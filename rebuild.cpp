@@ -1,6 +1,8 @@
 // MaxiM: Ported.
 
 #include "partoss.h"
+
+#include "rebuild.h"
 #include "globext.h"
 
 void rebuild (long aoffset, short type)
@@ -13,25 +15,25 @@ void rebuild (long aoffset, short type)
     {
       opensqd (newarea, nindex, 0, 0);
       if (!arealock)
-	{
-	  newarea->links.chain = newarea->links.last = NULL;
-	  newarea->links.numelem = 0;
-	  if (newarea->sqd.sqd)
-	    {
-	      switch (type)
-		{
-		case 1:
-		  purgesqd ();
-		  break;
-		case 2:
-		  fixsqd ();
-		  break;
-		case 3:
-		  untoss ();
-		  break;
-		}
-	    }
-	}
+  {
+    newarea->links.chain = newarea->links.last = NULL;
+    newarea->links.numelem = 0;
+    if (newarea->sqd.sqd)
+      {
+        switch (type)
+    {
+    case 1:
+      purgesqd ();
+      break;
+    case 2:
+      fixsqd ();
+      break;
+    case 3:
+      untoss ();
+      break;
+    }
+      }
+  }
     }
 }
 
@@ -94,63 +96,63 @@ void purgesqd (void)
       lseek (newarea->sqd.sqd, 112, SEEK_SET);
       rread (newarea->sqd.sqd, &firstf, 28, __FILE__, __LINE__);
       if (firstf.next)
-	{
-	  needwork = 1;
-	  if (bcfg.analyse < 2)
-	    goto dowork;
-	  if (bcfg.analyse == 3)
-	    {
-	      while (firstf.next)
-		{
-		  sumdel++;
-		  lseek (newarea->sqd.sqd, firstf.next, SEEK_SET);
-		  rread (newarea->sqd.sqd, &firstf, 28, __FILE__, __LINE__);
-		}
-	    }
-	}
+  {
+    needwork = 1;
+    if (bcfg.analyse < 2)
+      goto dowork;
+    if (bcfg.analyse == 3)
+      {
+        while (firstf.next)
+    {
+      sumdel++;
+      lseek (newarea->sqd.sqd, firstf.next, SEEK_SET);
+      rread (newarea->sqd.sqd, &firstf, 28, __FILE__, __LINE__);
+    }
+      }
+  }
       if (newarea->days)
-	{
-	  if (bcfg.analyse)
-	    {
-	      if (bcfg.analyse > 1)
-		{
-		  bitmap =
-		    (char *)myalloc ((unsigned)((maxmsg >> 3) + 1), __FILE__,
-				     __LINE__);
-		  balloc = 1;
-		}
-	      for (i = 0; i < maxmsg; i++)
-		{
-		  if (sqhtobuf (i) == -2)
-		    goto mnext;
-		  sftime = time (NULL);
-		  tmt = localtime (&sftime);
-		  mystrncpy (tstrtime, asctime (tmt), 39);
-		  currtime = strtime (tstrtime);
-		  diff = diffdays (head.timeto, currtime);
-		  if (diff >= newarea->days)
-		    {
-		      needwork = 1;
-		      if (bcfg.analyse == 1)
-			goto dowork;
-		      else
-			{
-			  bitmap[(unsigned)(i >> 3)] &=
-			    (char)((0xfe << (i & 7)) & 0xff);
-			  if (bcfg.analyse == 3)
-			    sumdel++;
-			}
-		    }
-		  else if (bcfg.analyse > 1)
-		    bitmap[(unsigned)(i >> 3)] |=
-		      (char)((1 << (i & 7)) & 0xff);
-		mnext:
-		  ;
-		}
-	    }
-	  else
-	    needwork = 1;
-	}
+  {
+    if (bcfg.analyse)
+      {
+        if (bcfg.analyse > 1)
+    {
+      bitmap =
+        (char *)myalloc ((unsigned)((maxmsg >> 3) + 1), __FILE__,
+             __LINE__);
+      balloc = 1;
+    }
+        for (i = 0; i < maxmsg; i++)
+    {
+      if (sqhtobuf (i) == -2)
+        goto mnext;
+      sftime = time (NULL);
+      tmt = localtime (&sftime);
+      mystrncpy (tstrtime, asctime (tmt), 39);
+      currtime = strtime (tstrtime);
+      diff = diffdays (head.timeto, currtime);
+      if (diff >= newarea->days)
+        {
+          needwork = 1;
+          if (bcfg.analyse == 1)
+      goto dowork;
+          else
+      {
+        bitmap[(unsigned)(i >> 3)] &=
+          (char)((0xfe << (i & 7)) & 0xff);
+        if (bcfg.analyse == 3)
+          sumdel++;
+      }
+        }
+      else if (bcfg.analyse > 1)
+        bitmap[(unsigned)(i >> 3)] |=
+          (char)((1 << (i & 7)) & 0xff);
+    mnext:
+      ;
+    }
+      }
+    else
+      needwork = 1;
+  }
     }
 dowork:
   if (needwork && (bcfg.analyse == 3))
@@ -161,119 +163,119 @@ dowork:
     {
       memcpy (persarea, newarea, szarea);
       if ((persarea->sqd.sqd =
-	   (short)sopen (pname, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-			 S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-	{
-	  mystrncpy (errname, pname, DirSize);
-	  errexit (2, __FILE__, __LINE__);
-	}
+     (short)sopen (pname, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
+       S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+  {
+    mystrncpy (errname, pname, DirSize);
+    errexit (2, __FILE__, __LINE__);
+  }
       if ((persarea->sqd.sqi =
-	   (short)sopen (iname, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-			 S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-	{
-	  mystrncpy (errname, iname, DirSize);
-	  errexit (2, __FILE__, __LINE__);
-	}
+     (short)sopen (iname, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
+       S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+  {
+    mystrncpy (errname, iname, DirSize);
+    errexit (2, __FILE__, __LINE__);
+  }
       persarea->open = 1;
       lseek (newarea->sqd.sqd, 0, SEEK_SET);
       rread (newarea->sqd.sqd, &tsqbuf, 256, __FILE__, __LINE__);
       tsqbuf.nummsg = tsqbuf.highmsg = tsqbuf.first = tsqbuf.last =
-	tsqbuf.firstf = tsqbuf.lastf = 0;
+  tsqbuf.firstf = tsqbuf.lastf = 0;
       tsqbuf.endf = 256;
       wwrite (persarea->sqd.sqd, &tsqbuf, 256, __FILE__, __LINE__);
       for (i = 0; i < maxmsg; i++)
-	{
+  {
 //      if((newarea->days==0) || (bcfg.analyse<2) || ((bitmap[i>>3])&(1<<(i<<7))))
-	  if ((newarea->days == 0) || (bcfg.analyse < 2)
-	      || ((bitmap[(unsigned)(i >> 3)]) & (1 << (i & 7))))
-	    {
-	      if (sqdtobuf (newarea, nindex, i) == -2)
-		goto mnext2;
-	      if (newarea->days == 0)
-		needcopy = 1;
-	      else
-		{
-		  if (bcfg.analyse < 2)
-		    {
-		      sftime = time (NULL);
-		      tmt = localtime (&sftime);
-		      mystrncpy (tstrtime, asctime (tmt), 39);
-		      currtime = strtime (tstrtime);
-		      diff = diffdays (bufsqd.timeto, currtime);
-		      if (diff < newarea->days)
-			needcopy = 1;
-		      else
-			needcopy = 0;
-		    }
-		  else
-		    needcopy = 1;
-		}
-	      if (needcopy)
-		{
-		  buftosqd (persarea, pindex, 2);
-		  newmess++;
-		}
-	      delctrl (2);
-	    mnext2:
-	      ;
-	    }
-	}
+    if ((newarea->days == 0) || (bcfg.analyse < 2)
+        || ((bitmap[(unsigned)(i >> 3)]) & (1 << (i & 7))))
+      {
+        if (sqdtobuf (newarea, nindex, i) == -2)
+    goto mnext2;
+        if (newarea->days == 0)
+    needcopy = 1;
+        else
+    {
+      if (bcfg.analyse < 2)
+        {
+          sftime = time (NULL);
+          tmt = localtime (&sftime);
+          mystrncpy (tstrtime, asctime (tmt), 39);
+          currtime = strtime (tstrtime);
+          diff = diffdays (bufsqd.timeto, currtime);
+          if (diff < newarea->days)
+      needcopy = 1;
+          else
+      needcopy = 0;
+        }
+      else
+        needcopy = 1;
+    }
+        if (needcopy)
+    {
+      buftosqd (persarea, pindex, 2);
+      newmess++;
+    }
+        delctrl (2);
+      mnext2:
+        ;
+      }
+  }
       if (balloc)
-	myfree ((void **)&bitmap, __FILE__, __LINE__);
+  myfree ((void **)&bitmap, __FILE__, __LINE__);
       closesqd (newarea, 0);
       newsize =
-	filelength (persarea->sqd.sqd) + filelength (persarea->sqd.sqi);
+  filelength (persarea->sqd.sqd) + filelength (persarea->sqd.sqi);
       cclose (&persarea->sqd.sqd, __FILE__, __LINE__);
       cclose (&persarea->sqd.sqi, __FILE__, __LINE__);
       persarea->open = 0;
       if (newsize == 256)
-	{
-	  mystrncpy (iname, newarea->areafp, DirSize);
-	  mystrncat (iname, ".sqd", 5, DirSize);
-	  unlink (iname);
-	  iname[strlen (iname) - 1] = 'i';
-	  unlink (iname);
-	  iname[strlen (iname) - 1] = 'l';
-	  unlink (iname);
-	  iname[strlen (iname) - 3] = '_';
-	  iname[strlen (iname) - 1] = 'd';
-	  unlink (iname);
-	  iname[strlen (iname) - 1] = 'i';
-	  unlink (iname);
-	}
+  {
+    mystrncpy (iname, newarea->areafp, DirSize);
+    mystrncat (iname, ".sqd", 5, DirSize);
+    unlink (iname);
+    iname[strlen (iname) - 1] = 'i';
+    unlink (iname);
+    iname[strlen (iname) - 1] = 'l';
+    unlink (iname);
+    iname[strlen (iname) - 3] = '_';
+    iname[strlen (iname) - 1] = 'd';
+    unlink (iname);
+    iname[strlen (iname) - 1] = 'i';
+    unlink (iname);
+  }
       else
-	{
-	  mystrncpy (fulname, newarea->areafp, DirSize);
-	  mystrncat (fulname, ".sqd", 5, DirSize);
-	  if (rrename (pname, fulname))
-	    {
-	      mystrncpy (errname, pname, DirSize);
-	      errexit (13, __FILE__, __LINE__);
-	    }
-	  fulname[strlen (fulname) - 1] = 'i';
-	  if (rrename (iname, fulname))
-	    {
-	      mystrncpy (errname, iname, DirSize);
-	      errexit (13, __FILE__, __LINE__);
-	    }
-	}
+  {
+    mystrncpy (fulname, newarea->areafp, DirSize);
+    mystrncat (fulname, ".sqd", 5, DirSize);
+    if (rrename (pname, fulname))
+      {
+        mystrncpy (errname, pname, DirSize);
+        errexit (13, __FILE__, __LINE__);
+      }
+    fulname[strlen (fulname) - 1] = 'i';
+    if (rrename (iname, fulname))
+      {
+        mystrncpy (errname, iname, DirSize);
+        errexit (13, __FILE__, __LINE__);
+      }
+  }
       if (maxmsg > newmess || oldsize > newsize)
-	{
-	  globold += oldsize;
-	  globnew += newsize;
-	  if (oldsize < 1024)
-	    sprintf (logout, "Purge %s: %ld -> %ld (%ldb -> %ldb, %d%%)",
-		     newarea->areaname, maxmsg, newmess, oldsize, newsize,
-		     (newsize * 100) / oldsize);
-	  else
-	    sprintf (logout, "Purge %s: %ld -> %ld (%ldK -> %ldK, %d%%)",
-		     newarea->areaname, maxmsg, newmess, oldsize >> 10,
-		     newsize >> 10,
-		     /*(newsize*100)/oldsize */ newsize / (oldsize / 100));
-	  if (bcfg.loglevel)
-	    logwrite (1, 1);
-	  ccprintf ("%s\r\n", logout);
-	}
+  {
+    globold += oldsize;
+    globnew += newsize;
+    if (oldsize < 1024)
+      sprintf (logout, "Purge %s: %ld -> %ld (%ldb -> %ldb, %d%%)",
+         newarea->areaname, maxmsg, newmess, oldsize, newsize,
+         (newsize * 100) / oldsize);
+    else
+      sprintf (logout, "Purge %s: %ld -> %ld (%ldK -> %ldK, %d%%)",
+         newarea->areaname, maxmsg, newmess, oldsize >> 10,
+         newsize >> 10,
+         /*(newsize*100)/oldsize */ newsize / (oldsize / 100));
+    if (bcfg.loglevel)
+      logwrite (1, 1);
+    ccprintf ("%s\r\n", logout);
+  }
     }
   else
     closesqd (newarea, 0);
@@ -427,7 +429,7 @@ void tossbad (void)
     {
       closesqd (badmess, 0);
       if (!bcfg.killdupes)
-	closesqd (dupes, 0);
+  closesqd (dupes, 0);
       mystrncpy (logout, "Bad Area is empty", 20);
       logwrite (1, 4);
       return;
@@ -442,7 +444,7 @@ void tossbad (void)
   mystrncat (tempsqdn, "tempsqd.$$$", 16, DirSize);
   if ((tempsqd =
        (short)sopen (tempsqdn, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-		     S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+         S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
     {
       mystrncpy (errname, tempsqdn, DirSize);
       errexit (2, __FILE__, __LINE__);
@@ -472,14 +474,14 @@ void tossbad (void)
   badd[strlen (badd) - 3] = '_';
   if ((persarea->sqd.sqd =
        (short)sopen (badd, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-		     S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+         S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
     {
       mystrncpy (errname, badd, DirSize);
       errexit (2, __FILE__, __LINE__);
     }
   if ((persarea->sqd.sqi =
        (short)sopen (badi, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-		     S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+         S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
     {
       mystrncpy (errname, badi, DirSize);
       errexit (2, __FILE__, __LINE__);
@@ -490,65 +492,65 @@ void tossbad (void)
   lseek (persarea->sqd.sqd, 8, SEEK_SET);
   rread (persarea->sqd.sqd, &maxmsg, 4, __FILE__, __LINE__);
   rread (persarea->sqd.sqi, pindex,
-	 (unsigned short)(((maxmsg < bufsqi) ? maxmsg : bufsqi) * 12),
-	 __FILE__, __LINE__);
+   (unsigned short)(((maxmsg < bufsqi) ? maxmsg : bufsqi) * 12),
+   __FILE__, __LINE__);
   for (i = 0; i < maxmsg; i++)
     {
       isdupe = 0;
       pktaddr.zone = pktaddr.net = pktaddr.node = pktaddr.point = 0;
       if (sqdtobuf (persarea, pindex, i) == -2)
-	goto mnext3;
+  goto mnext3;
       badarea = setarea (curarea, 0);
       if (badarea)
-	{
-	  wipearea = 0;
-	  totbad++;
-	  if (badarea > 0 && (bcfg.locked == 4))
-	    {
-	      sprintf (logout, "BackUp: Area %s is locked");
-	      logwrite (1, 3);
-	      backup (1);
-	    }
-	  else
-	    {
-	      if (badarea < 0)
-		badtype = 2;
-	      else
-		badtype = 5;
-	      if (badlocked)
-		{
-		  sprintf (logout, "BackUp: BadArea is locked");
-		  logwrite (1, 3);
-		  backup (1);
-		}
-	      else
-		buftosqd (badmess, bindex, 2);
-	    }
-	  wipearea = 1;
-	}
+  {
+    wipearea = 0;
+    totbad++;
+    if (badarea > 0 && (bcfg.locked == 4))
+      {
+        sprintf (logout, "BackUp: Area %s is locked");
+        logwrite (1, 3);
+        backup (1);
+      }
+    else
+      {
+        if (badarea < 0)
+    badtype = 2;
+        else
+    badtype = 5;
+        if (badlocked)
+    {
+      sprintf (logout, "BackUp: BadArea is locked");
+      logwrite (1, 3);
+      backup (1);
+    }
+        else
+    buftosqd (badmess, bindex, 2);
+      }
+    wipearea = 1;
+  }
       else
-	{
-	  if (!isdupe)
-	    dupcheck (2);
-	  if (newarea->dupes && isdupe)
-	    {
-	      if (!bcfg.killdupes)
-		{
-		  wipearea = 0;
-		  if (dupelocked)
-		    {
-		      sprintf (logout, "BackUp: DupeArea is locked");
-		      logwrite (1, 3);
-		      backup (1);
-		    }
-		  else
-		    buftosqd (dupes, dindex, 2);
-		  wipearea = 1;
-		}
-	    }
-	  else
-	    buftosqd (newarea, nindex, 2);
-	}
+  {
+    if (!isdupe)
+      dupcheck (2);
+    if (newarea->dupes && isdupe)
+      {
+        if (!bcfg.killdupes)
+    {
+      wipearea = 0;
+      if (dupelocked)
+        {
+          sprintf (logout, "BackUp: DupeArea is locked");
+          logwrite (1, 3);
+          backup (1);
+        }
+      else
+        buftosqd (dupes, dindex, 2);
+      wipearea = 1;
+    }
+      }
+    else
+      buftosqd (newarea, nindex, 2);
+  }
 /*
      {
       ttaddr=newarea->links.chain;
@@ -706,7 +708,7 @@ void untoss (void)
   for (i = 0; i < maxmsg; i++)
     {
       if (sqdtobuf (newarea, nindex, i) == -2)
-	goto mnext4;
+  goto mnext4;
       a = bufsqd.timefrom;
       ayear = (short)((a >> 9) & 0x7f);
       ayear += 1980;
@@ -722,79 +724,79 @@ void untoss (void)
       createpath (fulname);
       memcpy (fname, bufsqd.fromname, 8);
       for (j = 0; j < 8; j++)
-	if (!isalnum (fname[(unsigned)j]))
-	  fname[(unsigned)j] = '_';
+  if (!isalnum (fname[(unsigned)j]))
+    fname[(unsigned)j] = '_';
       fname[8] = 0;
       mystrncat (fulname, fname, 18, DirSize);
       mystrncat (fulname, ".000", 6, DirSize);
       acurr = 1;
       while (access (fulname, 0) != -1)
-	{
-	  bcurr = acurr;
-	  fulname[strlen (fulname) - 3] = (char)(bcurr / 100 + '0');
-	  bcurr = (short)(bcurr % 100);
-	  fulname[strlen (fulname) - 2] = (char)(bcurr / 10 + '0');
-	  bcurr = (short)(bcurr % 10);
-	  fulname[strlen (fulname) - 1] = (char)(bcurr + '0');
-	  fulname[strlen (fulname)] = 0;
-	  acurr++;
-	}
+  {
+    bcurr = acurr;
+    fulname[strlen (fulname) - 3] = (char)(bcurr / 100 + '0');
+    bcurr = (short)(bcurr % 100);
+    fulname[strlen (fulname) - 2] = (char)(bcurr / 10 + '0');
+    bcurr = (short)(bcurr % 10);
+    fulname[strlen (fulname) - 1] = (char)(bcurr + '0');
+    fulname[strlen (fulname)] = 0;
+    acurr++;
+  }
       bcurr =
-	(short)sopen (fulname, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-		      S_IRWXU | S_IRWXG | S_IRWXO);
+  (short)sopen (fulname, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
+          S_IRWXU | S_IRWXG | S_IRWXO);
       if (sbigmess)
-	{
-	  lseek (tempsqd, 0, SEEK_SET);
-	  rread (tempsqd, sqdbuf, (unsigned short)(stolen + 1), __FILE__,
-		 __LINE__);
-	  mywrite (bcurr, "To: ", __FILE__, __LINE__);
-	  mywrite (bcurr, sqdbuf, __FILE__, __LINE__);
-	  mywrite (bcurr, "\r", __FILE__, __LINE__);
-	  rread (tempsqd, sqdbuf, (unsigned short)(sfromlen + 1), __FILE__,
-		 __LINE__);
-	  mywrite (bcurr, "From: ", __FILE__, __LINE__);
-	  mywrite (bcurr, sqdbuf, __FILE__, __LINE__);
-	  mywrite (bcurr, "\r", __FILE__, __LINE__);
-	  rread (tempsqd, sqdbuf, (unsigned short)(ssubjlen + 1), __FILE__,
-		 __LINE__);
-	  mywrite (bcurr, "Subj: ", __FILE__, __LINE__);
-	  mywrite (bcurr, sqdbuf, __FILE__, __LINE__);
-	  mywrite (bcurr, "\r\r", __FILE__, __LINE__);
-	  while ((fmax2 =
-		  (unsigned short)rread (tempsqd, sqdbuf, buflen, __FILE__,
-					 __LINE__)) != 0)
-	    {
-	      temp = strstr (sqdbuf, "\rSEEN-BY: ");
-	      if (temp && ((temp - sqdbuf) < fmax2))
-		{
-		  wwrite (bcurr, sqdbuf, (unsigned short)(temp - sqdbuf + 1),
-			  __FILE__, __LINE__);
-		  break;
-		}
-	      else
-		wwrite (bcurr, sqdbuf, fmax2, __FILE__, __LINE__);
-	    }
-	}
+  {
+    lseek (tempsqd, 0, SEEK_SET);
+    rread (tempsqd, sqdbuf, (unsigned short)(stolen + 1), __FILE__,
+     __LINE__);
+    mywrite (bcurr, "To: ", __FILE__, __LINE__);
+    mywrite (bcurr, sqdbuf, __FILE__, __LINE__);
+    mywrite (bcurr, "\r", __FILE__, __LINE__);
+    rread (tempsqd, sqdbuf, (unsigned short)(sfromlen + 1), __FILE__,
+     __LINE__);
+    mywrite (bcurr, "From: ", __FILE__, __LINE__);
+    mywrite (bcurr, sqdbuf, __FILE__, __LINE__);
+    mywrite (bcurr, "\r", __FILE__, __LINE__);
+    rread (tempsqd, sqdbuf, (unsigned short)(ssubjlen + 1), __FILE__,
+     __LINE__);
+    mywrite (bcurr, "Subj: ", __FILE__, __LINE__);
+    mywrite (bcurr, sqdbuf, __FILE__, __LINE__);
+    mywrite (bcurr, "\r\r", __FILE__, __LINE__);
+    while ((fmax2 =
+      (unsigned short)rread (tempsqd, sqdbuf, buflen, __FILE__,
+           __LINE__)) != 0)
+      {
+        temp = strstr (sqdbuf, "\rSEEN-BY: ");
+        if (temp && ((temp - sqdbuf) < fmax2))
+    {
+      wwrite (bcurr, sqdbuf, (unsigned short)(temp - sqdbuf + 1),
+        __FILE__, __LINE__);
+      break;
+    }
+        else
+    wwrite (bcurr, sqdbuf, fmax2, __FILE__, __LINE__);
+      }
+  }
       else
-	{
-	  mywrite (bcurr, "To: ", __FILE__, __LINE__);
-	  mywrite (bcurr, bufsqd.toname, __FILE__, __LINE__);
-	  mywrite (bcurr, "\r", __FILE__, __LINE__);
-	  mywrite (bcurr, "From: ", __FILE__, __LINE__);
-	  mywrite (bcurr, bufsqd.fromname, __FILE__, __LINE__);
-	  mywrite (bcurr, "\r", __FILE__, __LINE__);
-	  mywrite (bcurr, "Subj: ", __FILE__, __LINE__);
-	  mywrite (bcurr, bufsqd.subj, __FILE__, __LINE__);
-	  mywrite (bcurr, "\r\r", __FILE__, __LINE__);
-	  temp = strstr (bufsqd.text, "\rSEEN-BY: ");
-	  if (temp && ((temp - bufsqd.text) < stextlen))
-	    wwrite (bcurr, bufsqd.text,
-		    (unsigned short)(temp - bufsqd.text + 1), __FILE__,
-		    __LINE__);
-	  else
-	    wwrite (bcurr, bufsqd.text, (unsigned short)(stextlen), __FILE__,
-		    __LINE__);
-	}
+  {
+    mywrite (bcurr, "To: ", __FILE__, __LINE__);
+    mywrite (bcurr, bufsqd.toname, __FILE__, __LINE__);
+    mywrite (bcurr, "\r", __FILE__, __LINE__);
+    mywrite (bcurr, "From: ", __FILE__, __LINE__);
+    mywrite (bcurr, bufsqd.fromname, __FILE__, __LINE__);
+    mywrite (bcurr, "\r", __FILE__, __LINE__);
+    mywrite (bcurr, "Subj: ", __FILE__, __LINE__);
+    mywrite (bcurr, bufsqd.subj, __FILE__, __LINE__);
+    mywrite (bcurr, "\r\r", __FILE__, __LINE__);
+    temp = strstr (bufsqd.text, "\rSEEN-BY: ");
+    if (temp && ((temp - bufsqd.text) < stextlen))
+      wwrite (bcurr, bufsqd.text,
+        (unsigned short)(temp - bufsqd.text + 1), __FILE__,
+        __LINE__);
+    else
+      wwrite (bcurr, bufsqd.text, (unsigned short)(stextlen), __FILE__,
+        __LINE__);
+  }
       cclose (&bcurr, __FILE__, __LINE__);
       newmess++;
       delctrl (2);
@@ -806,7 +808,7 @@ void untoss (void)
       lseek (newarea->sqd.sqd, 0, SEEK_SET);
       rread (newarea->sqd.sqd, &tsqbuf, 256, __FILE__, __LINE__);
       tsqbuf.nummsg = tsqbuf.highmsg = tsqbuf.first = tsqbuf.last =
-	tsqbuf.firstf = tsqbuf.lastf = 0;
+  tsqbuf.firstf = tsqbuf.lastf = 0;
       tsqbuf.endf = 256;
       lseek (newarea->sqd.sqd, 0, SEEK_SET);
       wwrite (newarea->sqd.sqd, &tsqbuf, 256, __FILE__, __LINE__);
