@@ -13,7 +13,7 @@
 //#endif
 
 
-/* $Id: partoss.h,v 1.6 2003/02/28 08:48:56 mozhaev Exp $ */
+/* $Id: partoss.h,v 1.7 2003/03/07 21:59:10 saf2 Exp $ */
 /* Ported partially */
 #ifdef HAVE_CONFIG_H
 
@@ -218,18 +218,6 @@ int _grow_handles( int new_count ) { return new_count; };
 // XM functions for memory control debugging
 // #define XM_USED
 // #include "xm.h"
-
-#ifdef __DOS__
-
-// #include <spawno.h>
-#include "swapexec.hhh"
-
-extern "C" unsigned pascal SwapExec (char *FileNameToSwap,
-             char *ProgramToExecute,
-             char *CommandString, unsigned Actions,
-             unsigned EnvSeg);
-
-#endif
 
 #ifdef __DOS__
 #define DirSize 80
@@ -558,42 +546,6 @@ struct pktname
   struct pktname *next;
 };
 
-class areaalias
-{
-public:
-  char sarea[arealength];
-  char darea[arealength];
-  struct myaddr linkaddr;
-
-  int operator < (areaalias & a)
-  {
-    return (stricmp (sarea, a.sarea) < 0);
-  }
-  int operator > (areaalias & a)
-  {
-    return (stricmp (sarea, a.sarea) > 0);
-  }
-  int operator == (areaalias & a) {
-    if (stricmp (sarea, a.sarea) != 0 || stricmp (darea, a.darea) != 0)
-      return 0;
-    if (linkaddr.zone != a.linkaddr.zone || linkaddr.net != a.linkaddr.net ||
-  linkaddr.node != a.linkaddr.node
-  || linkaddr.point != a.linkaddr.point)
-      return 0;
-    return 1;
-  }
-  areaalias & operator = (areaalias & a)
-  {
-    strcpy (sarea, a.sarea);
-    strcpy (darea, a.darea);
-    linkaddr.zone = a.linkaddr.zone;
-    linkaddr.net = a.linkaddr.net;
-    linkaddr.node = a.linkaddr.node;
-    linkaddr.point = a.linkaddr.point;
-    return *this;
-  }
-};
-
 struct bincfg
 {
   unsigned long maindt, packdt, areadt;
@@ -724,7 +676,6 @@ extern long filelength (int fhandle);
 
 // needport to here
 
-int archiver (char *arcname, char *packname, short type);
 short cmpaddr (struct myaddr *first, struct myaddr *second);
 short cmpaddrw (struct myaddr *first, struct myaddr *second);
 short compaddr (struct myaddr *chain, struct myaddr *mess);
@@ -879,8 +830,6 @@ short seekarea (struct uplname *uplink, char *area);
 short mysopen (char *fname, short type, char *file, short line);
 short sqread (struct area *tarea, long pos, struct pointers *pnt, char *file,
         short line);
-void addsarea (struct uplname **chain, struct uplname *tempor, char *areaname,
-         short where, short wild);
 void backup (short type);
 void addhome (char *dest, char *source);
 void addarcs (char *path, struct find_t *fblk, short secure);
@@ -889,11 +838,6 @@ void linknet (void);
 void setreplyn (short from, short to);
 void readnet2 (short pos, short type);
 void readnet (short file, short pos, short type);
-void inecholog (char *areaname);
-void delorph (struct uplname *utarea, struct uplname *ttname);
-short delkill (short deltype);
-void delorphn (struct uplname *utarea, struct uplname *ttname, char * descr);
-void dolist (short rt);
 
 void untoss (void);
 
@@ -904,14 +848,8 @@ void lpselect (char page);
 
 #endif
 
-void hideout (void);
-void unhideout (void);
-
 int linkArea (const char *areaFile, int linkType);
 void relink (void);
 void dupundo (void);
 char *makebox (struct myaddr *toaddr, int type, int hold);
-void areaaliasmaker ();
-char *areaaliasrestorer (char *);
-void printversion(void);
 #endif

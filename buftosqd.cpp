@@ -1,6 +1,7 @@
 // MaxiM: ported, not changed.
 
 #include "partoss.h"
+#include "partserv.h"
 #include "globext.h"
 
 short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
@@ -22,7 +23,7 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
     return -1;
   memcpy (rcurarea, curarea, arealength);
   sprintf (logout, "***** Debug info: [%s] [%s] [%s] [%s]",
-	   ttarea->areaname, newarea->areaname, persarea->areaname, curarea);
+     ttarea->areaname, newarea->areaname, persarea->areaname, curarea);
   logwrite (1, 12);
   if (type == 1)
     {
@@ -52,7 +53,7 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
       tkllen = skludlen;
       wipearea = 1;
       kill = (mode & 2176 && flags2
-	      && (ttarea->type == 1 || ttarea->type == 3) && bcfg.ktrash);
+        && (ttarea->type == 1 || ttarea->type == 3) && bcfg.ktrash);
     }
 // /*
   if (ttarea->type == 2)
@@ -60,42 +61,42 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
       memset (reason, 0, 40);
       mystrncpy (reason, "\1Reason: ", 39);
       switch (badtype)
-	{
-	case 1:
-	  mystrncat (reason, (char *)"Corrupted packet", 19, 39);
-	  rlen = 25;
-	  break;
-	case 2:
-	  mystrncat (reason, (char *)"Unknown area", 15, 39);
-	  rlen = 21;
-	  break;
-	case 3:
-	  mystrncat (reason, (char *)"Read-Only area", 17, 39);
-	  rlen = 23;
-	  break;
-	case 4:
-	  mystrncat (reason, (char *)"Security violation", 21, 39);
-	  rlen = 27;
-	  break;
-	case 5:
-	  mystrncat (reason, (char *)"Locked area", 15, 39);
-	  rlen = 20;
-	  break;
-	}
+  {
+  case 1:
+    mystrncat (reason, (char *)"Corrupted packet", 19, 39);
+    rlen = 25;
+    break;
+  case 2:
+    mystrncat (reason, (char *)"Unknown area", 15, 39);
+    rlen = 21;
+    break;
+  case 3:
+    mystrncat (reason, (char *)"Read-Only area", 17, 39);
+    rlen = 23;
+    break;
+  case 4:
+    mystrncat (reason, (char *)"Security violation", 21, 39);
+    rlen = 27;
+    break;
+  case 5:
+    mystrncat (reason, (char *)"Locked area", 15, 39);
+    rlen = 20;
+    break;
+  }
       if (!(tkludge))
-	{
-	  tkludge = (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
-	  ttkludge = tkludge;
-	}
+  {
+    tkludge = (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
+    ttkludge = tkludge;
+  }
       else
-	{
-	  ttkludge = tkludge;
-	  while (ttkludge->next)
-	    ttkludge = ttkludge->next;
-	  ttkludge->next =
-	    (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
-	  ttkludge = ttkludge->next;
-	}
+  {
+    ttkludge = tkludge;
+    while (ttkludge->next)
+      ttkludge = ttkludge->next;
+    ttkludge->next =
+      (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
+    ttkludge = ttkludge->next;
+  }
       ttkludge->next = NULL;
       ttkludge->str = (char *)myalloc (rlen + 3, __FILE__, __LINE__);
       memset (ttkludge->str, 0, rlen + 3);
@@ -106,15 +107,15 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
 //    lkludnum++;
       tkllen += rlen;
       if (type == 1)
-	{
-	  pkludlen += rlen;
-	  pkludnum++;
-	}
+  {
+    pkludlen += rlen;
+    pkludnum++;
+  }
       else
-	{
-	  skludlen += rlen;
-	  skludnum++;
-	}
+  {
+    skludlen += rlen;
+    skludnum++;
+  }
     }
 // */
 
@@ -126,74 +127,74 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
   if (!ttarea->passthr)
     {
       if (sqbuf.maxmsg && sqbuf.nummsg >= sqbuf.maxmsg)
-	{
-	  if (sqbuf.skipmsg > (ttarea->curindex + bufsqi)
-	      || sqbuf.skipmsg < ttarea->curindex)
-	    {
-	      ttarea->curindex = (sqbuf.skipmsg / bufsqi) * bufsqi;
-	      lseek (ttarea->sqd.sqi, ttarea->curindex * 12, SEEK_SET);
-	      rread (ttarea->sqd.sqi, tindex, (unsigned short)(bufsqi * 12),
-		     __FILE__, __LINE__);
-	    }
-	  memcpy (&sqibuf,
-		  &tindex[(unsigned)(sqbuf.skipmsg - ttarea->curindex)], 12);
-	  current = sqibuf.offset;
-	  if (sqread (ttarea, current, &pcurr, __FILE__, __LINE__) == -1)
-	    return -1;
-	  while (sqbuf.nummsg >= sqbuf.maxmsg)
-	    {
-	      pcurr.frametype = 1;
-	      next = sqbuf.first = pcurr.next;
-	      if (sqread (ttarea, next, &pnext, __FILE__, __LINE__) == -1)
-		return -1;
-	      pnext.prev = 0;
-	      lseek (ttarea->sqd.sqd, next, SEEK_SET);
-	      wwrite (ttarea->sqd.sqd, &pnext, 28, __FILE__, __LINE__);
-	      if (sqbuf.lastf)
-		{
-		  pcurr.prev = prevf = sqbuf.lastf;
-		  pcurr.next = 0;
-		  if (sqread (ttarea, prevf, &pprev, __FILE__, __LINE__) ==
-		      -1)
-		    return -1;
-		  sqbuf.lastf = pprev.next = current;
-		  lseek (ttarea->sqd.sqd, prevf, SEEK_SET);
-		  wwrite (ttarea->sqd.sqd, &pprev, 28, __FILE__, __LINE__);
-		  lseek (ttarea->sqd.sqd, current, SEEK_SET);
-		  wwrite (ttarea->sqd.sqd, &pcurr, 28, __FILE__, __LINE__);
-		}
-	      else
-		{
-		  sqbuf.firstf = sqbuf.lastf = current;
-		  pcurr.next = pcurr.prev = 0;
-		  lseek (ttarea->sqd.sqd, current, SEEK_SET);
-		  wwrite (ttarea->sqd.sqd, &pcurr, 28, __FILE__, __LINE__);
-		}
-	      for (i = sqbuf.skipmsg + 1; i <= sqbuf.nummsg; i++)
-		{
-		  lseek (ttarea->sqd.sqi, i * 12, SEEK_SET);
-		  rread (ttarea->sqd.sqi, &tbuf, 12, __FILE__, __LINE__);
-		  lseek (ttarea->sqd.sqi, (i - 1) * 12, SEEK_SET);
-		  wwrite (ttarea->sqd.sqi, &tbuf, 12, __FILE__, __LINE__);
-		}
-	      if (sqbuf.skipmsg > (ttarea->curindex + bufsqi)
-		  || sqbuf.skipmsg < ttarea->curindex)
-		{
-		  ttarea->curindex = (sqbuf.skipmsg / bufsqi) * bufsqi;
-		  lseek (ttarea->sqd.sqi, ttarea->curindex * 12, SEEK_SET);
-		  rread (ttarea->sqd.sqi, tindex,
-			 (unsigned short)(bufsqi * 12), __FILE__, __LINE__);
-		}
-	      sqbuf.nummsg--;
-	      sqbuf.highmsg--;
-	      flushbuf (ttarea->sqd.sqd);
-	      flushbuf (ttarea->sqd.sqi);
-	      current = next;
-	      if (sqread (ttarea, next, &pcurr, __FILE__, __LINE__) == -1)
-		return -1;
-	    }
-	  chsize (ttarea->sqd.sqi, sqbuf.maxmsg * 12);
-	}
+  {
+    if (sqbuf.skipmsg > (ttarea->curindex + bufsqi)
+        || sqbuf.skipmsg < ttarea->curindex)
+      {
+        ttarea->curindex = (sqbuf.skipmsg / bufsqi) * bufsqi;
+        lseek (ttarea->sqd.sqi, ttarea->curindex * 12, SEEK_SET);
+        rread (ttarea->sqd.sqi, tindex, (unsigned short)(bufsqi * 12),
+         __FILE__, __LINE__);
+      }
+    memcpy (&sqibuf,
+      &tindex[(unsigned)(sqbuf.skipmsg - ttarea->curindex)], 12);
+    current = sqibuf.offset;
+    if (sqread (ttarea, current, &pcurr, __FILE__, __LINE__) == -1)
+      return -1;
+    while (sqbuf.nummsg >= sqbuf.maxmsg)
+      {
+        pcurr.frametype = 1;
+        next = sqbuf.first = pcurr.next;
+        if (sqread (ttarea, next, &pnext, __FILE__, __LINE__) == -1)
+    return -1;
+        pnext.prev = 0;
+        lseek (ttarea->sqd.sqd, next, SEEK_SET);
+        wwrite (ttarea->sqd.sqd, &pnext, 28, __FILE__, __LINE__);
+        if (sqbuf.lastf)
+    {
+      pcurr.prev = prevf = sqbuf.lastf;
+      pcurr.next = 0;
+      if (sqread (ttarea, prevf, &pprev, __FILE__, __LINE__) ==
+          -1)
+        return -1;
+      sqbuf.lastf = pprev.next = current;
+      lseek (ttarea->sqd.sqd, prevf, SEEK_SET);
+      wwrite (ttarea->sqd.sqd, &pprev, 28, __FILE__, __LINE__);
+      lseek (ttarea->sqd.sqd, current, SEEK_SET);
+      wwrite (ttarea->sqd.sqd, &pcurr, 28, __FILE__, __LINE__);
+    }
+        else
+    {
+      sqbuf.firstf = sqbuf.lastf = current;
+      pcurr.next = pcurr.prev = 0;
+      lseek (ttarea->sqd.sqd, current, SEEK_SET);
+      wwrite (ttarea->sqd.sqd, &pcurr, 28, __FILE__, __LINE__);
+    }
+        for (i = sqbuf.skipmsg + 1; i <= sqbuf.nummsg; i++)
+    {
+      lseek (ttarea->sqd.sqi, i * 12, SEEK_SET);
+      rread (ttarea->sqd.sqi, &tbuf, 12, __FILE__, __LINE__);
+      lseek (ttarea->sqd.sqi, (i - 1) * 12, SEEK_SET);
+      wwrite (ttarea->sqd.sqi, &tbuf, 12, __FILE__, __LINE__);
+    }
+        if (sqbuf.skipmsg > (ttarea->curindex + bufsqi)
+      || sqbuf.skipmsg < ttarea->curindex)
+    {
+      ttarea->curindex = (sqbuf.skipmsg / bufsqi) * bufsqi;
+      lseek (ttarea->sqd.sqi, ttarea->curindex * 12, SEEK_SET);
+      rread (ttarea->sqd.sqi, tindex,
+       (unsigned short)(bufsqi * 12), __FILE__, __LINE__);
+    }
+        sqbuf.nummsg--;
+        sqbuf.highmsg--;
+        flushbuf (ttarea->sqd.sqd);
+        flushbuf (ttarea->sqd.sqi);
+        current = next;
+        if (sqread (ttarea, next, &pcurr, __FILE__, __LINE__) == -1)
+    return -1;
+      }
+    chsize (ttarea->sqd.sqi, sqbuf.maxmsg * 12);
+  }
     }
   if (mode & 128 && !(mode & 32))
     sqbuf.uid = rehwm;
@@ -203,22 +204,22 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
     switch (bcfg.delinfo)
       {
       case 1:
-	tpmsglen = (type == 1) ? pcmsglen : scmsglen;
-	break;
+  tpmsglen = (type == 1) ? pcmsglen : scmsglen;
+  break;
       case 2:
-	tpmsglen = (type == 1) ? pcmsglen : scmsglen;
-	char *temp, *temp2, *temp3;
-	if (bigmess)
-	  temp = tsbuf;
-	else
-	  temp = buftemp->text;
-	if ((temp2 = locpath (temp)) != NULL)
-	  {
-	    tpmsglen += strlen (temp2);
-	    if (((temp3 = locseenby (temp)) != NULL) && (temp3 < temp2))
-	      strcpy (temp3, temp2);
-	  }
-	break;
+  tpmsglen = (type == 1) ? pcmsglen : scmsglen;
+  char *temp, *temp2, *temp3;
+  if (bigmess)
+    temp = tsbuf;
+  else
+    temp = buftemp->text;
+  if ((temp2 = locpath (temp)) != NULL)
+    {
+      tpmsglen += strlen (temp2);
+      if (((temp3 = locseenby (temp)) != NULL) && (temp3 < temp2))
+        strcpy (temp3, temp2);
+    }
+  break;
       }
   else
     tpmsglen = (type == 1) ? pmsglen : smsglen;
@@ -226,7 +227,7 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
     {
       tpmsglen -= arealen;
       if (mode & 2048)
-	tpmsglen--;
+  tpmsglen--;
     }
   else if (type == 1 && !netmail)
     tpmsglen++;
@@ -252,61 +253,61 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
     {
       current = pcurr.next;
       if (current)
-	if (sqread (ttarea, current, &pcurr, __FILE__, __LINE__) == -1)
-	  return -1;
+  if (sqread (ttarea, current, &pcurr, __FILE__, __LINE__) == -1)
+    return -1;
     }
   if (current)
     {
       if (current == sqbuf.firstf)
-	sqbuf.firstf = pcurr.next;
+  sqbuf.firstf = pcurr.next;
       if (current == sqbuf.lastf)
-	sqbuf.lastf = pcurr.prev;
+  sqbuf.lastf = pcurr.prev;
       if (pcurr.prev)
-	{
-	  if (sqread (ttarea, pcurr.prev, &pprev, __FILE__, __LINE__) == -1)
-	    return -1;
-	  pprev.next = pcurr.next;
-	  lseek (ttarea->sqd.sqd, pcurr.prev, SEEK_SET);
-	  wwrite (ttarea->sqd.sqd, &pprev, 28, __FILE__, __LINE__);
-	}
+  {
+    if (sqread (ttarea, pcurr.prev, &pprev, __FILE__, __LINE__) == -1)
+      return -1;
+    pprev.next = pcurr.next;
+    lseek (ttarea->sqd.sqd, pcurr.prev, SEEK_SET);
+    wwrite (ttarea->sqd.sqd, &pprev, 28, __FILE__, __LINE__);
+  }
       if (pcurr.next)
-	{
-	  if (sqread (ttarea, pcurr.next, &pnext, __FILE__, __LINE__) == -1)
-	    return -1;
-	  pnext.prev = pcurr.prev;
-	  lseek (ttarea->sqd.sqd, pcurr.next, SEEK_SET);
-	  wwrite (ttarea->sqd.sqd, &pnext, 28, __FILE__, __LINE__);
-	}
+  {
+    if (sqread (ttarea, pcurr.next, &pnext, __FILE__, __LINE__) == -1)
+      return -1;
+    pnext.prev = pcurr.prev;
+    lseek (ttarea->sqd.sqd, pcurr.next, SEEK_SET);
+    wwrite (ttarea->sqd.sqd, &pnext, 28, __FILE__, __LINE__);
+  }
       prev = sqbuf.last;
       if (prev)
-	{
-	  if (sqread (ttarea, prev, &pprev, __FILE__, __LINE__) == -1)
-	    return -1;
-	  pcurr.prev = prev;
-	  pprev.next = current;
-	  lseek (ttarea->sqd.sqd, prev, SEEK_SET);
-	  wwrite (ttarea->sqd.sqd, &pprev, 28, __FILE__, __LINE__);
-	}
+  {
+    if (sqread (ttarea, prev, &pprev, __FILE__, __LINE__) == -1)
+      return -1;
+    pcurr.prev = prev;
+    pprev.next = current;
+    lseek (ttarea->sqd.sqd, prev, SEEK_SET);
+    wwrite (ttarea->sqd.sqd, &pprev, 28, __FILE__, __LINE__);
+  }
       else
-	{
-	  sqbuf.first = current;
-	  pcurr.prev = 0;
-	}
+  {
+    sqbuf.first = current;
+    pcurr.prev = 0;
+  }
     }
   else
     {
       current = sqbuf.endf;
       prev = sqbuf.last;
       if (prev)
-	{
-	  if (sqread (ttarea, prev, &pprev, __FILE__, __LINE__) == -1)
-	    return -1;
-	  pcurr.prev = prev;
-	  pprev.next = current;
-	  pcurr.frlength = 0;
-	  lseek (ttarea->sqd.sqd, prev, SEEK_SET);
-	  wwrite (ttarea->sqd.sqd, &pprev, 28, __FILE__, __LINE__);
-	}
+  {
+    if (sqread (ttarea, prev, &pprev, __FILE__, __LINE__) == -1)
+      return -1;
+    pcurr.prev = prev;
+    pprev.next = current;
+    pcurr.frlength = 0;
+    lseek (ttarea->sqd.sqd, prev, SEEK_SET);
+    wwrite (ttarea->sqd.sqd, &pprev, 28, __FILE__, __LINE__);
+  }
     }
   pcurr.next = 0;
   sqbuf.last = current;
@@ -323,22 +324,22 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
       sqhead.msglength -= pkludnum;
       sqhead.clen = pkludlen - pkludnum + 1;
       if (!wipearea && !netmail)
-	sqhead.clen++;
+  sqhead.clen++;
     }
   else
     {
       if (skludlen)
-	sqhead.clen = skludlen + 1;
+  sqhead.clen = skludlen + 1;
       else
-	{
-	  sqhead.clen = 0;
-	}
+  {
+    sqhead.clen = 0;
+  }
     }
   if (wipearea)
     {
       sqhead.clen -= arealen;
       if (mode & 2048)
-	sqhead.clen--;
+  sqhead.clen--;
     }
   if (bcfg.delkl && kill2)
     sqhead.clen -= lkludlen;
@@ -353,11 +354,11 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
     {
       lseek (tempfile, 0, SEEK_SET);
       rread (tempfile, buftemp->toname, (unsigned short)(tolen + 1), __FILE__,
-	     __LINE__);
+       __LINE__);
       rread (tempfile, buftemp->fromname, (unsigned short)(fromlen + 1),
-	     __FILE__, __LINE__);
+       __FILE__, __LINE__);
       rread (tempfile, buftemp->subj, (unsigned short)(subjlen + 1), __FILE__,
-	     __LINE__);
+       __LINE__);
     }
   mystrncpy (sqhead.fromname, buftemp->fromname, 35);
   mystrncpy (sqhead.toname, buftemp->toname, 35);
@@ -376,30 +377,30 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
   if (ttarea->type == 2)
     {
       sprintf (logout,
-	       "* Message in area %s from %s to %s (%s) moved to BadArea",
-	       curarea, sqhead.fromname, sqhead.toname, sqhead.subj);
+         "* Message in area %s from %s to %s (%s) moved to BadArea",
+         curarea, sqhead.fromname, sqhead.toname, sqhead.subj);
       logwrite (1, 6);
       switch (badtype)
-	{
-	case 1:
-	  sprintf (logout, "** Reason: Corrupted packet from %u:%u/%u.%u",
-		   pktaddr.zone, pktaddr.net, pktaddr.node, pktaddr.point);
-	  break;
-	case 2:
-	  sprintf (logout, "** Reason: Unknown area %s", curarea);
-	  break;
-	case 3:
-	  sprintf (logout, "** Reason: Read-Only area %s", curarea);
-	  break;
-	case 4:
-	  sprintf (logout,
-		   "** Reason: Security violation (packet from %u:%u/%u.%u)",
-		   pktaddr.zone, pktaddr.net, pktaddr.node, pktaddr.point);
-	  break;
-	case 5:
-	  sprintf (logout, "** Reason: Locked area %s", curarea);
-	  break;
-	}
+  {
+  case 1:
+    sprintf (logout, "** Reason: Corrupted packet from %u:%u/%u.%u",
+       pktaddr.zone, pktaddr.net, pktaddr.node, pktaddr.point);
+    break;
+  case 2:
+    sprintf (logout, "** Reason: Unknown area %s", curarea);
+    break;
+  case 3:
+    sprintf (logout, "** Reason: Read-Only area %s", curarea);
+    break;
+  case 4:
+    sprintf (logout,
+       "** Reason: Security violation (packet from %u:%u/%u.%u)",
+       pktaddr.zone, pktaddr.net, pktaddr.node, pktaddr.point);
+    break;
+  case 5:
+    sprintf (logout, "** Reason: Locked area %s", curarea);
+    break;
+  }
       logwrite (1, 6);
     }
 
@@ -435,39 +436,39 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
   while (tkludge)
     {
       if (wipearea && !isarea)
-	{
-	  if (memcmp (tkludge->str, "AREA:", 5) == 0)
-	    {
-	      isarea = 1;
-	      goto nextkl;
-	    }
-	  if ((mode & 2048) && (ttarea->type != 3 && ttarea->type != 2))
-	    {
-	      if (memcmp (tkludge->str, "\1AREA:", 6) == 0)
-		{
-		  isarea = 1;
-		  goto nextkl;
-		}
-	    }
-	}
+  {
+    if (memcmp (tkludge->str, "AREA:", 5) == 0)
+      {
+        isarea = 1;
+        goto nextkl;
+      }
+    if ((mode & 2048) && (ttarea->type != 3 && ttarea->type != 2))
+      {
+        if (memcmp (tkludge->str, "\1AREA:", 6) == 0)
+    {
+      isarea = 1;
+      goto nextkl;
+    }
+      }
+  }
       if (!(bcfg.delkl && tkludge->left && kill2))
-	{
-	  if ((memcmp (tkludge->str, "AREA:", 5) == 0)
-	      && (ttarea->type == 2 || ttarea->type == 3 || mustcopy))
-	    {
-	      if (!isdog)
-		{
-		  memcpy (klbuf + (unsigned)tislen, one1, 1);
-		  tislen++;
-		  reallen++;
-		  isdog = 1;
-		}
-	    }
-	  memcpy (klbuf + (unsigned)tislen, tkludge->str,
-		  strlen (tkludge->str));
-	  tislen += strlen (tkludge->str);
-	  reallen += strlen (tkludge->str);
-	}
+  {
+    if ((memcmp (tkludge->str, "AREA:", 5) == 0)
+        && (ttarea->type == 2 || ttarea->type == 3 || mustcopy))
+      {
+        if (!isdog)
+    {
+      memcpy (klbuf + (unsigned)tislen, one1, 1);
+      tislen++;
+      reallen++;
+      isdog = 1;
+    }
+      }
+    memcpy (klbuf + (unsigned)tislen, tkludge->str,
+      strlen (tkludge->str));
+    tislen += strlen (tkludge->str);
+    reallen += strlen (tkludge->str);
+  }
     nextkl:
       tkludge = tkludge->next;
     }
@@ -478,7 +479,7 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
       reallen++;
     }
   wwrite (ttarea->sqd.sqd, klbuf, (unsigned short)(tislen), __FILE__,
-	  __LINE__);
+    __LINE__);
   myfree ((void **)&klbuf, __FILE__, __LINE__);
   if (mustcopy)
     {
@@ -488,97 +489,97 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
   if (bigmess)
     {
       while ((fmax2 =
-	      (unsigned short)rread (tempfile, tsbuf, buflen, __FILE__,
-				     __LINE__)) != 0)
-	{
-	  if ((bcfg.delinfo && !ttarea->saveci) && kill2 && ttarea->type == 1)
-	    {
+        (unsigned short)rread (tempfile, tsbuf, buflen, __FILE__,
+             __LINE__)) != 0)
+  {
+    if ((bcfg.delinfo && !ttarea->saveci) && kill2 && ttarea->type == 1)
+      {
 //          if(type==1)
-	      switch (bcfg.delinfo)
-		{
-		case 1:
-		  temp = locseenby (tsbuf);
-		  break;
-		case 2:
-		  temp = locpath (tsbuf);
-		  if (temp != NULL)
-		    temp = strchr (temp, 0);
-		  else
-		    temp = locseenby (tsbuf);
-		  break;
-		}
+        switch (bcfg.delinfo)
+    {
+    case 1:
+      temp = locseenby (tsbuf);
+      break;
+    case 2:
+      temp = locpath (tsbuf);
+      if (temp != NULL)
+        temp = strchr (temp, 0);
+      else
+        temp = locseenby (tsbuf);
+      break;
+    }
 //          else
 //              temp=locseenby(tsbuf);
-	      if (temp && ((temp - tsbuf) < fmax2))
-		{
-		  wwrite (ttarea->sqd.sqd, tsbuf,
-			  (unsigned short)(temp - tsbuf), __FILE__, __LINE__);
-		  reallen += (temp - tsbuf);
-		  break;
-		}
-	      else
-		{
-		  wwrite (ttarea->sqd.sqd, tsbuf, fmax2, __FILE__, __LINE__);
-		  reallen += fmax2;
-		}
-	    }
-	  else
-	    {
-	      wwrite (ttarea->sqd.sqd, tsbuf, fmax2, __FILE__, __LINE__);
-	      reallen += fmax2;
-	    }
-	}
+        if (temp && ((temp - tsbuf) < fmax2))
+    {
+      wwrite (ttarea->sqd.sqd, tsbuf,
+        (unsigned short)(temp - tsbuf), __FILE__, __LINE__);
+      reallen += (temp - tsbuf);
+      break;
+    }
+        else
+    {
+      wwrite (ttarea->sqd.sqd, tsbuf, fmax2, __FILE__, __LINE__);
+      reallen += fmax2;
+    }
+      }
+    else
+      {
+        wwrite (ttarea->sqd.sqd, tsbuf, fmax2, __FILE__, __LINE__);
+        reallen += fmax2;
+      }
+  }
     }
   else
     {
       if (textlen > 0)
-	{
-	  if (type == 1 || kill)
-	    {
-	      if ((bcfg.delinfo && !ttarea->saveci) && kill2
-		  && ttarea->type == 1)
-		{
-		  switch (bcfg.delinfo)
-		    {
-		    case 1:
-		      temp = locseenby (buftemp->text);
-		      break;
-		    case 2:
-		      temp = locpath (buftemp->text);
-		      if (temp != NULL)
-			temp = strchr (temp, 0);
-		      else
-			temp = locseenby (buftemp->text);
-		      break;
-		    }
-		  if (temp && ((temp - buftemp->text) < textlen))
-		    {
-		      wwrite (ttarea->sqd.sqd, buftemp->text,
-			      (unsigned short)(temp - buftemp->text),
-			      __FILE__, __LINE__);
-		      reallen += (temp - buftemp->text);
-		    }
-		  else
-		    {
-		      wwrite (ttarea->sqd.sqd, buftemp->text,
-			      (unsigned short)(textlen), __FILE__, __LINE__);
-		      reallen += textlen;
-		    }
-		}
-	      else
-		{
-		  wwrite (ttarea->sqd.sqd, buftemp->text,
-			  (unsigned short)(textlen), __FILE__, __LINE__);
-		  reallen += textlen;
-		}
-	    }
-	  else
-	    {
-	      wwrite (ttarea->sqd.sqd, buftemp->text,
-		      (unsigned short)(textlen), __FILE__, __LINE__);
-	      reallen += textlen;
-	    }
-	}
+  {
+    if (type == 1 || kill)
+      {
+        if ((bcfg.delinfo && !ttarea->saveci) && kill2
+      && ttarea->type == 1)
+    {
+      switch (bcfg.delinfo)
+        {
+        case 1:
+          temp = locseenby (buftemp->text);
+          break;
+        case 2:
+          temp = locpath (buftemp->text);
+          if (temp != NULL)
+      temp = strchr (temp, 0);
+          else
+      temp = locseenby (buftemp->text);
+          break;
+        }
+      if (temp && ((temp - buftemp->text) < textlen))
+        {
+          wwrite (ttarea->sqd.sqd, buftemp->text,
+            (unsigned short)(temp - buftemp->text),
+            __FILE__, __LINE__);
+          reallen += (temp - buftemp->text);
+        }
+      else
+        {
+          wwrite (ttarea->sqd.sqd, buftemp->text,
+            (unsigned short)(textlen), __FILE__, __LINE__);
+          reallen += textlen;
+        }
+    }
+        else
+    {
+      wwrite (ttarea->sqd.sqd, buftemp->text,
+        (unsigned short)(textlen), __FILE__, __LINE__);
+      reallen += textlen;
+    }
+      }
+    else
+      {
+        wwrite (ttarea->sqd.sqd, buftemp->text,
+          (unsigned short)(textlen), __FILE__, __LINE__);
+        reallen += textlen;
+      }
+  }
     }
   if (addorig)
     {
@@ -606,46 +607,46 @@ short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
   ttarea->curindex = ((sqbuf.nummsg - 1) / bufsqi) * bufsqi;
   lseek (ttarea->sqd.sqi, ttarea->curindex * 12, SEEK_SET);
   rread (ttarea->sqd.sqi, tindex, (unsigned short)(bufsqi * 12), __FILE__,
-	 __LINE__);
+   __LINE__);
   sqibuf.offset = current;
   if (nowpurge)
     sqibuf.hash = curhash;
   else
     sqibuf.hash = hash (sqhead.toname);
   memcpy (&tindex[(unsigned)(sqbuf.nummsg - ttarea->curindex - 1)], &sqibuf,
-	  12);
+    12);
   lseek (ttarea->sqd.sqi, ttarea->curindex * 12, SEEK_SET);
   wwrite (ttarea->sqd.sqi, tindex,
-	  (unsigned
-	   short)((((sqbuf.nummsg - ttarea->curindex) >
-		    bufsqi) ? bufsqi : sqbuf.nummsg - ttarea->curindex) * 12),
-	  __FILE__, __LINE__);
+    (unsigned
+     short)((((sqbuf.nummsg - ttarea->curindex) >
+        bufsqi) ? bufsqi : sqbuf.nummsg - ttarea->curindex) * 12),
+    __FILE__, __LINE__);
   flushbuf (ttarea->sqd.sqi);
   if (!ttarea->logged)
     {
       if (mustlog /* && !(mode&160) */ )
-	inecholog (ttarea->areaname);
+  inecholog (ttarea->areaname);
       ttarea->logged = 1;
     }
   if (pcreate && bcfg.echosem[0])
     {
       cclose (&dupreserv, __FILE__, __LINE__);
       msg =
-	(short)sopen (bcfg.echosem, O_RDWR | O_BINARY | O_CREAT, SH_DENYNO,
-		      S_IRWXU | S_IRWXG | S_IRWXO);
+  (short)sopen (bcfg.echosem, O_RDWR | O_BINARY | O_CREAT, SH_DENYNO,
+          S_IRWXU | S_IRWXG | S_IRWXO);
       if (msg != -1)
-	cclose (&msg, __FILE__, __LINE__);
+  cclose (&msg, __FILE__, __LINE__);
       if ((dupreserv = (short)open (NULL_DEV, O_WRONLY)) == -1)
-	{
-	  mystrncpy (errname, NULL_DEV, DirSize);
-	  errexit (2, __FILE__, __LINE__);
-	}
+  {
+    mystrncpy (errname, NULL_DEV, DirSize);
+    errexit (2, __FILE__, __LINE__);
+  }
     }
   return 0;
 }
 
 short sqread (struct area *tarea, long pos, struct pointers *pnt, char *file,
-	      short line)
+        short line)
 {
   lseek (tarea->sqd.sqd, pos, SEEK_SET);
   rread (tarea->sqd.sqd, pnt, 28, file, line);

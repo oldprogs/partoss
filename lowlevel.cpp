@@ -47,8 +47,8 @@ void readblock (short handle, short level)
   else
     {
       for (i = (short)(bufs - 1);
-	   i && buf[i] != '\r' && buf[i] != '\n' && buf[i] != 0x1a;
-	   i--, j++) ;
+     i && buf[i] != '\r' && buf[i] != '\n' && buf[i] != 0x1a;
+     i--, j++) ;
       lseek (handle, -j, SEEK_CUR);
       bsize = i;
       endinput[level] = 0;
@@ -66,13 +66,13 @@ void getstring (short level)
   ::string = buf + curspos[level];
   i = curspos[level];
   while (i < maxlen[level] && buf[i] != '\r' && buf[i] != '\n'
-	 && buf[i] != 0x1a)
+   && buf[i] != 0x1a)
     i++;
   maxstr[level] = (short)(i - curspos[level]);
   while (buf[i] == '\r' || buf[i] == '\n' || buf[i] == 0x1a)
     {
       if (buf[i] == '\r')
-	numcr[level]++;
+  numcr[level]++;
       i++;
     }
   maxstr2[level] = (short)(i - curspos[level]);
@@ -91,28 +91,28 @@ void gettoken (short level)
   while (k)
     {
       if (::string[j] == ';')
-	iscomm = 1;
+  iscomm = 1;
       if (::string[j] == '"' && !iscomm)
-	{
-	  if (i == j)
-	    i++;
-	  j++;
-	  while ((j < maxstr[level]) && ::string[j] != '"')
-	    j++;
-	  k = 0;
-	  if (j == maxstr[level])
-	    {
-	      ccprintf
-		("\r\nWARNING! Unclosed parenthesis in %s (line %d)\r\n",
-		 confile, lineno[level]);
-	      ccprintf ("Erroneous line is:\r\n");
-	      ccprintf ("%s\r\n", ::string);
-	    }
-	}
+  {
+    if (i == j)
+      i++;
+    j++;
+    while ((j < maxstr[level]) && ::string[j] != '"')
+      j++;
+    k = 0;
+    if (j == maxstr[level])
+      {
+        ccprintf
+    ("\r\nWARNING! Unclosed parenthesis in %s (line %d)\r\n",
+     confile, lineno[level]);
+        ccprintf ("Erroneous line is:\r\n");
+        ccprintf ("%s\r\n", ::string);
+      }
+  }
       else if ((j >= maxstr[level]) || isspace (::string[j]))
-	k = 0;
+  k = 0;
       else
-	j++;
+  j++;
     }
   token = ::string + i;
   curtpos[level] = j;
@@ -170,7 +170,7 @@ short cmpaddr (struct myaddr *first, struct myaddr *second)
   return 0;
 }
 
-short cmpaddrw (struct myaddr *first, struct myaddr *second)	// with wildcards
+short cmpaddrw (struct myaddr *first, struct myaddr *second)  // with wildcards
 {
   if (first == NULL)
     return -2;
@@ -179,30 +179,30 @@ short cmpaddrw (struct myaddr *first, struct myaddr *second)	// with wildcards
   if (first->zone != 65535u && second->zone != 65535u)
     {
       if (first->zone < second->zone)
-	return -1;
+  return -1;
       if (first->zone > second->zone)
-	return 1;
+  return 1;
       if (first->net != 65535u && second->net != 65535u)
-	{
-	  if (first->net < second->net)
-	    return -1;
-	  if (first->net > second->net)
-	    return 1;
-	  if (first->node != 65535u && second->node != 65535u)
-	    {
-	      if (first->node < second->node)
-		return -1;
-	      if (first->node > second->node)
-		return 1;
-	      if (first->point != 65535u && second->point != 65535u)
-		{
-		  if (first->point < second->point)
-		    return -1;
-		  if (first->point > second->point)
-		    return 1;
-		}
-	    }
-	}
+  {
+    if (first->net < second->net)
+      return -1;
+    if (first->net > second->net)
+      return 1;
+    if (first->node != 65535u && second->node != 65535u)
+      {
+        if (first->node < second->node)
+    return -1;
+        if (first->node > second->node)
+    return 1;
+        if (first->point != 65535u && second->point != 65535u)
+    {
+      if (first->point < second->point)
+        return -1;
+      if (first->point > second->point)
+        return 1;
+    }
+      }
+  }
     }
   return 0;
 }
@@ -215,10 +215,10 @@ unsigned long hash (char *string)
     {
       result = (result << 4) + tolower (*ttemp);
       if ((temp = (result & 0xf0000000L)) != 0L)
-	{
-	  result |= temp >> 24;
-	  result |= temp;
-	}
+  {
+    result |= temp >> 24;
+    result |= temp;
+  }
     }
   return (result & 0x7fffffffLu);
 }
@@ -238,28 +238,28 @@ void logwrite (short first, short level)
       addhome (hfile, bcfg.logfile);
 #if HAVE_SOPEN
       if ((logfile =
-	   (short)sopen (hfile, O_RDWR | O_BINARY, SH_DENYNO)) == -1)
-	if ((logfile =
-	     (short)sopen (hfile, O_RDWR | O_BINARY | O_CREAT, SH_DENYNO,
-			   S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-	  {
-	    mystrncpy (errname, hfile, DirSize);
-	    logfileok = 0;
-	    errexit (2, __FILE__, __LINE__);
-	  }
+     (short)sopen (hfile, O_RDWR | O_BINARY, SH_DENYNO)) == -1)
+  if ((logfile =
+       (short)sopen (hfile, O_RDWR | O_BINARY | O_CREAT, SH_DENYNO,
+         S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+    {
+      mystrncpy (errname, hfile, DirSize);
+      logfileok = 0;
+      errexit (2, __FILE__, __LINE__);
+    }
       lseek (logfile, 0, SEEK_END);
 #else
       // Perm. mode (S_I*) here must be changed to use value, got from
       // configuration. I.e. it must be possible for user to define his
       // own mode for the logfile.
       if ((logfile =
-	   open (hfile, O_WRONLY | O_BINARY | O_CREAT | O_APPEND | O_EXLOCK,
-		 S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
-	{
-	  mystrncpy (errname, hfile, DirSize);
-	  logfileok = 0;
-	  errexit (2, __FILE__, __LINE__);
-	}
+     open (hfile, O_WRONLY | O_BINARY | O_CREAT | O_APPEND | O_EXLOCK,
+     S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
+  {
+    mystrncpy (errname, hfile, DirSize);
+    logfileok = 0;
+    errexit (2, __FILE__, __LINE__);
+  }
 #endif
     }
   if (!logfile)
@@ -276,10 +276,10 @@ void logwrite (short first, short level)
       wwrite (logfile, ftstime, 20, __FILE__, __LINE__);
       ftstime[19] = 0;
       if (bcfg.logoutl)
-	{
-	  sprintf (slev, "[%2u] ", level);
-	  mywrite (logfile, slev, __FILE__, __LINE__);
-	}
+  {
+    sprintf (slev, "[%2u] ", level);
+    mywrite (logfile, slev, __FILE__, __LINE__);
+  }
     }
   mywrite (logfile, logout, __FILE__, __LINE__);
   flushbuf (logfile);
@@ -297,84 +297,84 @@ void badlog (struct area *barea)
       temp = bcfg.bshablon;
       temp2 = temp;
       while (temp && *temp)
-	{
-	  while (*temp2 && (*temp2 != '@'))
-	    temp2++;
-	  mystrncat (tstr, temp, (short)(temp2 - temp + 1), CSSize);
-	  temp2++;
-	  switch (toupper (*temp2))
-	    {
-	    case 'T':
-	      mystrncat (tstr, barea->areaname, arealength, CSSize);
-	      break;
-	    case 'P':
-	      mystrncat (tstr, barea->areafp, DirSize, CSSize);
-	      break;
-	    case 'A':
-	      sprintf (logout, "%u:%u/%u.%u", barea->myaka.zone,
-		       barea->myaka.net, barea->myaka.node,
-		       barea->myaka.point);
-	      mystrncat (tstr, logout, (short)(strlen (logout) + 5), CSSize);
-	      break;
-	    default:
-	      temp2--;
-	      break;
-	    }
-	  temp2++;
-	  temp = temp2;
-	}
+  {
+    while (*temp2 && (*temp2 != '@'))
+      temp2++;
+    mystrncat (tstr, temp, (short)(temp2 - temp + 1), CSSize);
+    temp2++;
+    switch (toupper (*temp2))
+      {
+      case 'T':
+        mystrncat (tstr, barea->areaname, arealength, CSSize);
+        break;
+      case 'P':
+        mystrncat (tstr, barea->areafp, DirSize, CSSize);
+        break;
+      case 'A':
+        sprintf (logout, "%u:%u/%u.%u", barea->myaka.zone,
+           barea->myaka.net, barea->myaka.node,
+           barea->myaka.point);
+        mystrncat (tstr, logout, (short)(strlen (logout) + 5), CSSize);
+        break;
+      default:
+        temp2--;
+        break;
+      }
+    temp2++;
+    temp = temp2;
+  }
 //    mystrncat(tstr,"\r\n",5,CSSize);
       cclose (&dupreserv, __FILE__, __LINE__);
       if ((blog =
-	   (short)sopen (bcfg.badlog, O_RDWR | O_BINARY, SH_DENYWR)) == -1)
-	{
-	  if ((blog =
-	       (short)sopen (bcfg.badlog, O_RDWR | O_BINARY | O_CREAT,
-			     SH_DENYWR, S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-	    {
-	      ccprintf ("\r\nWARNING! Can't create BadLog %s\r\n",
-			bcfg.badlog);
-	      if ((dupreserv = (short)open (NULL_DEV, O_WRONLY)) == -1)
-		{
-		  mystrncpy (errname, NULL_DEV, DirSize);
-		  errexit (2, __FILE__, __LINE__);
-		}
-	      blog = 0;
-	      return;
-	    }
-	}
+     (short)sopen (bcfg.badlog, O_RDWR | O_BINARY, SH_DENYWR)) == -1)
+  {
+    if ((blog =
+         (short)sopen (bcfg.badlog, O_RDWR | O_BINARY | O_CREAT,
+           SH_DENYWR, S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+      {
+        ccprintf ("\r\nWARNING! Can't create BadLog %s\r\n",
+      bcfg.badlog);
+        if ((dupreserv = (short)open (NULL_DEV, O_WRONLY)) == -1)
+    {
+      mystrncpy (errname, NULL_DEV, DirSize);
+      errexit (2, __FILE__, __LINE__);
+    }
+        blog = 0;
+        return;
+      }
+  }
       lseek (blog, 0, SEEK_SET);
       endinput[2] = 0;
       while (!endinput[2])
-	{
-	  readblock (blog, 2);
-	  endblock[2] = 0;
-	  do
-	    {
-	      getstring (2);
-	      if ((strnicmp (::string, tstr, maxstr[2]) == 0)
-		  && (strlen (tstr) == maxstr[2]))
-		goto bfound;
-	    }
-	  while (!endblock[2]);
-	}
+  {
+    readblock (blog, 2);
+    endblock[2] = 0;
+    do
+      {
+        getstring (2);
+        if ((strnicmp (::string, tstr, maxstr[2]) == 0)
+      && (strlen (tstr) == maxstr[2]))
+    goto bfound;
+      }
+    while (!endblock[2]);
+  }
       lseek (blog, 0, SEEK_END);
       mywrite (blog, tstr, __FILE__, __LINE__);
       mywrite (blog, "\r\n", __FILE__, __LINE__);
     bfound:
       if (blog)
-	{
-	  bloglen = filelength (blog);
-	  Close (blog);
-	  blog = 0;
-	  if (bloglen == 0)
-	    unlink (bcfg.badlog);
-	}
+  {
+    bloglen = filelength (blog);
+    Close (blog);
+    blog = 0;
+    if (bloglen == 0)
+      unlink (bcfg.badlog);
+  }
       if ((dupreserv = (short)open (NULL_DEV, O_WRONLY)) == -1)
-	{
-	  mystrncpy (errname, NULL_DEV, DirSize);
-	  errexit (2, __FILE__, __LINE__);
-	}
+  {
+    mystrncpy (errname, NULL_DEV, DirSize);
+    errexit (2, __FILE__, __LINE__);
+  }
       ;
     }
 }
@@ -431,49 +431,49 @@ void parseaddr (char *address, struct myaddr *straddr, short length)
       straddr->net = defaddr.net;
       straddr->node = defaddr.node;
       if (taddr[1] == '*')
-	straddr->point = 65535u;
+  straddr->point = 65535u;
       else
-	straddr->point = (unsigned short)(atoi (&taddr[1]));
+  straddr->point = (unsigned short)(atoi (&taddr[1]));
       break;
     case '/':
       straddr->zone = defaddr.zone;
       straddr->net = defaddr.net;
       if (taddr[1] == '*')
-	straddr->node = straddr->point = 65535u;
+  straddr->node = straddr->point = 65535u;
       else
-	{
-	  straddr->node = (unsigned short)(atoi (&taddr[1]));
-	  if ((temp = strchr (taddr, '.')) != NULL)
-	    if (*(temp + 1) == '*')
-	      straddr->point = 65535u;
-	    else
-	      straddr->point = (unsigned short)(atoi (temp + 1));
-	  else
-	    straddr->point = 0;
-	}
+  {
+    straddr->node = (unsigned short)(atoi (&taddr[1]));
+    if ((temp = strchr (taddr, '.')) != NULL)
+      if (*(temp + 1) == '*')
+        straddr->point = 65535u;
+      else
+        straddr->point = (unsigned short)(atoi (temp + 1));
+    else
+      straddr->point = 0;
+  }
       break;
     case ':':
       straddr->zone = defaddr.zone;
       if (taddr[1] == '*')
-	straddr->net = straddr->node = straddr->point = 65535u;
+  straddr->net = straddr->node = straddr->point = 65535u;
       else
-	{
-	  straddr->net = (unsigned short)(atoi (&taddr[1]));
-	  temp = strchr (taddr, '/');
-	  if (temp == NULL || (*(temp + 1) == '*'))
-	    straddr->node = straddr->point = 65535u;
-	  else
-	    {
-	      straddr->node = (unsigned short)(atoi (temp + 1));
-	      if ((temp = strchr (taddr, '.')) != NULL)
-		if (*(temp + 1) == '*')
-		  straddr->point = 65535u;
-		else
-		  straddr->point = (unsigned short)(atoi (temp + 1));
-	      else
-		straddr->point = 0;
-	    }
-	}
+  {
+    straddr->net = (unsigned short)(atoi (&taddr[1]));
+    temp = strchr (taddr, '/');
+    if (temp == NULL || (*(temp + 1) == '*'))
+      straddr->node = straddr->point = 65535u;
+    else
+      {
+        straddr->node = (unsigned short)(atoi (temp + 1));
+        if ((temp = strchr (taddr, '.')) != NULL)
+    if (*(temp + 1) == '*')
+      straddr->point = 65535u;
+    else
+      straddr->point = (unsigned short)(atoi (temp + 1));
+        else
+    straddr->point = 0;
+      }
+  }
       break;
     case '0':
     case '1':
@@ -486,63 +486,63 @@ void parseaddr (char *address, struct myaddr *straddr, short length)
     case '8':
     case '9':
       if ((temp = strchr (taddr, ':')) != NULL)
-	{
-	  straddr->zone = (unsigned short)(atoi (taddr));
-	  if (*(temp + 1) == '*')
-	    straddr->net = straddr->node = straddr->point = 65535u;
-	  else
-	    {
-	      straddr->net = (unsigned short)(atoi (temp + 1));
-	      temp = strchr (taddr, '/');
-	      if (temp == NULL || *(temp + 1) == '*')
-		straddr->node = straddr->point = 65535u;
-	      else
-		{
-		  straddr->node = (unsigned short)(atoi (temp + 1));
-		  if ((temp = strchr (taddr, '.')) != NULL)
-		    if (*(temp + 1) == '*')
-		      straddr->point = 65535u;
-		    else
-		      straddr->point = (unsigned short)(atoi (temp + 1));
-		  else
-		    straddr->point = 0;
-		}
-	    }
-	}
+  {
+    straddr->zone = (unsigned short)(atoi (taddr));
+    if (*(temp + 1) == '*')
+      straddr->net = straddr->node = straddr->point = 65535u;
+    else
+      {
+        straddr->net = (unsigned short)(atoi (temp + 1));
+        temp = strchr (taddr, '/');
+        if (temp == NULL || *(temp + 1) == '*')
+    straddr->node = straddr->point = 65535u;
+        else
+    {
+      straddr->node = (unsigned short)(atoi (temp + 1));
+      if ((temp = strchr (taddr, '.')) != NULL)
+        if (*(temp + 1) == '*')
+          straddr->point = 65535u;
+        else
+          straddr->point = (unsigned short)(atoi (temp + 1));
       else
-	{
-	  straddr->zone = defaddr.zone;
-	  if ((temp = strchr (taddr, '/')) != NULL)
-	    {
-	      straddr->net = (unsigned short)(atoi (taddr));
-	      temp = strchr (taddr, '/');
-	      if (temp == NULL || (*(temp + 1) == '*'))
-		straddr->node = straddr->point = 65535u;
-	      else
-		{
-		  straddr->node = (unsigned short)(atoi (temp + 1));
-		  if ((temp = strchr (taddr, '.')) != NULL)
-		    if (*(temp + 1) == '*')
-		      straddr->point = 65535u;
-		    else
-		      straddr->point = (unsigned short)(atoi (temp + 1));
-		  else
-		    straddr->point = 0;
-		}
-	    }
-	  else
-	    {
-	      straddr->net = defaddr.net;
-	      straddr->node = (unsigned short)(atoi (taddr));
-	      if ((temp = strchr (taddr, '.')) != NULL)
-		if (*(temp + 1) == '*')
-		  straddr->point = 65535u;
-		else
-		  straddr->point = (unsigned short)(atoi (temp + 1));
-	      else
-		straddr->point = 0;
-	    }
-	}
+        straddr->point = 0;
+    }
+      }
+  }
+      else
+  {
+    straddr->zone = defaddr.zone;
+    if ((temp = strchr (taddr, '/')) != NULL)
+      {
+        straddr->net = (unsigned short)(atoi (taddr));
+        temp = strchr (taddr, '/');
+        if (temp == NULL || (*(temp + 1) == '*'))
+    straddr->node = straddr->point = 65535u;
+        else
+    {
+      straddr->node = (unsigned short)(atoi (temp + 1));
+      if ((temp = strchr (taddr, '.')) != NULL)
+        if (*(temp + 1) == '*')
+          straddr->point = 65535u;
+        else
+          straddr->point = (unsigned short)(atoi (temp + 1));
+      else
+        straddr->point = 0;
+    }
+      }
+    else
+      {
+        straddr->net = defaddr.net;
+        straddr->node = (unsigned short)(atoi (taddr));
+        if ((temp = strchr (taddr, '.')) != NULL)
+    if (*(temp + 1) == '*')
+      straddr->point = 65535u;
+    else
+      straddr->point = (unsigned short)(atoi (temp + 1));
+        else
+    straddr->point = 0;
+      }
+  }
       break;
     }
   straddr->numaka = 0;
@@ -564,7 +564,7 @@ void hexascii (unsigned long value, char *string)
     {
       tt = (char)(value >> (24 - (i << 3)));
       for (j = 0; j < 2; j++)
-	string[(i << 1) + j] = duotrice[(tt >> (4 - (j << 2))) & 0x0f];
+  string[(i << 1) + j] = duotrice[(tt >> (4 - (j << 2))) & 0x0f];
     }
 }
 
@@ -595,26 +595,6 @@ void illpselect (char page)
 #endif
 }
 #endif
-
-void hideout (void)
-{
-  hdst = open (NULL_DEV, O_CREAT, S_IREAD | S_IWRITE);
-  holdh = dup (1 /*stdout */ );
-  dup2 (hdst, 1);
-  close (hdst);
-  hdst2 = open (NULL_DEV, O_CREAT, S_IREAD | S_IWRITE);
-  holdh2 = dup (2 /*stderr */ );
-  dup2 (hdst2, 2);
-  close (hdst2);
-}
-
-void unhideout (void)
-{
-  dup2 (holdh, 1);
-  close (holdh);
-  dup2 (holdh2, 2);
-  close (holdh2);
-}
 
 void flushbuf (short handle)
 {
@@ -660,24 +640,24 @@ void sortfpkt (short what)
       i = 0;
       tmp = fapkt;
       while (tmp->next)
-	tmp = tmp->next, i++;
+  tmp = tmp->next, i++;
       for (j = 0; j < i; j++)
-	{
-	  tmp = fapkt;
-	  for (k = 0; k < i - j; k++)
-	    {
-	      if (tmp->time > tmp->next->time)
-		{
-		  ttime = tmp->time;
-		  mystrncpy (tname, tmp->name, DirSize);
-		  tmp->time = tmp->next->time;
-		  mystrncpy (tmp->name, tmp->next->name, DirSize);
-		  tmp->next->time = ttime;
-		  mystrncpy (tmp->next->name, tname, DirSize);
-		}
-	      tmp = tmp->next;
-	    }
-	}
+  {
+    tmp = fapkt;
+    for (k = 0; k < i - j; k++)
+      {
+        if (tmp->time > tmp->next->time)
+    {
+      ttime = tmp->time;
+      mystrncpy (tname, tmp->name, DirSize);
+      tmp->time = tmp->next->time;
+      mystrncpy (tmp->name, tmp->next->name, DirSize);
+      tmp->next->time = ttime;
+      mystrncpy (tmp->next->name, tname, DirSize);
+    }
+        tmp = tmp->next;
+      }
+  }
     }
 }
 
@@ -761,22 +741,22 @@ void addarcs (char *path, struct find_t *fblk, short secure)
     {
       cpkt = apkt;
       while (cpkt)
-	{
-	  if (stricmp (currname, cpkt->name) == 0)
-	    break;
-	  cpkt = cpkt->next;
-	}
+  {
+    if (stricmp (currname, cpkt->name) == 0)
+      break;
+    cpkt = cpkt->next;
+  }
       if (cpkt == NULL)
-	{
-	  cpkt = apkt;
-	  while (cpkt->next)
-	    cpkt = cpkt->next;
-	  cpkt->next =
-	    (struct pktname *)myalloc (szpktname, __FILE__, __LINE__);
-	  cpkt = cpkt->next;
-	}
+  {
+    cpkt = apkt;
+    while (cpkt->next)
+      cpkt = cpkt->next;
+    cpkt->next =
+      (struct pktname *)myalloc (szpktname, __FILE__, __LINE__);
+    cpkt = cpkt->next;
+  }
       else
-	return;
+  return;
     }
   memset (cpkt, 0, szpktname);
   cpkt->next = NULL;
@@ -843,7 +823,7 @@ char *mystrncpy (char *dest, const char *src, unsigned short len)
 }
 
 char *mystrncat (char *dest, const char *src, unsigned short len,
-		 unsigned short maxsize)
+     unsigned short maxsize)
 {
   unsigned short size, rest;
   size = (unsigned short)strlen (dest);
@@ -866,29 +846,29 @@ short rrename (char *from, char *to)
     {
       unlink (to);
       if (from[1] == ':')
-	da = from[0];
+  da = from[0];
       if (to[1] == ':')
-	db = to[0];
+  db = to[0];
       if (da != db)
-	return movefile (from, to);
+  return movefile (from, to);
       for (i = 0; i < 5; i++)
-	{
-	  result = (short)rename (from, to);
-	  terr = (short)errno;
-	  if (result == 0)
-	    break;
-	  if (lich)
-	    {
-	      sprintf (logout, "Waiting for rename %s to %s", from, to);
-	      logwrite (1, 1);
-	      sprintf (logout, "Previous try returned %d, errno - %d", result,
-		       terr);
-	      logwrite (1, 1);
-	    }
-	  mtsleep (1);
-	}
+  {
+    result = (short)rename (from, to);
+    terr = (short)errno;
+    if (result == 0)
+      break;
+    if (lich)
+      {
+        sprintf (logout, "Waiting for rename %s to %s", from, to);
+        logwrite (1, 1);
+        sprintf (logout, "Previous try returned %d, errno - %d", result,
+           terr);
+        logwrite (1, 1);
+      }
+    mtsleep (1);
+  }
       if (result)
-	result = movefile (from, to);
+  result = movefile (from, to);
       return result;
     }
   else
@@ -903,14 +883,14 @@ short movefile (char *src, char *dst)
     return -1;
   dsth =
     sopen (dst, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-	   S_IRWXU | S_IRWXG | S_IRWXO);
+     S_IRWXU | S_IRWXG | S_IRWXO);
   if (dsth <= 0)
     return -2;
   res = rread ((short)srch, sbuffer[0], 4096, __FILE__, __LINE__);
   while (res > 0)
     {
       wwrite ((short)dsth, sbuffer[0], (unsigned short)res, __FILE__,
-	      __LINE__);
+        __LINE__);
       res = rread ((short)srch, sbuffer[0], 4096, __FILE__, __LINE__);
     }
   Close (dsth);
@@ -924,21 +904,21 @@ short wildcard (char *mask, char *string)
   while (*mask && *string)
     {
       switch (*mask)
-	{
-	case '?':
-	  mask++;
-	  string++;
-	  break;
-	case '*':
-	  if (*++mask == '*' || *mask == '?')
-	    break;
-	  while (*string && toupper (*string) != toupper (*mask))
-	    ++string;
-	  break;
-	default:
-	  if (toupper (*mask++) != toupper (*string++))
-	    return ((short)(toupper (*--mask) - toupper (*--string)));
-	}
+  {
+  case '?':
+    mask++;
+    string++;
+    break;
+  case '*':
+    if (*++mask == '*' || *mask == '?')
+      break;
+    while (*string && toupper (*string) != toupper (*mask))
+      ++string;
+    break;
+  default:
+    if (toupper (*mask++) != toupper (*string++))
+      return ((short)(toupper (*--mask) - toupper (*--string)));
+  }
     }
   while ((*mask == '*') || (*mask == '?'))
     mask++;
@@ -955,30 +935,30 @@ int wildnew (char *mask, char *string)
   if ((*curmask) == '?')
     {
       if (wildnew (curmask + 1, curstr2) == 0)
-	return 0;
+  return 0;
       if (wildnew (curmask + 1, curstr2 + 1) == 0)
-	return 0;
+  return 0;
       return 1;
     }
   if ((*curmask) == '*')
     {
       temp = curmask + 1;
       while ((*temp) != '*' && (*temp) != '?'
-	     && ((temp - curmask) < strlen (curmask) - 1))
-	temp++;
+       && ((temp - curmask) < strlen (curmask) - 1))
+  temp++;
       memcpy (ts, curmask + 1, (unsigned)(temp - curmask - 1));
       ts[(unsigned)(temp - curmask)] = 0;
       while ((temp2 = strstr (curstr2, ts)) != NULL)
-	{
-	  if (wildnew (temp2 + strlen (ts), temp) == 0)
-	    return 0;
-	  curstr2 = curstr2 + strlen (ts);
-	}
+  {
+    if (wildnew (temp2 + strlen (ts), temp) == 0)
+      return 0;
+    curstr2 = curstr2 + strlen (ts);
+  }
       return 1;
     }
   temp = curmask;
   while ((*temp) != '*' && (*temp) != '?'
-	 && ((temp - curmask) < strlen (curmask) - 1))
+   && ((temp - curmask) < strlen (curmask) - 1))
     temp++;
   if (strnicmp (curmask, curstr2, (unsigned)(temp - curmask)) == 0)
     return wildnew (curstr2 + (unsigned)(temp - curmask), temp);

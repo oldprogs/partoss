@@ -1,6 +1,7 @@
 // MaxiM: itoa memicmp
 
 #include "partoss.h"
+#include "arealias.h"
 #include "globext.h"
 #include <string.h>
 
@@ -28,30 +29,30 @@ void writechain (short handle, struct shortchain *chain, short type)
   for (i = 0; i < chain->numelem; i++)
     {
       if (!tsnb->hide)
-	{
-	  mystrncpy (curnode, " ", 2);
-	  if (tsnb->net != net)
-	    {
-	      mystrncat (curnode, (char *)itoa (tsnb->net, temp, 10), 8, 12);
-	      mystrncat (curnode, "/", 2, 12);
-	    }
-	  mystrncat (curnode, itoa (tsnb->node, temp, 10), 8, 12);
-	  if (strlen (cstring) + strlen (curnode) >= 77)
-	    {
-	      mystrncat (cstring, "\r", 2, 80);
-	      mywrite (handle, cstring, __FILE__, __LINE__);
-	      mystrncpy (cstring,(char *)( type == 1 ? "SEEN-BY:" : "\1PATH:"), 10);
-	      net = 0, i--;
-	    }
-	  else
-	    {
-	      net = tsnb->net;
-	      mystrncat (cstring, curnode, 15, 80);
-	      tsnb = tsnb->next;
-	    }
-	}
+  {
+    mystrncpy (curnode, " ", 2);
+    if (tsnb->net != net)
+      {
+        mystrncat (curnode, (char *)itoa (tsnb->net, temp, 10), 8, 12);
+        mystrncat (curnode, "/", 2, 12);
+      }
+    mystrncat (curnode, itoa (tsnb->node, temp, 10), 8, 12);
+    if (strlen (cstring) + strlen (curnode) >= 77)
+      {
+        mystrncat (cstring, "\r", 2, 80);
+        mywrite (handle, cstring, __FILE__, __LINE__);
+        mystrncpy (cstring,(char *)( type == 1 ? "SEEN-BY:" : "\1PATH:"), 10);
+        net = 0, i--;
+      }
+    else
+      {
+        net = tsnb->net;
+        mystrncat (cstring, curnode, 15, 80);
+        tsnb = tsnb->next;
+      }
+  }
       else
-	tsnb = tsnb->next;
+  tsnb = tsnb->next;
     }
   if (net)
     {
@@ -67,50 +68,50 @@ void readchain (short type, short subtype)
     {
       tmp = (short)atoi (point);
       while (isdigit (*point))
-	point++;
+  point++;
       if (point && (*point) == '/')
-	{
-	  point++;
-	  tmp2 = tmp;
-	  curnet = tmp;
-	  curnode = (short)atoi (point);
-	  while (isdigit (*point))
-	    point++;
-	}
+  {
+    point++;
+    tmp2 = tmp;
+    curnet = tmp;
+    curnode = (short)atoi (point);
+    while (isdigit (*point))
+      point++;
+  }
       else
-	curnode = tmp;
+  curnode = tmp;
       if ((curnet != bcfg.delseen.net) || (curnode != bcfg.delseen.node))
-	addshort (&
-		  (type ==
-		   1 ? (subtype == 1 ? psnb : ssnb) : (subtype ==
-						       1 ? ppath : spath)),
-		  curnet, curnode);
+  addshort (&
+      (type ==
+       1 ? (subtype == 1 ? psnb : ssnb) : (subtype ==
+                   1 ? ppath : spath)),
+      curnet, curnode);
       else
-	tmp = tmp2;
+  tmp = tmp2;
       while ((*point) && !isspace (*point))
-	point++;
+  point++;
       while ((*point) && isspace (*point))
-	point++;
+  point++;
       if (point && !(*point))
-	break;
+  break;
       if (point
-	  &&
-	  ((type ==
-	    1 ? strncmp (point, "SEEN-BY", 7) : strncmp (point, "\1PATH",
-							 5)) == 0))
-	{
-	  while ((*point) && !isspace (*point))
-	    point++;
-	  while ((*point) && isspace (*point))
-	    point++;
-	}
+    &&
+    ((type ==
+      1 ? strncmp (point, "SEEN-BY", 7) : strncmp (point, "\1PATH",
+               5)) == 0))
+  {
+    while ((*point) && !isspace (*point))
+      point++;
+    while ((*point) && isspace (*point))
+      point++;
+  }
       else
-	if (point && !isdigit (*point)
-	    &&
-	    ((type ==
-	      1 ? strncmp (point, "SEEN-BY", 7) : strncmp (point, "\1PATH",
-							   5)) != 0))
-	break;
+  if (point && !isdigit (*point)
+      &&
+      ((type ==
+        1 ? strncmp (point, "SEEN-BY", 7) : strncmp (point, "\1PATH",
+                 5)) != 0))
+  break;
     }
 }
 
@@ -122,9 +123,9 @@ char *locseenby (char *buf)
     {
       temp2 = temp - 1;
       while (temp2 && (*temp2 == '\n'))
-	temp2--;
+  temp2--;
       if (temp2 && (*temp2 == '\r'))
-	return temp;
+  return temp;
       temp2 = temp + 1;
       temp = strstr (temp2, "SEEN-BY: ");
     }
@@ -139,9 +140,9 @@ char *locpath (char *buf)
     {
       temp2 = temp - 1;
       while (temp2 && (*temp2 == '\n'))
-	temp2--;
+  temp2--;
       if (temp2 && (*temp2 == '\r'))
-	return temp;
+  return temp;
       temp2 = temp + 1;
       temp = strstr (temp2, "\1PATH: ");
     }
@@ -164,173 +165,173 @@ void parsesnb (char *temp, short type)
       point = temp + 9;
       readchain (1, type);
       if (point && point[0] == '\1')
-	{
-	  point += 7;
-	  readchain (2, type);
-	}
+  {
+    point += 7;
+    readchain (2, type);
+  }
     }
   if (type == 1 && !(newarea->myaka.point) && bcfg.lookpath)
     {
       tsnb = ppath.chain;
       for (i = 0; i < ppath.numelem; i++)
-	{
-	  if (tsnb->net == newarea->myaka.net
-	      && tsnb->node == newarea->myaka.node && tsnb->next)
-	    {
-	      isdupe = 2;
-	      //
-	      // For Jury Fradkin
-	      //
-	      if (bcfg.loglevel > 10)
-		{
-		  sprintf (logout,
-			   "Path loop detected. Our AKA - %u:%u/%u.%u, found in path - %u/%u",
-			   newarea->myaka.zone, newarea->myaka.net,
-			   newarea->myaka.node, newarea->myaka.point,
-			   tsnb->net, tsnb->node);
-		  logwrite (1, 11);
-		}
-	      //
-	      // For Jury Fradkin
-	      //
-	      break;
-	    }
-	  tsnb = tsnb->next;
-	}
+  {
+    if (tsnb->net == newarea->myaka.net
+        && tsnb->node == newarea->myaka.node && tsnb->next)
+      {
+        isdupe = 2;
+        //
+        // For Jury Fradkin
+        //
+        if (bcfg.loglevel > 10)
+    {
+      sprintf (logout,
+         "Path loop detected. Our AKA - %u:%u/%u.%u, found in path - %u/%u",
+         newarea->myaka.zone, newarea->myaka.net,
+         newarea->myaka.node, newarea->myaka.point,
+         tsnb->net, tsnb->node);
+      logwrite (1, 11);
+    }
+        //
+        // For Jury Fradkin
+        //
+        break;
+      }
+    tsnb = tsnb->next;
+  }
     }
   link = newarea->links.chain;
   while (link)
     {
       if (!link->passive)
-	{
-	  if (link->zone == newarea->myaka.zone)
-	    {
-	      if (link->point == 0)
-		{
-		  tsnb = (type == 1 ? psnb.chain : ssnb.chain);
-		  for (i = 0; i < (type == 1 ? psnb.numelem : ssnb.numelem);
-		       i++)
-		    {
-		      if (tsnb->net == link->net && tsnb->node == link->node)
-			break;
-		      tsnb = tsnb->next;
-		    }
-		  if (tsnb == NULL)
-		    present = 1;
-		  else
-		    present = 0;
-		}
-	      else
-		present = 1;
-	      if (present)
-		{
-		  tsnb = (type == 1 ? ppath.chain : spath.chain);
-		  for (i = 0; i < (type == 1 ? ppath.numelem : spath.numelem);
-		       i++)
-		    {
-		      if (tsnb->net == link->net && tsnb->node == link->node
-			  && ((link->point == 0) || tsnb->next))
-			break;
-		      tsnb = tsnb->next;
-		    }
-		  if (tsnb == NULL)
-		    present = 1;
-		  else
-		    present = 0;
-		}
-	    }
-	  else
-	    present = 1;
-	  if (present)
-	    {
-	      if (type == 1)
-		{
-		  if (pktaddr.zone == link->zone && pktaddr.net == link->net
-		      && pktaddr.node == link->node
-		      && pktaddr.point == link->point)
-		    present = 0;
-		}
-	      else
-		{
-		  if (bufsqd.fromzone == link->zone
-		      && bufsqd.fromnet == link->net
-		      && bufsqd.fromnode == link->node
-		      && bufsqd.frompoint == link->point)
-		    present = 0;
-		}
-	    }
-	  if (present)
-	    {
-	      if (!bcfg.selfaka)
-		{
-		  taddr = bcfg.address.chain;
-		  while (taddr)
-		    {
-		      if (taddr->zone == link->zone && taddr->net == link->net
-			  && taddr->node == link->node
-			  && taddr->point == link->point)
-			present = 0;
-		      taddr = taddr->next;
-		    }
-		}
-	    }
-	  if (present)
-	    {
-	      tsnd.zone = link->zone;
-	      tsnd.net = link->net;
-	      tsnd.node = link->node;
-	      tsnd.point = link->point;
-	      addaddr ((type == 1 ? &ptosend : &stosend), &tsnd);
-	    }
-	}
+  {
+    if (link->zone == newarea->myaka.zone)
+      {
+        if (link->point == 0)
+    {
+      tsnb = (type == 1 ? psnb.chain : ssnb.chain);
+      for (i = 0; i < (type == 1 ? psnb.numelem : ssnb.numelem);
+           i++)
+        {
+          if (tsnb->net == link->net && tsnb->node == link->node)
+      break;
+          tsnb = tsnb->next;
+        }
+      if (tsnb == NULL)
+        present = 1;
+      else
+        present = 0;
+    }
+        else
+    present = 1;
+        if (present)
+    {
+      tsnb = (type == 1 ? ppath.chain : spath.chain);
+      for (i = 0; i < (type == 1 ? ppath.numelem : spath.numelem);
+           i++)
+        {
+          if (tsnb->net == link->net && tsnb->node == link->node
+        && ((link->point == 0) || tsnb->next))
+      break;
+          tsnb = tsnb->next;
+        }
+      if (tsnb == NULL)
+        present = 1;
+      else
+        present = 0;
+    }
+      }
+    else
+      present = 1;
+    if (present)
+      {
+        if (type == 1)
+    {
+      if (pktaddr.zone == link->zone && pktaddr.net == link->net
+          && pktaddr.node == link->node
+          && pktaddr.point == link->point)
+        present = 0;
+    }
+        else
+    {
+      if (bufsqd.fromzone == link->zone
+          && bufsqd.fromnet == link->net
+          && bufsqd.fromnode == link->node
+          && bufsqd.frompoint == link->point)
+        present = 0;
+    }
+      }
+    if (present)
+      {
+        if (!bcfg.selfaka)
+    {
+      taddr = bcfg.address.chain;
+      while (taddr)
+        {
+          if (taddr->zone == link->zone && taddr->net == link->net
+        && taddr->node == link->node
+        && taddr->point == link->point)
+      present = 0;
+          taddr = taddr->next;
+        }
+    }
+      }
+    if (present)
+      {
+        tsnd.zone = link->zone;
+        tsnd.net = link->net;
+        tsnd.node = link->node;
+        tsnd.point = link->point;
+        addaddr ((type == 1 ? &ptosend : &stosend), &tsnd);
+      }
+  }
       link = link->next;
     }
   tsend = (type == 1 ? ptosend.chain : stosend.chain);
   while (tsend)
     {
       if ((tsend->point == 0) && (tsend->zone == newarea->myaka.zone))
-	addshort ((type == 1 ? &psnb : &ssnb), tsend->net, tsend->node);
+  addshort ((type == 1 ? &psnb : &ssnb), tsend->net, tsend->node);
       tsend = tsend->next;
     }
   if (bcfg.numseenby)
     {
       link = bcfg.seenby.chain;
       while (link)
-	{
-	  if (link->zone == newarea->myaka.zone)
-	    {
-	      tsnb = (type == 1 ? psnb.chain : ssnb.chain);
-	      while (tsnb)
-		{
-		  if (tsnb->net == link->net && tsnb->node == link->node)
-		    break;
-		  tsnb = tsnb->next;
-		}
-	      if (tsnb == NULL)
-		addshort ((type == 1 ? &psnb : &ssnb), link->net, link->node);
-	    }
-	  link = link->next;
-	}
+  {
+    if (link->zone == newarea->myaka.zone)
+      {
+        tsnb = (type == 1 ? psnb.chain : ssnb.chain);
+        while (tsnb)
+    {
+      if (tsnb->net == link->net && tsnb->node == link->node)
+        break;
+      tsnb = tsnb->next;
+    }
+        if (tsnb == NULL)
+    addshort ((type == 1 ? &psnb : &ssnb), link->net, link->node);
+      }
+    link = link->next;
+  }
     }
   if (!newarea->myaka.point)
     {
       tsnb = (type == 1 ? psnb.chain : ssnb.chain);
       while (tsnb)
-	{
-	  if (tsnb->net == newarea->myaka.net
-	      && tsnb->node == newarea->myaka.node)
-	    break;
-	  tsnb = tsnb->next;
-	}
+  {
+    if (tsnb->net == newarea->myaka.net
+        && tsnb->node == newarea->myaka.node)
+      break;
+    tsnb = tsnb->next;
+  }
       if (tsnb == NULL)
-	addshort (&(type == 1 ? psnb : ssnb), newarea->myaka.net,
-		  newarea->myaka.node);
+  addshort (&(type == 1 ? psnb : ssnb), newarea->myaka.net,
+      newarea->myaka.node);
       tsnb = (type == 1 ? ppath.last : spath.last);
       if ((tsnb == NULL)
-	  || (tsnb->net != newarea->myaka.net
-	      || tsnb->node != newarea->myaka.node))
-	addshort (&(type == 1 ? ppath : spath), newarea->myaka.net,
-		  newarea->myaka.node);
+    || (tsnb->net != newarea->myaka.net
+        || tsnb->node != newarea->myaka.node))
+  addshort (&(type == 1 ? ppath : spath), newarea->myaka.net,
+      newarea->myaka.node);
     }
   sortsnb (type == 1 ? &psnb : &ssnb);
 }
@@ -343,25 +344,25 @@ void sortsnb (struct shortchain *chain)
   if (chain->numelem)
     {
       tmp =
-	(unsigned long *)myalloc ((chain->numelem * szlong), __FILE__,
-				  __LINE__);
+  (unsigned long *)myalloc ((chain->numelem * szlong), __FILE__,
+          __LINE__);
       tsnb = chain->chain;
       for (i = 0; i < chain->numelem; i++)
-	{
-	  tmp[i] = tsnb->net;
-	  tmp[i] <<= 16;
-	  tmp[i] += tsnb->node;
-	  tsnb = tsnb->next;
-	}
+  {
+    tmp[i] = tsnb->net;
+    tmp[i] <<= 16;
+    tmp[i] += tsnb->node;
+    tsnb = tsnb->next;
+  }
       quicksort (tmp, &tmp[chain->numelem - 1]);
 
       tsnb = chain->chain;
       for (i = 0; i < chain->numelem; i++)
-	{
-	  tsnb->net = (unsigned short)(tmp[i] >> 16);
-	  tsnb->node = (unsigned short)(tmp[i] & 0xffff);
-	  tsnb = tsnb->next;
-	}
+  {
+    tsnb->net = (unsigned short)(tmp[i] >> 16);
+    tsnb->node = (unsigned short)(tmp[i] & 0xffff);
+    tsnb = tsnb->next;
+  }
       myfree ((void **)&tmp, __FILE__, __LINE__);
     }
 }
@@ -377,12 +378,12 @@ void quicksort (unsigned long *array, unsigned long *array2)
   for (i = array + 1; i <= array2; ++i)
     {
       if (*array > *i)
-	{
-	  ++last;
-	  tmp = *last;
-	  *last = *i;
-	  *i = tmp;
-	}
+  {
+    ++last;
+    tmp = *last;
+    *last = *i;
+    *i = tmp;
+  }
     }
   tmp = *array;
   *array = *last;
@@ -422,10 +423,10 @@ void getctrl (char *text, unsigned short len, short type)
       kludnum = &pkludnum;
       ckludge = &pckludge;
       while (*temp == '\n')
-	{
-	  temp++;
-	  numlf++;
-	}
+  {
+    temp++;
+    numlf++;
+  }
       break;
     case 2:
       term = '\1';
@@ -458,19 +459,19 @@ void getctrl (char *text, unsigned short len, short type)
       (*kludnum)++;
       (*kludlen) += i;
       if (local && 1)
-	{
-	  tkludge->next =
-	    (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
-	  tkludge = tkludge->next;
-	  tkludge->next = NULL;
-	  memset (att, 0, DirSize + 1);
-	  sprintf (att, "\1TID: ParToss %s", version);
-	  tkludge->str =
-	    (char *)myalloc (strlen (att) + 3, __FILE__, __LINE__);
-	  mystrncpy (tkludge->str, att, (short)(strlen (att) + 2));
-	  (*kludnum)++;
-	  (*kludlen) += (unsigned short)(strlen (att) + 1);
-	}
+  {
+    tkludge->next =
+      (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
+    tkludge = tkludge->next;
+    tkludge->next = NULL;
+    memset (att, 0, DirSize + 1);
+    sprintf (att, "\1TID: ParToss %s", version);
+    tkludge->str =
+      (char *)myalloc (strlen (att) + 3, __FILE__, __LINE__);
+    mystrncpy (tkludge->str, att, (short)(strlen (att) + 2));
+    (*kludnum)++;
+    (*kludlen) += (unsigned short)(strlen (att) + 1);
+  }
     }
   else
     memset (curarea, 0, arealength);
@@ -479,370 +480,370 @@ void getctrl (char *text, unsigned short len, short type)
       spaces = 0;
       lkludge = 0;
       for (i = 0; i < klnum; i++)
-	if (memcmp (temp, kludges[i], strlen (kludges[i])) == 0)
-	  break;
+  if (memcmp (temp, kludges[i], strlen (kludges[i])) == 0)
+    break;
       if (*temp == '\1' || (i < klnum && !((i == 0) && isarea)))
-	{
-	  temp2 = strchr (temp + 1, term);
-	  if (type == 2)
-	    {
-	      if (temp2 == NULL || (temp2 - text > gheadclen))
-		temp2 = text + gheadclen - 1;
-	      else if (temp2 - text > gheadclen)
-		{
-		  temp2 = text + gheadclen - 1;
-		  gheadgarb = 1;
-		}
+  {
+    temp2 = strchr (temp + 1, term);
+    if (type == 2)
+      {
+        if (temp2 == NULL || (temp2 - text > gheadclen))
+    temp2 = text + gheadclen - 1;
+        else if (temp2 - text > gheadclen)
+    {
+      temp2 = text + gheadclen - 1;
+      gheadgarb = 1;
+    }
 //          goto garb;
-	    }
-	  else
-	    {
-	      if (temp2 == NULL || (temp2 - text) > len)
-		// temp2=temp+strlen(temp);
-		temp2 = text + len;
-	    }
-	  if (temp2 <= temp)
-	    goto garb;
-	  switch (i)
-	    {
-	    case 0:
-	      if (!isarea)
-		memset (curarea, 0, arealength);
-	      temp3 = temp + 5;
-	      if ((*temp3 == 0) || (*temp3 == term))
-		break;
-	      while (isspace (*temp3))
-		{
-		  temp3++;
-		  spaces++;
-		}
-	      while (isascii (*temp3) && !isspace (*temp3))
-		temp3++;
-	      if (temp3 > temp2)
-		temp3 = temp2;
-	      if (!isarea)
-		{
-		  bred = (short)(temp2 - temp3);
-		  arealen = (short)(temp3 - temp /*-spaces*/ );
-		  if (arealen > arealength + 4)
-		    arealen = arealength + 4;
-		  memcpy (curarea, temp + 5 + spaces, arealen - 5 - spaces);
-		  //areaaliasmaker
-		  /*sprintf(logout,"Message from %s, %u:%u/%u.%u to %s, %u:%u/%u.%u about \"%s\"",
-		     bufpkt.fromname, bufpkt.fromzone, bufpkt.fromnet, bufpkt.fromnode,
-		     bufpkt.frompoint, bufpkt.toname, bufpkt.tozone, bufpkt.tonet,
-		     bufpkt.tonode, bufpkt.topoint, bufpkt.subj);
-		     logwrite(1,13);
-		     if(!quiet)
-		     ccprintf("%s\r\n",logout); */
-		  areaaliasmaker ();
-		  arealenold = arealen;
-		  arealen = strlen (curarea) + 5;
-		  //
-		  if (memicmp (curarea, "NETMAIL", 7) != 0)
-		    {
-		      if (type == 1 && both)
-			setarea (curarea, 0);
-		    }
-		  else
-		    isnetmail = 1;
-		  isarea = 1;
-		}
-	      spaces = 0;
-	      break;
-	    case 1:
-	      parseaddr (temp + 8, &faddr, (short)(temp2 - temp - 8));
-	      if (faddr.zone)
-		{
-		  tbufmess->fromzone = faddr.zone;
-		  tbufmess->fromnet = faddr.net;
-		  tbufmess->fromnode = faddr.node;
-		  tbufmess->frompoint = faddr.point;
-		}
-	      else
-		addrfake = 1;
-	      if (type != 3)
-		{
-		  if (bcfg.defarea.dupes)
-		    {
-		      temp4 = temp2 - 1;
-		      while (temp4 && isspace (*temp4) && (temp4 > text))
-//              while(isspace(*temp4))
-			temp4--;
-		      while (temp4 && !isspace (*temp4) && (temp4 > text))
-//              while(!isspace(*temp4))
-			temp4--;
-		      temp4++;
-		      memcpy (curmsgid, temp4,
-			      (unsigned)(((temp2 - temp4) >
-					  8) ? 8 : (temp2 - temp4)));
-		    }
-		}
-	      break;
-	    case 2:
-	      if (type != 3)
-		{
-		  parseaddr (temp + 8, &caddr, (short)(temp2 - temp - 8));
-		  if (tbufmess->tonode == 0 && tbufmess->tonet == 0)
-		    {
-		      if (caddr.zone)
-			{
-			  tbufmess->tozone = caddr.zone;
-			  tbufmess->tonet = caddr.net;
-			  tbufmess->tonode = caddr.node;
-			  tbufmess->topoint = caddr.point;
-			}
-		    }
-		  if (bcfg.defarea.dupes)
-		    {
-		      temp4 = temp2 - 1;
-		      while (temp4 && isspace (*temp4) && (temp4 > text))
-//              while(isspace(*temp4))
-			temp4--;
-		      while (temp4 && !isspace (*temp4) && (temp4 > text))
-//              while(!isspace(*temp4))
-			temp4--;
-		      temp4++;
-		      memcpy (curreply, temp4,
-			      (unsigned)(((temp2 - temp4) >
-					  8) ? 8 : (temp2 - temp4)));
-		    }
-		}
-	      break;
-	    case 3:
-	      temp3 = strchr (temp + 6, ' ');
-	      parseaddr (temp + 6, &faddr, (short)(temp3 - temp - 6));
-	      if (faddr.zone)
-		{
-		  tbufmess->tozone = faddr.zone;
-		  tbufmess->tonet = faddr.net;
-		  tbufmess->tonode = faddr.node;
-		}
-//          tbufmess->topoint=faddr.point;
-	      temp3++;
-	      parseaddr (temp3, &faddr, (short)(temp2 - temp3));
-	      if (faddr.zone)
-		{
-		  tbufmess->fromzone = faddr.zone;
-		  tbufmess->fromnet = faddr.net;
-		  tbufmess->fromnode = faddr.node;
-		}
-//          tbufmess->frompoint=faddr.point;
-	      break;
-	    case 4:
-	      tbufmess->frompoint = (unsigned short)(atoi (temp + 6));
-	      break;
-	    case 5:
-	      tbufmess->topoint = (unsigned short)(atoi (temp + 6));
-	      break;
-	    case 6:
-	      if (type == 3)
-		{
-		  temp3 = strstr (temp, " DIR");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x400;
-		  temp3 = strstr (temp, " CRA");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x2;
-		  temp3 = strstr (temp, " FPU");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x402;
-		  temp3 = strstr (temp, " HLD");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x200;
-		  temp3 = strstr (temp, " SNT");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x8;
-		  temp3 = strstr (temp, " RCV");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x4;
-		  temp3 = strstr (temp, " FRQ");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x800;
-		  temp3 = strstr (temp, " FIL");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x10;
-		  temp3 = strstr (temp, " IMM");
-		  if ((temp3 != NULL) && (temp3 < temp2))
-		    mflags |= 0x10000l;
-		}
-	      break;
-	    case 7:
-	      if (mode & 2048)
-		{
-		  if (!isarea)
-		    memset (curarea, 0, arealength);
-		  temp3 = temp + 6;
-		  if ((*temp3 == 0) || (*temp3 == term))
-		    break;
-		  while (isspace (*temp3))
-		    {
-		      temp3++;
-		      spaces++;
-		    }
-		  while (isascii (*temp3) && !isspace (*temp3))
-		    temp3++;
-		  if (temp3 > temp2)
-		    temp3 = temp2;
-		  if (!isarea)
-		    {
-		      bred = (short)(temp2 - temp3);
-		      arealen = (short)(temp3 - temp - 1 - spaces);
-		      if (arealen > arealength + 4)
-			arealen = arealength + 4;
-		      memcpy (curarea, temp + 6 + spaces,
-			      arealen - 5 - spaces);
-		      areaaliasmaker ();
-		      arealenold = arealen;
-		      arealen = strlen (curarea) + 5;
-		      setarea (curarea, 0);
-		      isarea = 1;
-		    }
-		}
-	      spaces = 0;
-	      break;
-	    case 8:
-	      temp3 = temp + 8;
-	      while (isspace (*temp3) && (*temp3) != 0 && (*temp3) != term)
-		temp3++;
-	      temp4 = temp3;
-	      while (!isspace (*temp4) && (*temp4) != 0 && (*temp4) != term)
-		temp4++;
-	      memset (tatt, 0, DirSize + 1);
-	      memcpy (tatt, temp3, (unsigned)(temp4 - temp3));
-	      temp3 = strchr (tatt, DIRSEP[0]);
-	      if (temp3 == NULL)
-		{
-		  if (newarea->pooloffs)
-		    {
-		      lseek (areapool, newarea->pooloffs, SEEK_SET);
-		      rread (areapool, att,
-			     (unsigned short)(newarea->poollen + 1), __FILE__,
-			     __LINE__);
-		    }
-		  else
-		    memset (att, 0, DirSize + 1);
-		  mystrncat (att, tatt, DirSize, DirSize);
-		  mystrncpy (satt, tatt, DirSize);
-		}
-	      else
-		{
-		  mystrncpy (att, tatt, DirSize);
-		  mystrncpy (satt, temp3 + 1, DirSize);
-		}
-	      temp3 = temp4;
-	      while (isspace (*temp3) && (*temp3) != 0 && (*temp3) != term)
-		temp3++;
-	      temp4 = temp3;
-	      while (!isspace (*temp4) && (*temp4) != 0 && (*temp4) != term)
-		temp4++;
-	      memset (tatt, 0, DirSize + 1);
-	      memcpy (tatt, temp3, (unsigned)(temp4 - temp3));
-
-	      if (glpool)
-		{
-		  tpool = glpool;
-		  while (tpool->next)
-		    tpool = tpool->next;
-		  tpool->next =
-		    (struct pool *)myalloc (sizeof (struct pool), __FILE__,
-					    __LINE__);
-		  tpool = tpool->next;
-		}
-	      else
-		{
-		  glpool =
-		    (struct pool *)myalloc (sizeof (struct pool), __FILE__,
-					    __LINE__);
-		  tpool = glpool;
-		}
-	      tpool->fullname =
-		(char *)myalloc (strlen (att) + 1, __FILE__, __LINE__);
-	      tpool->shortname =
-		(char *)myalloc (strlen (satt) + 1, __FILE__, __LINE__);
-	      tpool->type =
-		(char *)myalloc (strlen (tatt) + 1, __FILE__, __LINE__);
-	      tpool->next = NULL;
-	      mystrncpy (tpool->fullname, att, (short)strlen (att));
-	      mystrncpy (tpool->shortname, satt, (short)strlen (satt));
-	      mystrncpy (tpool->type, tatt, (short)strlen (tatt));
-	      if (type == 1)
-		{
-		  mystrncpy (source, bcfg.workdir, DirSize);
-		  mystrncat (source, satt, DirSize, DirSize);
-		  rrename (source, att);
-		}
-	      sprintf (logout, "\1ATTACH: %s %s\r", satt, tatt);
-	      break;
-
-	    default:
-	      lkludge = 1;
-	      lkludlen += (unsigned short)(temp2 - temp);
-	      lkludnum++;
-	      break;
-	    }
-	  if (type == 2)
-	    {
-	      if (*(temp2 - 1) == 0x0d)
-		{
-		  *(temp2 - 1) = 0;
-		  if (lkludge)
-		    lkludlen--;
-		}
-	    }
-	  if (!(*ckludge))
-	    {
-	      *ckludge =
-		(struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
-	      tkludge = *ckludge;
-	    }
-	  else
-	    {
-	      tkludge = *ckludge;
-	      while (tkludge->next)
-		tkludge = tkludge->next;
-	      tkludge->next =
-		(struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
-	      tkludge = tkludge->next;
-	    }
-	  tkludge->next = NULL;
-	  if (i == 8)
-	    {
-	      tkludge->str =
-		(char *)myalloc (strlen (logout) + 1, __FILE__, __LINE__);
-	      memcpy (tkludge->str, logout, strlen (logout));
-	      tkludge->str[strlen (logout)] = 0;
-	    }
-	  else if (i != 0)
-	    {
-	      tkludge->str =
-		(char *)myalloc ((unsigned)(temp2 - temp + 3), __FILE__,
-				 __LINE__);
-	      memcpy (tkludge->str, temp, (unsigned)(temp2 - temp));
-	      tkludge->str[(unsigned)(temp2 - temp)] = 0;
-	    }
-	  else
-	    {
-	      tkludge->str =
-		(char *)myalloc ((strlen (curarea) + 6), __FILE__, __LINE__);
-	      strcpy (tkludge->str, "AREA:");
-	      strcat (tkludge->str, curarea);
-	    }
-	  tkludge->left = lkludge;
-	  temp = temp2;
-	  if (type != 2)
-	    {
-	      temp++;
-	      if (*temp == '\n')
-		{
-		  temp++;
-		  numlf++;
-		}
-	    }
-	  (*kludnum)++;
-	}
+      }
+    else
+      {
+        if (temp2 == NULL || (temp2 - text) > len)
+    // temp2=temp+strlen(temp);
+    temp2 = text + len;
+      }
+    if (temp2 <= temp)
+      goto garb;
+    switch (i)
+      {
+      case 0:
+        if (!isarea)
+    memset (curarea, 0, arealength);
+        temp3 = temp + 5;
+        if ((*temp3 == 0) || (*temp3 == term))
+    break;
+        while (isspace (*temp3))
+    {
+      temp3++;
+      spaces++;
+    }
+        while (isascii (*temp3) && !isspace (*temp3))
+    temp3++;
+        if (temp3 > temp2)
+    temp3 = temp2;
+        if (!isarea)
+    {
+      bred = (short)(temp2 - temp3);
+      arealen = (short)(temp3 - temp /*-spaces*/ );
+      if (arealen > arealength + 4)
+        arealen = arealength + 4;
+      memcpy (curarea, temp + 5 + spaces, arealen - 5 - spaces);
+      //areaaliasmaker
+      /*sprintf(logout,"Message from %s, %u:%u/%u.%u to %s, %u:%u/%u.%u about \"%s\"",
+         bufpkt.fromname, bufpkt.fromzone, bufpkt.fromnet, bufpkt.fromnode,
+         bufpkt.frompoint, bufpkt.toname, bufpkt.tozone, bufpkt.tonet,
+         bufpkt.tonode, bufpkt.topoint, bufpkt.subj);
+         logwrite(1,13);
+         if(!quiet)
+         ccprintf("%s\r\n",logout); */
+      areaaliasmaker ();
+      arealenold = arealen;
+      arealen = strlen (curarea) + 5;
+      //
+      if (memicmp (curarea, "NETMAIL", 7) != 0)
+        {
+          if (type == 1 && both)
+      setarea (curarea, 0);
+        }
       else
-	break;
+        isnetmail = 1;
+      isarea = 1;
+    }
+        spaces = 0;
+        break;
+      case 1:
+        parseaddr (temp + 8, &faddr, (short)(temp2 - temp - 8));
+        if (faddr.zone)
+    {
+      tbufmess->fromzone = faddr.zone;
+      tbufmess->fromnet = faddr.net;
+      tbufmess->fromnode = faddr.node;
+      tbufmess->frompoint = faddr.point;
+    }
+        else
+    addrfake = 1;
+        if (type != 3)
+    {
+      if (bcfg.defarea.dupes)
+        {
+          temp4 = temp2 - 1;
+          while (temp4 && isspace (*temp4) && (temp4 > text))
+//              while(isspace(*temp4))
+      temp4--;
+          while (temp4 && !isspace (*temp4) && (temp4 > text))
+//              while(!isspace(*temp4))
+      temp4--;
+          temp4++;
+          memcpy (curmsgid, temp4,
+            (unsigned)(((temp2 - temp4) >
+            8) ? 8 : (temp2 - temp4)));
+        }
+    }
+        break;
+      case 2:
+        if (type != 3)
+    {
+      parseaddr (temp + 8, &caddr, (short)(temp2 - temp - 8));
+      if (tbufmess->tonode == 0 && tbufmess->tonet == 0)
+        {
+          if (caddr.zone)
+      {
+        tbufmess->tozone = caddr.zone;
+        tbufmess->tonet = caddr.net;
+        tbufmess->tonode = caddr.node;
+        tbufmess->topoint = caddr.point;
+      }
+        }
+      if (bcfg.defarea.dupes)
+        {
+          temp4 = temp2 - 1;
+          while (temp4 && isspace (*temp4) && (temp4 > text))
+//              while(isspace(*temp4))
+      temp4--;
+          while (temp4 && !isspace (*temp4) && (temp4 > text))
+//              while(!isspace(*temp4))
+      temp4--;
+          temp4++;
+          memcpy (curreply, temp4,
+            (unsigned)(((temp2 - temp4) >
+            8) ? 8 : (temp2 - temp4)));
+        }
+    }
+        break;
+      case 3:
+        temp3 = strchr (temp + 6, ' ');
+        parseaddr (temp + 6, &faddr, (short)(temp3 - temp - 6));
+        if (faddr.zone)
+    {
+      tbufmess->tozone = faddr.zone;
+      tbufmess->tonet = faddr.net;
+      tbufmess->tonode = faddr.node;
+    }
+//          tbufmess->topoint=faddr.point;
+        temp3++;
+        parseaddr (temp3, &faddr, (short)(temp2 - temp3));
+        if (faddr.zone)
+    {
+      tbufmess->fromzone = faddr.zone;
+      tbufmess->fromnet = faddr.net;
+      tbufmess->fromnode = faddr.node;
+    }
+//          tbufmess->frompoint=faddr.point;
+        break;
+      case 4:
+        tbufmess->frompoint = (unsigned short)(atoi (temp + 6));
+        break;
+      case 5:
+        tbufmess->topoint = (unsigned short)(atoi (temp + 6));
+        break;
+      case 6:
+        if (type == 3)
+    {
+      temp3 = strstr (temp, " DIR");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x400;
+      temp3 = strstr (temp, " CRA");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x2;
+      temp3 = strstr (temp, " FPU");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x402;
+      temp3 = strstr (temp, " HLD");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x200;
+      temp3 = strstr (temp, " SNT");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x8;
+      temp3 = strstr (temp, " RCV");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x4;
+      temp3 = strstr (temp, " FRQ");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x800;
+      temp3 = strstr (temp, " FIL");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x10;
+      temp3 = strstr (temp, " IMM");
+      if ((temp3 != NULL) && (temp3 < temp2))
+        mflags |= 0x10000l;
+    }
+        break;
+      case 7:
+        if (mode & 2048)
+    {
+      if (!isarea)
+        memset (curarea, 0, arealength);
+      temp3 = temp + 6;
+      if ((*temp3 == 0) || (*temp3 == term))
+        break;
+      while (isspace (*temp3))
+        {
+          temp3++;
+          spaces++;
+        }
+      while (isascii (*temp3) && !isspace (*temp3))
+        temp3++;
+      if (temp3 > temp2)
+        temp3 = temp2;
+      if (!isarea)
+        {
+          bred = (short)(temp2 - temp3);
+          arealen = (short)(temp3 - temp - 1 - spaces);
+          if (arealen > arealength + 4)
+      arealen = arealength + 4;
+          memcpy (curarea, temp + 6 + spaces,
+            arealen - 5 - spaces);
+          areaaliasmaker ();
+          arealenold = arealen;
+          arealen = strlen (curarea) + 5;
+          setarea (curarea, 0);
+          isarea = 1;
+        }
+    }
+        spaces = 0;
+        break;
+      case 8:
+        temp3 = temp + 8;
+        while (isspace (*temp3) && (*temp3) != 0 && (*temp3) != term)
+    temp3++;
+        temp4 = temp3;
+        while (!isspace (*temp4) && (*temp4) != 0 && (*temp4) != term)
+    temp4++;
+        memset (tatt, 0, DirSize + 1);
+        memcpy (tatt, temp3, (unsigned)(temp4 - temp3));
+        temp3 = strchr (tatt, DIRSEP[0]);
+        if (temp3 == NULL)
+    {
+      if (newarea->pooloffs)
+        {
+          lseek (areapool, newarea->pooloffs, SEEK_SET);
+          rread (areapool, att,
+           (unsigned short)(newarea->poollen + 1), __FILE__,
+           __LINE__);
+        }
+      else
+        memset (att, 0, DirSize + 1);
+      mystrncat (att, tatt, DirSize, DirSize);
+      mystrncpy (satt, tatt, DirSize);
+    }
+        else
+    {
+      mystrncpy (att, tatt, DirSize);
+      mystrncpy (satt, temp3 + 1, DirSize);
+    }
+        temp3 = temp4;
+        while (isspace (*temp3) && (*temp3) != 0 && (*temp3) != term)
+    temp3++;
+        temp4 = temp3;
+        while (!isspace (*temp4) && (*temp4) != 0 && (*temp4) != term)
+    temp4++;
+        memset (tatt, 0, DirSize + 1);
+        memcpy (tatt, temp3, (unsigned)(temp4 - temp3));
+
+        if (glpool)
+    {
+      tpool = glpool;
+      while (tpool->next)
+        tpool = tpool->next;
+      tpool->next =
+        (struct pool *)myalloc (sizeof (struct pool), __FILE__,
+              __LINE__);
+      tpool = tpool->next;
+    }
+        else
+    {
+      glpool =
+        (struct pool *)myalloc (sizeof (struct pool), __FILE__,
+              __LINE__);
+      tpool = glpool;
+    }
+        tpool->fullname =
+    (char *)myalloc (strlen (att) + 1, __FILE__, __LINE__);
+        tpool->shortname =
+    (char *)myalloc (strlen (satt) + 1, __FILE__, __LINE__);
+        tpool->type =
+    (char *)myalloc (strlen (tatt) + 1, __FILE__, __LINE__);
+        tpool->next = NULL;
+        mystrncpy (tpool->fullname, att, (short)strlen (att));
+        mystrncpy (tpool->shortname, satt, (short)strlen (satt));
+        mystrncpy (tpool->type, tatt, (short)strlen (tatt));
+        if (type == 1)
+    {
+      mystrncpy (source, bcfg.workdir, DirSize);
+      mystrncat (source, satt, DirSize, DirSize);
+      rrename (source, att);
+    }
+        sprintf (logout, "\1ATTACH: %s %s\r", satt, tatt);
+        break;
+
+      default:
+        lkludge = 1;
+        lkludlen += (unsigned short)(temp2 - temp);
+        lkludnum++;
+        break;
+      }
+    if (type == 2)
+      {
+        if (*(temp2 - 1) == 0x0d)
+    {
+      *(temp2 - 1) = 0;
+      if (lkludge)
+        lkludlen--;
+    }
+      }
+    if (!(*ckludge))
+      {
+        *ckludge =
+    (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
+        tkludge = *ckludge;
+      }
+    else
+      {
+        tkludge = *ckludge;
+        while (tkludge->next)
+    tkludge = tkludge->next;
+        tkludge->next =
+    (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
+        tkludge = tkludge->next;
+      }
+    tkludge->next = NULL;
+    if (i == 8)
+      {
+        tkludge->str =
+    (char *)myalloc (strlen (logout) + 1, __FILE__, __LINE__);
+        memcpy (tkludge->str, logout, strlen (logout));
+        tkludge->str[strlen (logout)] = 0;
+      }
+    else if (i != 0)
+      {
+        tkludge->str =
+    (char *)myalloc ((unsigned)(temp2 - temp + 3), __FILE__,
+         __LINE__);
+        memcpy (tkludge->str, temp, (unsigned)(temp2 - temp));
+        tkludge->str[(unsigned)(temp2 - temp)] = 0;
+      }
+    else
+      {
+        tkludge->str =
+    (char *)myalloc ((strlen (curarea) + 6), __FILE__, __LINE__);
+        strcpy (tkludge->str, "AREA:");
+        strcat (tkludge->str, curarea);
+      }
+    tkludge->left = lkludge;
+    temp = temp2;
+    if (type != 2)
+      {
+        temp++;
+        if (*temp == '\n')
+    {
+      temp++;
+      numlf++;
+    }
+      }
+    (*kludnum)++;
+  }
+      else
+  break;
     }
 garb:
   (*kludlen) = (short)(temp - text);
@@ -861,11 +862,11 @@ garb:
   if (type == 1)
     {
       if (isnetmail)
-	netmail = isnetmail;
+  netmail = isnetmail;
       else
-	netmail = !curarea[0];
+  netmail = !curarea[0];
       if (netmail)
-	memset (oldarea, 0, arealength);
+  memset (oldarea, 0, arealength);
     }
 }
 

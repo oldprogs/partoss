@@ -1,6 +1,8 @@
 // MaxiM: find_t
 
 #include "partoss.h"
+#include "archives.h"
+#include "partserv.h"
 #include "globext.h"
 
 long badpos;
@@ -17,155 +19,155 @@ void tossarcs (void)
     {
       cycle = 0;
       if (wasunp == 1)
-	wasunp = 0;
+  wasunp = 0;
       mystrncpy (packname, bcfg.workdir, DirSize);
       mystrncat (packname, "ptbackup.tkp", 16, DirSize);
       mystrncpy (fullname, bcfg.workdir, DirSize);
       mystrncat (fullname, "ptbackup.pkt", 16, DirSize);
       if (access (packname, 0) == 0)
-	if (!globbad)
-	  rrename (packname, fullname);
+  if (!globbad)
+    rrename (packname, fullname);
       createpkts ();
       chsize (temppkt, 0);
       lseek (temppkt, 0, SEEK_SET);
       if (both)
-	{
-	  mystrncpy (tempsqdn, bcfg.workdir, DirSize);
-	  mystrncat (tempsqdn, "tempsqd.$$$", 16, DirSize);
-	  if ((tempsqd =
-	       (short)sopen (tempsqdn, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-			     S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-	    {
-	      mystrncpy (errname, tempsqdn, DirSize);
-	      errexit (2, __FILE__, __LINE__);
-	    }
-	}
+  {
+    mystrncpy (tempsqdn, bcfg.workdir, DirSize);
+    mystrncat (tempsqdn, "tempsqd.$$$", 16, DirSize);
+    if ((tempsqd =
+         (short)sopen (tempsqdn, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
+           S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+      {
+        mystrncpy (errname, tempsqdn, DirSize);
+        errexit (2, __FILE__, __LINE__);
+      }
+  }
 //    mystrncpy(packname,bcfg.workdir,DirSize);
       mystrncpy (packname, PKT_MASK, DirSize);
       if (alog == 0)
-	{
-	  mustlog = -1;
-	  if (bcfg.workdir[0])
-	    mystrncpy (echologt, bcfg.workdir, DirSize);
-	  else
-	    mystrncpy (echologt, homedir, DirSize);
-	  mystrncat (echologt, "echolog.$$$", DirSize, DirSize);
-	  if ((alog =
-	       (short)sopen (echologt, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-			     S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-	    {
-	      mystrncpy (errname, echologt, DirSize);
-	      errexit (2, __FILE__, __LINE__);
-	    }
-	  chsize (alog, 0);
-	  lseek (alog, 0, SEEK_SET);
-	}
+  {
+    mustlog = -1;
+    if (bcfg.workdir[0])
+      mystrncpy (echologt, bcfg.workdir, DirSize);
+    else
+      mystrncpy (echologt, homedir, DirSize);
+    mystrncat (echologt, "echolog.$$$", DirSize, DirSize);
+    if ((alog =
+         (short)sopen (echologt, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
+           S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+      {
+        mystrncpy (errname, echologt, DirSize);
+        errexit (2, __FILE__, __LINE__);
+      }
+    chsize (alog, 0);
+    lseek (alog, 0, SEEK_SET);
+  }
       for (i = 0; i < 7; i++)
-	{
-	  for (t = 0; t <= bcfg.levels; t++)
-	    {
-	      mystrncpy (cext, arcsh[i], 7);
-	      if (t)
-		cext[3] += (char)t;
-	      tinbound = bcfg.inbound;
-	      while (tinbound)
-		{
-		  mystrncpy (fullname, tinbound->name, DirSize);
-		  mystrncat (fullname, cext, 16, DirSize);
-		  pgood = (short)_dos_findfirst (fullname, findattr, &fblk);
-		  while (pgood == 0)
-		    {
-		      if (!(fblk.attrib & 0x1f))
-			{
-			  if (fblk.name[strlen (fblk.name) - 4] == '.')
-			    {
-			      if (bcfg.sortarc)
-				addarcs (tinbound->name, &fblk,
-					 tinbound->where ? 1 : 0);
-			      else
-				{
-				  mystrncpy (currname, tinbound->name,
-					     DirSize);
-				  mystrncat (currname, fblk.name, DirSize,
-					     DirSize);
-				  if (bcfg.sbu[0])
-				    {
-				      mystrncpy (ssystem, bcfg.sbu, DirSize);
-				      mystrncat (ssystem, "  ", 5, DirSize);
-				      mystrncat (ssystem, currname, DirSize,
-						 DirSize);
-				      system (ssystem);
-				    }
-				  archiver (currname, packname, 1);
-				  wasunp = 1;
-				  if (bcfg.sau[0])
-				    {
-				      ccprintf ("Execute [%s]\r\n", bcfg.sau);
-				      system (bcfg.sau);
-				    }
-				  if (!bcfg.bunarc)
-				    cycle |= tosspkts ();
-				}
-			    }
-			}
-		      pgood = (short)_dos_findnext (&fblk);
-		    }
-		  _dos_findclose (&fblk);
-		  tinbound = tinbound->next;
-		}
-	    }
-	}
+  {
+    for (t = 0; t <= bcfg.levels; t++)
+      {
+        mystrncpy (cext, arcsh[i], 7);
+        if (t)
+    cext[3] += (char)t;
+        tinbound = bcfg.inbound;
+        while (tinbound)
+    {
+      mystrncpy (fullname, tinbound->name, DirSize);
+      mystrncat (fullname, cext, 16, DirSize);
+      pgood = (short)_dos_findfirst (fullname, findattr, &fblk);
+      while (pgood == 0)
+        {
+          if (!(fblk.attrib & 0x1f))
+      {
+        if (fblk.name[strlen (fblk.name) - 4] == '.')
+          {
+            if (bcfg.sortarc)
+        addarcs (tinbound->name, &fblk,
+           tinbound->where ? 1 : 0);
+            else
+        {
+          mystrncpy (currname, tinbound->name,
+               DirSize);
+          mystrncat (currname, fblk.name, DirSize,
+               DirSize);
+          if (bcfg.sbu[0])
+            {
+              mystrncpy (ssystem, bcfg.sbu, DirSize);
+              mystrncat (ssystem, "  ", 5, DirSize);
+              mystrncat (ssystem, currname, DirSize,
+             DirSize);
+              system (ssystem);
+            }
+          archiver (currname, packname, 1);
+          wasunp = 1;
+          if (bcfg.sau[0])
+            {
+              ccprintf ("Execute [%s]\r\n", bcfg.sau);
+              system (bcfg.sau);
+            }
+          if (!bcfg.bunarc)
+            cycle |= tosspkts ();
+        }
+          }
+      }
+          pgood = (short)_dos_findnext (&fblk);
+        }
+      _dos_findclose (&fblk);
+      tinbound = tinbound->next;
+    }
+      }
+  }
       if (bcfg.sortarc)
-	{
-	  sortfpkt (0);
-	  tapkt = apkt;
-	  while (tapkt)
-	    {
-	      if (bcfg.sbu[0])
-		{
-		  mystrncpy (ssystem, bcfg.sbu, DirSize);
-		  mystrncat (ssystem, "  ", 5, DirSize);
-		  mystrncat (ssystem, tapkt->name, DirSize, DirSize);
-		  system (ssystem);
-		}
-	      archiver (tapkt->name, packname, 1);
-	      wasunp = 1;
-	      if (bcfg.sau[0])
-		{
-		  ccprintf ("Execute [%s]\r\n", bcfg.sau);
-		  system (bcfg.sau);
-		}
-	      if (!bcfg.bunarc)
-		cycle |= tosspkts ();
-	      tinbound = tapkt->next;
-	      myfree ((void **)&tapkt, __FILE__, __LINE__);
-	      tapkt = tinbound;
-	    }
-	}
+  {
+    sortfpkt (0);
+    tapkt = apkt;
+    while (tapkt)
+      {
+        if (bcfg.sbu[0])
+    {
+      mystrncpy (ssystem, bcfg.sbu, DirSize);
+      mystrncat (ssystem, "  ", 5, DirSize);
+      mystrncat (ssystem, tapkt->name, DirSize, DirSize);
+      system (ssystem);
+    }
+        archiver (tapkt->name, packname, 1);
+        wasunp = 1;
+        if (bcfg.sau[0])
+    {
+      ccprintf ("Execute [%s]\r\n", bcfg.sau);
+      system (bcfg.sau);
+    }
+        if (!bcfg.bunarc)
+    cycle |= tosspkts ();
+        tinbound = tapkt->next;
+        myfree ((void **)&tapkt, __FILE__, __LINE__);
+        tapkt = tinbound;
+      }
+  }
       if (bcfg.saua[0] && wasunp)
-	system (bcfg.saua);
+  system (bcfg.saua);
       wasunp = 1;
       apkt = NULL;
       cycle |= tosspkts ();
       if (!cycle)
-	{
-	  closesqd (badmess, 0);
-	  if (!bcfg.killdupes)
-	    closesqd (dupes, 0);
-	  closesqd (persarea, 1);
-	  closesqd (newarea, 1);
-	}
+  {
+    closesqd (badmess, 0);
+    if (!bcfg.killdupes)
+      closesqd (dupes, 0);
+    closesqd (persarea, 1);
+    closesqd (newarea, 1);
+  }
       if (mode & 0x08 || bcfg.autosend)
-	makeattach (0);
+  makeattach (0);
       delpkts ();
       if (both)
-	{
-	  cclose (&tempsqd, __FILE__, __LINE__);
-	  unlink (tempsqdn);
-	}
+  {
+    cclose (&tempsqd, __FILE__, __LINE__);
+    unlink (tempsqdn);
+  }
       delpkts ();
       if (bcfg.single)
-	cycle = 0;
+  cycle = 0;
     }
 }
 
@@ -178,10 +180,10 @@ short tosspkts (void)
     {
       tinbound = bcfg.inbound;
       while (tinbound)
-	{
-	  addpacket (tinbound->name, 0);
-	  tinbound = tinbound->next;
-	}
+  {
+    addpacket (tinbound->name, 0);
+    tinbound = tinbound->next;
+  }
     }
   addpacket (bcfg.workdir, 0);
   sortfpkt (1);
@@ -190,56 +192,56 @@ short tosspkts (void)
     {
       retcode = tosspkt (cpkt);
       if (retcode == 0)
-	{
-	  unlink (cpkt->name);
-	  temp = strrchr (cpkt->name, DIRSEP[0]);
-	  if (temp)
-	    temp++;
-	  else
-	    temp = cpkt->name;
-	  if (strnicmp (temp, "ptbackup", 8))
-	    retc = 1;
-	}
+  {
+    unlink (cpkt->name);
+    temp = strrchr (cpkt->name, DIRSEP[0]);
+    if (temp)
+      temp++;
+    else
+      temp = cpkt->name;
+    if (strnicmp (temp, "ptbackup", 8))
+      retc = 1;
+  }
       else
-	{
-	  if (retcode == 1 || retcode == 2 || retcode == 3)
-	    {
-	      mystrncpy (pbadname, cpkt->name, DirSize);
-	      pbadname[strlen (pbadname) - 3] = 'b';
+  {
+    if (retcode == 1 || retcode == 2 || retcode == 3)
+      {
+        mystrncpy (pbadname, cpkt->name, DirSize);
+        pbadname[strlen (pbadname) - 3] = 'b';
 //        if(logfileok)
 //         {
-	      if (retcode == 1)
-		sprintf (logout,
-			 "??? Inbound packet %s is damaged, look near offset %lx",
-			 cpkt->name, badpos);
-	      else if (retcode == 2)
-		sprintf (logout, "??? Inbound packet %s - wrong password",
-			 cpkt->name);
-	      else
-		sprintf (logout, "??? Inbound packet %s - not for us",
-			 cpkt->name);
-	      ccprintf ("\r\n%s\r\n", logout);
-	      logwrite (1, 1);
-	      if (!rrename (cpkt->name, pbadname))
-		{
-		  sprintf (logout, "??? Renamed to %s for Your intervence",
-			   pbadname);
-		  ccprintf ("\r\n%s\r\n", logout);
-		  logwrite (1, 1);
-		}
+        if (retcode == 1)
+    sprintf (logout,
+       "??? Inbound packet %s is damaged, look near offset %lx",
+       cpkt->name, badpos);
+        else if (retcode == 2)
+    sprintf (logout, "??? Inbound packet %s - wrong password",
+       cpkt->name);
+        else
+    sprintf (logout, "??? Inbound packet %s - not for us",
+       cpkt->name);
+        ccprintf ("\r\n%s\r\n", logout);
+        logwrite (1, 1);
+        if (!rrename (cpkt->name, pbadname))
+    {
+      sprintf (logout, "??? Renamed to %s for Your intervence",
+         pbadname);
+      ccprintf ("\r\n%s\r\n", logout);
+      logwrite (1, 1);
+    }
 //         }
-	    }
-	  else
-	    {
-	      sprintf (logout, "??? Can't open inbound packet %s",
-		       cpkt->name);
-	      if (logfileok)
-		logwrite (1, 1);
-	      ccprintf ("\r\n%s\r\n", logout);
-	    }
-	}
+      }
+    else
+      {
+        sprintf (logout, "??? Can't open inbound packet %s",
+           cpkt->name);
+        if (logfileok)
+    logwrite (1, 1);
+        ccprintf ("\r\n%s\r\n", logout);
+      }
+  }
       if (both && (mode & 0x08 || bcfg.autosend) && bcfg.bpack)
-	makeattach (1);
+  makeattach (1);
       cpkt = cpkt->next;
     }
   cpkt = fpkt;
@@ -272,8 +274,8 @@ short tosspkt (struct pktname *tpkt)
   pktype = readhead (pkt, &pktaddr, &node);
 #ifdef __LOG_DEBUG__
   sprintf (logout, "[D] PKT (%ld bytes) From %u:%u/%u.%u to %u:%u/%u.%u",
-	   pktsz, pktaddr.zone, pktaddr.net, pktaddr.node, pktaddr.point,
-	   node.zone, node.net, node.node, node.point);
+     pktsz, pktaddr.zone, pktaddr.net, pktaddr.node, pktaddr.point,
+     node.zone, node.net, node.node, node.point);
   ccprintf ("\n%s\n", logout);
   logwrite (1, 1);
 #endif
@@ -283,16 +285,16 @@ short tosspkt (struct pktname *tpkt)
   while (taddr)
     {
       if (pktype == 0)
-	{
-	  if (taddr->zone == node.zone && taddr->net == node.net
-	      && taddr->node == node.node)
-	    break;
-	}
+  {
+    if (taddr->zone == node.zone && taddr->net == node.net
+        && taddr->node == node.node)
+      break;
+  }
       else
-	{
-	  if (cmpaddr (taddr, &node) == 0)
-	    break;
-	}
+  {
+    if (cmpaddr (taddr, &node) == 0)
+      break;
+  }
       taddr = taddr->next;
     }
   if ((taddr == NULL) && bcfg.secure)
@@ -308,31 +310,31 @@ short tosspkt (struct pktname *tpkt)
   if (strnicmp (temp, "ptbackup.pkt", 12) == 0)
     isbackup = 1;
   ccprintf ("\r\n[%s] %s (%ld bytes) - %u:%u/%u.%u\r\n", fromdir[tpkt->where],
-	    temp, pktsz, pktaddr.zone, pktaddr.net, pktaddr.node,
-	    pktaddr.point);
+      temp, pktsz, pktaddr.zone, pktaddr.net, pktaddr.node,
+      pktaddr.point);
   sprintf (logout, "[%s] %s (%ld bytes) from %u:%u/%u.%u to %u:%u/%u.%u",
-	   fromdir[tpkt->where], temp, pktsz, pktaddr.zone, pktaddr.net,
-	   pktaddr.node, pktaddr.point, node.zone, node.net, node.node,
-	   node.point);
+     fromdir[tpkt->where], temp, pktsz, pktaddr.zone, pktaddr.net,
+     pktaddr.node, pktaddr.point, node.zone, node.net, node.node,
+     node.point);
   logwrite (1, 3);
   blink = bcfg.links.chain;
   while (blink)
     {
       if (cmpaddr (&blink->address, &pktaddr) == 0)
-	break;
+  break;
       blink = blink->next;
     }
   if (blink && blink->password[0])
     {
       if (blink->mask & (2L << 20))
-	{
-	  if ((strlen (blink->password) != strlen (ppassword)) ||
-	      (strncmp (blink->password, ppassword, strlen (ppassword)) != 0))
-	    {
-	      badpack = 2;
-	      goto endfunc;
-	    }
-	}
+  {
+    if ((strlen (blink->password) != strlen (ppassword)) ||
+        (strncmp (blink->password, ppassword, strlen (ppassword)) != 0))
+      {
+        badpack = 2;
+        goto endfunc;
+      }
+  }
     }
   create = bcfg.create;
   if (blink)
@@ -343,448 +345,448 @@ short tosspkt (struct pktname *tpkt)
   poffset = 58;
   loctoss = 0;
   while ((fmax =
-	  (unsigned short)rread (pkt, pktbuf, buflen, __FILE__,
-				 __LINE__)) > 0)
+    (unsigned short)rread (pkt, pktbuf, buflen, __FILE__,
+         __LINE__)) > 0)
     {
       if (fmax < 34)
-	break;
+  break;
       pcurpos = 0;
       badfr = 0;
       pctrlpos = 0;
       for (i = pcurpos;
-	   i < fmax && (*(pktbuf + i + 1) || (*(pktbuf + i) != 2)); i++) ;
+     i < fmax && (*(pktbuf + i + 1) || (*(pktbuf + i) != 2)); i++) ;
       if (i > pcurpos)
-	{
-	  badpack = 1;
-	  badpos = poffset;
-	  if (bcfg.dropbad)
-	    goto endfunc;
-	}
+  {
+    badpack = 1;
+    badpos = poffset;
+    if (bcfg.dropbad)
+      goto endfunc;
+  }
       pcurpos = i;
       if ((pcurpos + 34) >= fmax)
-	break;
+  break;
       isdupe = 0;
       pkttobuf ();
       lseek (pkt, poffset, SEEK_SET);
       if (badfr)
-	{
-	  wipearea = 0;
-	  totbad++;
-	  badtype = 1;
-	  if (badlocked)
-	    {
-	      sprintf (logout, "BackUp: BadArea is locked");
-	      logwrite (1, 3);
-	      backup (1);
-	    }
-	  else
-	    buftosqd (badmess, bindex, 1);
-	  delctrl (1);
-	  wipearea = 1;
-	}
+  {
+    wipearea = 0;
+    totbad++;
+    badtype = 1;
+    if (badlocked)
+      {
+        sprintf (logout, "BackUp: BadArea is locked");
+        logwrite (1, 3);
+        backup (1);
+      }
+    else
+      buftosqd (badmess, bindex, 1);
+    delctrl (1);
+    wipearea = 1;
+  }
       else
-	{
-	  if (!netmail)
-	    {
-	      badarea = setarea (curarea, 0);
-	      if (badarea == -2)
-		{
-		  sprintf (logout, "Message in DeletedArea %s!", curarea);
-		  logwrite (1, 3);
-		  goto deleted;
-		}
-	      if (badarea)
-		{
-		  wipearea = 0;
-		  totbad++;
-		  if (badarea > 0 && (bcfg.locked == 4))
-		    {
-		      sprintf (logout, "BackUp: Area %s is locked", curarea);
-		      logwrite (1, 3);
-		      totbad--;
-		      backup (1);
-		    }
-		  else
-		    {
-		      if (badarea < 0)
-			badtype = 2;
-		      else
-			badtype = 5;
-		      if (badlocked)
-			{
-			  sprintf (logout, "BackUp: BadArea is locked");
-			  logwrite (1, 3);
-			  backup (1);
-			}
-		      else
-			buftosqd (badmess, bindex, 1);
-		    }
-		  wipearea = 1;
-		}
-	      else
-		{
-		  ttaddr = newarea->links.chain;
-		  while (ttaddr)
-		    {
-		      if (cmpaddr (ttaddr, &pktaddr) == 0)
-			{
-			  if (ttaddr->rdonly)
-			    {
-			      wipearea = 0;
-			      totbad++;
-			      badtype = 3;
-			      if (badlocked)
-				{
-				  sprintf (logout,
-					   "BackUp: BadArea is locked");
-				  logwrite (1, 3);
-				  backup (1);
-				}
-			      else
-				buftosqd (badmess, bindex, 1);
-			      wipearea = 1;
-			    }
-			  else
-			    {
-			      if (!isdupe)
-				dupcheck (1);
-			      if (newarea->dupes && isdupe)
-				{
-				  if (tlist)
-				    tlist->alist[carea].dupes++;
-				  totdupes++;
-				  if (!newarea->killd)
-				    {
-				      wipearea = 0;
-				      if (dupelocked)
-					{
-					  sprintf (logout,
-						   "BackUp: DupeArea is locked");
-					  logwrite (1, 3);
-					  backup (1);
-					}
-				      else
-					{
-					  //
-					  // For Jury Fradkin
-					  //
-					  if (bcfg.loglevel > 9)
-					    {
-					      sprintf (logout,
-						       "Moved to DupeArea, reason - %s",
-						       (isdupe ==
-							1) ? "CRC32 match" :
-						       "@PATH loop");
-					      logwrite (1, 10);
-					    }
-					  //
-					  // For Jury Fradkin
-					  //
-					  buftosqd (dupes, dindex, 1);
-					}
-				      wipearea = 1;
-				    }
-				}
-			      else
-				writeboth (1);
-			    }
-			  break;
-			}
-		      ttaddr = ttaddr->next;
-		    }
-		  if (ttaddr == NULL)
-		    {
-		      if (cmpaddr (&(newarea->myaka), &pktaddr) == 0)
-			{
-			  if (!isdupe)
-			    dupcheck (1);
-			  if (newarea->dupes && isdupe)
-			    {
-			      if (tlist)
-				tlist->alist[carea].dupes++;
-			      totdupes++;
-			      if (!newarea->killd)
-				{
-				  wipearea = 0;
-				  if (dupelocked)
-				    {
-				      sprintf (logout,
-					       "BackUp: DupeArea is locked");
-				      logwrite (1, 3);
-				      backup (1);
-				    }
-				  else
-				    {
-				      //
-				      // For Jury Fradkin
-				      //
-				      if (bcfg.loglevel > 9)
-					{
-					  sprintf (logout,
-						   "Moved to DupeArea, reason - %s",
-						   (isdupe ==
-						    1) ? "CRC32 match" :
-						   "@PATH loop");
-					  logwrite (1, 10);
-					}
-				      //
-				      // For Jury Fradkin
-				      //
-				      buftosqd (dupes, dindex, 1);
-				    }
-				  wipearea = 1;
-				}
-			    }
-			  else
-			    writeboth (1);
-			}
-		      else
-			{
-			  if (!bcfg.secure || isbackup)
-			    {
-			      if (!isdupe)
-				dupcheck (1);
-			      if (newarea->dupes && isdupe)
-				{
-				  if (tlist)
-				    tlist->alist[carea].dupes++;
-				  totdupes++;
-				  if (!newarea->killd)
-				    {
-				      wipearea = 0;
-				      if (dupelocked)
-					{
-					  sprintf (logout,
-						   "BackUp: DupeArea is locked");
-					  logwrite (1, 3);
-					  backup (1);
-					}
-				      else
-					{
-					  //
-					  // For Jury Fradkin
-					  //
-					  if (bcfg.loglevel > 9)
-					    {
-					      sprintf (logout,
-						       "Moved to DupeArea, reason - %s",
-						       (isdupe ==
-							1) ? "CRC32 match" :
-						       "@PATH loop");
-					      logwrite (1, 10);
-					    }
-					  //
-					  // For Jury Fradkin
-					  //
-					  buftosqd (dupes, dindex, 1);
-					}
-				      wipearea = 1;
-				    }
-				}
-			      else
-				writeboth (1);
-			    }
-			  else
-			    {
-			      wipearea = 0;
-			      totbad++;
-			      badtype = 4;
-			      if (badlocked)
-				{
-				  sprintf (logout,
-					   "BackUp: BadArea is locked");
-				  logwrite (1, 3);
-				  backup (1);
-				}
-			      else
-				{
+  {
+    if (!netmail)
+      {
+        badarea = setarea (curarea, 0);
+        if (badarea == -2)
+    {
+      sprintf (logout, "Message in DeletedArea %s!", curarea);
+      logwrite (1, 3);
+      goto deleted;
+    }
+        if (badarea)
+    {
+      wipearea = 0;
+      totbad++;
+      if (badarea > 0 && (bcfg.locked == 4))
+        {
+          sprintf (logout, "BackUp: Area %s is locked", curarea);
+          logwrite (1, 3);
+          totbad--;
+          backup (1);
+        }
+      else
+        {
+          if (badarea < 0)
+      badtype = 2;
+          else
+      badtype = 5;
+          if (badlocked)
+      {
+        sprintf (logout, "BackUp: BadArea is locked");
+        logwrite (1, 3);
+        backup (1);
+      }
+          else
+      buftosqd (badmess, bindex, 1);
+        }
+      wipearea = 1;
+    }
+        else
+    {
+      ttaddr = newarea->links.chain;
+      while (ttaddr)
+        {
+          if (cmpaddr (ttaddr, &pktaddr) == 0)
+      {
+        if (ttaddr->rdonly)
+          {
+            wipearea = 0;
+            totbad++;
+            badtype = 3;
+            if (badlocked)
+        {
+          sprintf (logout,
+             "BackUp: BadArea is locked");
+          logwrite (1, 3);
+          backup (1);
+        }
+            else
+        buftosqd (badmess, bindex, 1);
+            wipearea = 1;
+          }
+        else
+          {
+            if (!isdupe)
+        dupcheck (1);
+            if (newarea->dupes && isdupe)
+        {
+          if (tlist)
+            tlist->alist[carea].dupes++;
+          totdupes++;
+          if (!newarea->killd)
+            {
+              wipearea = 0;
+              if (dupelocked)
+          {
+            sprintf (logout,
+               "BackUp: DupeArea is locked");
+            logwrite (1, 3);
+            backup (1);
+          }
+              else
+          {
+            //
+            // For Jury Fradkin
+            //
+            if (bcfg.loglevel > 9)
+              {
+                sprintf (logout,
+                   "Moved to DupeArea, reason - %s",
+                   (isdupe ==
+              1) ? "CRC32 match" :
+                   "@PATH loop");
+                logwrite (1, 10);
+              }
+            //
+            // For Jury Fradkin
+            //
+            buftosqd (dupes, dindex, 1);
+          }
+              wipearea = 1;
+            }
+        }
+            else
+        writeboth (1);
+          }
+        break;
+      }
+          ttaddr = ttaddr->next;
+        }
+      if (ttaddr == NULL)
+        {
+          if (cmpaddr (&(newarea->myaka), &pktaddr) == 0)
+      {
+        if (!isdupe)
+          dupcheck (1);
+        if (newarea->dupes && isdupe)
+          {
+            if (tlist)
+        tlist->alist[carea].dupes++;
+            totdupes++;
+            if (!newarea->killd)
+        {
+          wipearea = 0;
+          if (dupelocked)
+            {
+              sprintf (logout,
+                 "BackUp: DupeArea is locked");
+              logwrite (1, 3);
+              backup (1);
+            }
+          else
+            {
+              //
+              // For Jury Fradkin
+              //
+              if (bcfg.loglevel > 9)
+          {
+            sprintf (logout,
+               "Moved to DupeArea, reason - %s",
+               (isdupe ==
+                1) ? "CRC32 match" :
+               "@PATH loop");
+            logwrite (1, 10);
+          }
+              //
+              // For Jury Fradkin
+              //
+              buftosqd (dupes, dindex, 1);
+            }
+          wipearea = 1;
+        }
+          }
+        else
+          writeboth (1);
+      }
+          else
+      {
+        if (!bcfg.secure || isbackup)
+          {
+            if (!isdupe)
+        dupcheck (1);
+            if (newarea->dupes && isdupe)
+        {
+          if (tlist)
+            tlist->alist[carea].dupes++;
+          totdupes++;
+          if (!newarea->killd)
+            {
+              wipearea = 0;
+              if (dupelocked)
+          {
+            sprintf (logout,
+               "BackUp: DupeArea is locked");
+            logwrite (1, 3);
+            backup (1);
+          }
+              else
+          {
+            //
+            // For Jury Fradkin
+            //
+            if (bcfg.loglevel > 9)
+              {
+                sprintf (logout,
+                   "Moved to DupeArea, reason - %s",
+                   (isdupe ==
+              1) ? "CRC32 match" :
+                   "@PATH loop");
+                logwrite (1, 10);
+              }
+            //
+            // For Jury Fradkin
+            //
+            buftosqd (dupes, dindex, 1);
+          }
+              wipearea = 1;
+            }
+        }
+            else
+        writeboth (1);
+          }
+        else
+          {
+            wipearea = 0;
+            totbad++;
+            badtype = 4;
+            if (badlocked)
+        {
+          sprintf (logout,
+             "BackUp: BadArea is locked");
+          logwrite (1, 3);
+          backup (1);
+        }
+            else
+        {
 /*********************************************
  Emergency exit in case of this uncatched bug
 *********************************************/
-				  if (stricmp (newarea->areaname, curarea))
-				    {
-				      sprintf (logout,
-					       "***** Debug at dead:");
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Newarea:  %s",
-					       newarea->areaname);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Persarea: %s",
-					       persarea->areaname);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Badarea:  %s",
-					       badmess->areaname);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Dupearea: %s",
-					       dupes->areaname);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Curarea:  %s",
-					       curarea);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Oldarea:  %s",
-					       oldarea);
-				      logwrite (1, 11);
-				      sprintf (logout,
-					       "***** Message parameters:");
-				      logwrite (1, 11);
-				      sprintf (logout,
-					       "***** Packet parameters:");
-				      logwrite (1, 11);
-				      sprintf (logout,
-					       "*** Packet from %u:%u/%u.%u",
-					       pktaddr.zone, pktaddr.net,
-					       pktaddr.node, pktaddr.point);
-				      logwrite (1, 11);
-				      sprintf (logout,
-					       "***** Message parameters:");
-				      logwrite (1, 11);
-				      sprintf (logout, "***** From: %s",
-					       bufpkt.fromname);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** To: %s",
-					       bufpkt.toname);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Subj: %s",
-					       bufpkt.subj);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Date: %s",
-					       bufpkt.datetime);
-				      logwrite (1, 11);
-				      sprintf (logout, "***** Kludges:");
-				      logwrite (1, 11);
-				      tkludge = pckludge;
-				      while (tkludge)
-					{
-					  if (tkludge->str[0] == 1)
-					    tkludge->str[0] = '@';
-					  sprintf (logout, "%s",
-						   tkludge->str);
-					  logwrite (1, 11);
-					  tkludge = tkludge->next;
-					}
-				      errexit (15, __FILE__, __LINE__);
-				    }
+          if (stricmp (newarea->areaname, curarea))
+            {
+              sprintf (logout,
+                 "***** Debug at dead:");
+              logwrite (1, 11);
+              sprintf (logout, "***** Newarea:  %s",
+                 newarea->areaname);
+              logwrite (1, 11);
+              sprintf (logout, "***** Persarea: %s",
+                 persarea->areaname);
+              logwrite (1, 11);
+              sprintf (logout, "***** Badarea:  %s",
+                 badmess->areaname);
+              logwrite (1, 11);
+              sprintf (logout, "***** Dupearea: %s",
+                 dupes->areaname);
+              logwrite (1, 11);
+              sprintf (logout, "***** Curarea:  %s",
+                 curarea);
+              logwrite (1, 11);
+              sprintf (logout, "***** Oldarea:  %s",
+                 oldarea);
+              logwrite (1, 11);
+              sprintf (logout,
+                 "***** Message parameters:");
+              logwrite (1, 11);
+              sprintf (logout,
+                 "***** Packet parameters:");
+              logwrite (1, 11);
+              sprintf (logout,
+                 "*** Packet from %u:%u/%u.%u",
+                 pktaddr.zone, pktaddr.net,
+                 pktaddr.node, pktaddr.point);
+              logwrite (1, 11);
+              sprintf (logout,
+                 "***** Message parameters:");
+              logwrite (1, 11);
+              sprintf (logout, "***** From: %s",
+                 bufpkt.fromname);
+              logwrite (1, 11);
+              sprintf (logout, "***** To: %s",
+                 bufpkt.toname);
+              logwrite (1, 11);
+              sprintf (logout, "***** Subj: %s",
+                 bufpkt.subj);
+              logwrite (1, 11);
+              sprintf (logout, "***** Date: %s",
+                 bufpkt.datetime);
+              logwrite (1, 11);
+              sprintf (logout, "***** Kludges:");
+              logwrite (1, 11);
+              tkludge = pckludge;
+              while (tkludge)
+          {
+            if (tkludge->str[0] == 1)
+              tkludge->str[0] = '@';
+            sprintf (logout, "%s",
+               tkludge->str);
+            logwrite (1, 11);
+            tkludge = tkludge->next;
+          }
+              errexit (15, __FILE__, __LINE__);
+            }
 /*********************************************
  Emergency exit in case of this uncatched bug
 *********************************************/
-				  buftosqd (badmess, bindex, 1);
-				  sprintf (logout,
-					   "*** Packet was from %u:%u/%u.%u",
-					   pktaddr.zone, pktaddr.net,
-					   pktaddr.node, pktaddr.point);
-				  logwrite (1, 10);
-				  sprintf (logout,
-					   "*** Packet address was not found in links of area %s:",
-					   newarea->areaname);
-				  logwrite (1, 10);
-				  tttaddr = newarea->links.chain;
-				  while (tttaddr)
-				    {
-				      sprintf (logout, "**** %u:%u/%u.%u",
-					       tttaddr->zone, tttaddr->net,
-					       tttaddr->node, tttaddr->point);
-				      logwrite (1, 10);
-				      tttaddr = tttaddr->next;
-				    }
-				  // More precisely debug info
-				  sprintf (logout,
-					   "***** Debug info 2: [%s] [%s] [%s]",
-					   newarea->areaname,
-					   persarea->areaname, curarea);
-				  logwrite (1, 11);
-				}
-			      wipearea = 1;
-			    }
-			}
-		    }
-		}
-	    deleted:
-	      delctrl (1);
-	    }
-	  else
-	    {
-	      memcpy (&bufmess, &bufpkt, szpackmess);
-	      tottoss++;
-	      loctoss++;
-	      tempmsg = temppkt;
-	      mckludge = pckludge;
-	      mkludlen = pkludlen;
-	      mbigmess = pbigmess;
-	      mtolen = ptolen;
-	      mfromlen = pfromlen;
-	      msubjlen = psubjlen;
-	      mtextlen = ptextlen;
-	      taddr = bcfg.address.chain;
-	      while (taddr)
-		{
-		  if (cmpaddr (taddr, &node) == 0)
-		    break;
-		  taddr = taddr->next;
-		}
-	      if (taddr)
-		buftomsg (2);
-	      else
-		{
-		  if (both && bcfg.pack)
-		    {
-		      if (!notouch || compaddr (notouch->list.chain, &node))
-			{
-			  if (mflags & 0x18e5el)
-			    topack = 0;
-			  else if (mflags & 0x80)
-			    topack = 2;
-			  else
-			    topack = 1;
-			  if (topack)
-			    if (bcfg.killtr)
-			      topack = 2;
-			  if (topack == 1)
-			    bufmess.flags |= 0x8;
-			  if (mmsgout () || topack < 2)
-			    {
-			      bufmess.flags |= 0x20;
-			      buftomsg (2);
-			    }
-			}
-		      else
-			{
-			  bufmess.flags |= 0x20;
-			  buftomsg (2);
-			}
-		    }
-		  else
-		    {
-		      bufmess.flags |= 0x20;
-		      buftomsg (2);
-		    }
-		}
-	      mckludge = NULL;
-	      delctrl (1);
-	      if (both && bcfg.pack)
-		{
-		  tlist = rlist;
-		  while (tlist)
-		    {
-		      for (carea = 0; carea < tlist->numlists; carea++)
-			{
-			  if (tlist->alist[carea].type == 0
-			      && tlist->alist[carea].scanned == 0)
-			    {
-			      if (newarea->open)
-				closesqd (newarea, 1);
-			      lseek (areaset, tlist->alist[carea].areaoffs,
-				     SEEK_SET);
-			      rread (areaset, newarea, szarea, __FILE__,
-				     __LINE__);
-			      scanmsg ();
-			      tlist->alist[carea].scanned = 1;
-			    }
-			}
-		      tlist = tlist->next;
-		    }
-		}
-	    }
-	}
+          buftosqd (badmess, bindex, 1);
+          sprintf (logout,
+             "*** Packet was from %u:%u/%u.%u",
+             pktaddr.zone, pktaddr.net,
+             pktaddr.node, pktaddr.point);
+          logwrite (1, 10);
+          sprintf (logout,
+             "*** Packet address was not found in links of area %s:",
+             newarea->areaname);
+          logwrite (1, 10);
+          tttaddr = newarea->links.chain;
+          while (tttaddr)
+            {
+              sprintf (logout, "**** %u:%u/%u.%u",
+                 tttaddr->zone, tttaddr->net,
+                 tttaddr->node, tttaddr->point);
+              logwrite (1, 10);
+              tttaddr = tttaddr->next;
+            }
+          // More precisely debug info
+          sprintf (logout,
+             "***** Debug info 2: [%s] [%s] [%s]",
+             newarea->areaname,
+             persarea->areaname, curarea);
+          logwrite (1, 11);
+        }
+            wipearea = 1;
+          }
+      }
+        }
+    }
+      deleted:
+        delctrl (1);
+      }
+    else
+      {
+        memcpy (&bufmess, &bufpkt, szpackmess);
+        tottoss++;
+        loctoss++;
+        tempmsg = temppkt;
+        mckludge = pckludge;
+        mkludlen = pkludlen;
+        mbigmess = pbigmess;
+        mtolen = ptolen;
+        mfromlen = pfromlen;
+        msubjlen = psubjlen;
+        mtextlen = ptextlen;
+        taddr = bcfg.address.chain;
+        while (taddr)
+    {
+      if (cmpaddr (taddr, &node) == 0)
+        break;
+      taddr = taddr->next;
+    }
+        if (taddr)
+    buftomsg (2);
+        else
+    {
+      if (both && bcfg.pack)
+        {
+          if (!notouch || compaddr (notouch->list.chain, &node))
+      {
+        if (mflags & 0x18e5el)
+          topack = 0;
+        else if (mflags & 0x80)
+          topack = 2;
+        else
+          topack = 1;
+        if (topack)
+          if (bcfg.killtr)
+            topack = 2;
+        if (topack == 1)
+          bufmess.flags |= 0x8;
+        if (mmsgout () || topack < 2)
+          {
+            bufmess.flags |= 0x20;
+            buftomsg (2);
+          }
+      }
+          else
+      {
+        bufmess.flags |= 0x20;
+        buftomsg (2);
+      }
+        }
+      else
+        {
+          bufmess.flags |= 0x20;
+          buftomsg (2);
+        }
+    }
+        mckludge = NULL;
+        delctrl (1);
+        if (both && bcfg.pack)
+    {
+      tlist = rlist;
+      while (tlist)
+        {
+          for (carea = 0; carea < tlist->numlists; carea++)
+      {
+        if (tlist->alist[carea].type == 0
+            && tlist->alist[carea].scanned == 0)
+          {
+            if (newarea->open)
+        closesqd (newarea, 1);
+            lseek (areaset, tlist->alist[carea].areaoffs,
+             SEEK_SET);
+            rread (areaset, newarea, szarea, __FILE__,
+             __LINE__);
+            scanmsg ();
+            tlist->alist[carea].scanned = 1;
+          }
+      }
+          tlist = tlist->next;
+        }
+    }
+      }
+  }
     }
 endfunc:
   if (!netmail)
@@ -810,7 +812,7 @@ void writeboth (short type)
       tlist->alist[carea].toss++;
       if (bcfg.tossstat)
 //      tlist->alist[carea].tossed+=(265+pkludlen+ptextlen);
-	tlist->alist[carea].tossed += (265 + pmsglen);
+  tlist->alist[carea].tossed += (265 + pmsglen);
     }
   tcarea = carea;
   move = 0;
@@ -821,170 +823,170 @@ void writeboth (short type)
     {
       mustcopy = 0;
       if (tname->where & 1)
-	{
-	  if (tname->name[0])
-	    {
-	      mystrncpy (logout, gltoname, BufSize);
-	      if (tname->exact)
-		{
-		  if ((strncmp (logout, tname->name, strlen (tname->name)) ==
-		       0) && (strlen (logout) == strlen (tname->name)))
-		    mustcopy = 1;
-		}
-	      else
-		{
-		  if (strstr (strupr (logout), strupr (tname->name)) != NULL)
-		    mustcopy = 1;
-		}
-	    }
-	  else
-	    {
-	      if ((caddr.zone == tname->address.zone
-		   || tname->address.zone == 65535u)
-		  && (caddr.net == tname->address.net
-		      || tname->address.net == 65535u)
-		  && (caddr.node == tname->address.node
-		      || tname->address.node == 65535u)
-		  && (caddr.point == tname->address.point
-		      || tname->address.point == 65535u))
-		mustcopy = 1;
-	    }
-	}
+  {
+    if (tname->name[0])
+      {
+        mystrncpy (logout, gltoname, BufSize);
+        if (tname->exact)
+    {
+      if ((strncmp (logout, tname->name, strlen (tname->name)) ==
+           0) && (strlen (logout) == strlen (tname->name)))
+        mustcopy = 1;
+    }
+        else
+    {
+      if (strstr (strupr (logout), strupr (tname->name)) != NULL)
+        mustcopy = 1;
+    }
+      }
+    else
+      {
+        if ((caddr.zone == tname->address.zone
+       || tname->address.zone == 65535u)
+      && (caddr.net == tname->address.net
+          || tname->address.net == 65535u)
+      && (caddr.node == tname->address.node
+          || tname->address.node == 65535u)
+      && (caddr.point == tname->address.point
+          || tname->address.point == 65535u))
+    mustcopy = 1;
+      }
+  }
       if (tname->where & 2)
-	{
-	  if (tname->name[0])
-	    {
-	      mystrncpy (logout, glfromname, BufSize);
-	      if (tname->exact)
-		{
-		  if ((strncmp (logout, tname->name, strlen (tname->name)) ==
-		       0) && (strlen (logout) == strlen (tname->name)))
-		    mustcopy = 1;
-		}
-	      else
-		{
-		  if (strstr (strupr (logout), strupr (tname->name)) != NULL)
-		    mustcopy = 1;
-		}
-	    }
-	  else
-	    {
-	      if (!addrfake)
-		{
-		  if ((bufpkt.fromzone == tname->address.zone
-		       || tname->address.zone == 65535u)
-		      && (bufpkt.fromnet == tname->address.net
-			  || tname->address.net == 65535u)
-		      && (bufpkt.fromnode == tname->address.node
-			  || tname->address.node == 65535u)
-		      && (bufpkt.frompoint == tname->address.point
-			  || tname->address.point == 65535u))
-		    mustcopy = 1;
-		}
-	    }
-	}
+  {
+    if (tname->name[0])
+      {
+        mystrncpy (logout, glfromname, BufSize);
+        if (tname->exact)
+    {
+      if ((strncmp (logout, tname->name, strlen (tname->name)) ==
+           0) && (strlen (logout) == strlen (tname->name)))
+        mustcopy = 1;
+    }
+        else
+    {
+      if (strstr (strupr (logout), strupr (tname->name)) != NULL)
+        mustcopy = 1;
+    }
+      }
+    else
+      {
+        if (!addrfake)
+    {
+      if ((bufpkt.fromzone == tname->address.zone
+           || tname->address.zone == 65535u)
+          && (bufpkt.fromnet == tname->address.net
+        || tname->address.net == 65535u)
+          && (bufpkt.fromnode == tname->address.node
+        || tname->address.node == 65535u)
+          && (bufpkt.frompoint == tname->address.point
+        || tname->address.point == 65535u))
+        mustcopy = 1;
+    }
+      }
+  }
       if (tname->where & 4)
-	{
-	  mystrncpy (logout, glsubj, BufSize);
-	  if (tname->exact)
-	    {
-	      if ((strncmp (logout, tname->name, strlen (tname->name)) == 0)
-		  && (strlen (logout) == strlen (tname->name)))
-		mustcopy = 1;
-	    }
-	  else
-	    {
-	      if (strstr (strupr (logout), strupr (tname->name)) != NULL)
-		mustcopy = 1;
-	    }
-	}
+  {
+    mystrncpy (logout, glsubj, BufSize);
+    if (tname->exact)
+      {
+        if ((strncmp (logout, tname->name, strlen (tname->name)) == 0)
+      && (strlen (logout) == strlen (tname->name)))
+    mustcopy = 1;
+      }
+    else
+      {
+        if (strstr (strupr (logout), strupr (tname->name)) != NULL)
+    mustcopy = 1;
+      }
+  }
       if (mustcopy)
-	{
-	  if (tname->move)
-	    move = 1;
-	  if (ttname == NULL)
-	    {
-	      ttname =
-		(struct sysname *)myalloc (szsysname, __FILE__, __LINE__);
-	      ttt = ttname;
-	    }
-	  else
-	    {
-	      ttt = ttname;
-	      while (ttt)
-		{
-		  if ((strlen (tname->persarea) == strlen (ttt->persarea)) &&
-		      (strcmp (tname->persarea, ttt->persarea) == 0))
-		    goto copied;
-		  ttt = ttt->next;
-		}
-	      ttt = ttname;
-	      while (ttt->next)
-		ttt = ttt->next;
-	      ttt->next =
-		(struct sysname *)myalloc (szsysname, __FILE__, __LINE__);
-	      ttt = ttt->next;
-	    }
-	  memcpy (ttt->persarea, tname->persarea, arealength);
-	  ttt->next = NULL;
-	  if ((setarea (tname->persarea, 1)) == 0)
-	    {
-	      wipearea = 0;
-	      wascopy = 1;
-	      totpers++;
-	      gpers = 1;
-	      buftosqd (persarea, pindex, 1);
-	      gpers = 0;
-	    }
-	  if (type == 1)
-	    {
-	      if (tname->templ[0])
-		{
-		  if ((tmpl =
-		       (short)sopen (tname->templ, O_RDONLY | O_BINARY,
-				     SH_DENYWR)) != -1)
-		    {
-		      bufmess.toname =
-			(char *)myalloc (36, __FILE__, __LINE__);
-		      bufmess.fromname =
-			(char *)myalloc (36, __FILE__, __LINE__);
-		      bufmess.subj = (char *)myalloc (72, __FILE__, __LINE__);
-		      bufmess.tozone = bufpkt.fromzone;
-		      bufmess.tonet = bufpkt.fromnet;
-		      bufmess.tonode = bufpkt.fromnode;
-		      bufmess.topoint = bufpkt.frompoint;
-		      bufmess.fromzone = newarea->myaka.zone;
-		      bufmess.fromnet = newarea->myaka.net;
-		      bufmess.fromnode = newarea->myaka.node;
-		      bufmess.frompoint = newarea->myaka.point;
-		      mystrncpy (bufmess.toname, bufpkt.fromname, 35);
-		      mystrncpy (bufmess.fromname, "Parma Tosser", 35);
-		      mystrncpy (bufmess.subj, bufpkt.subj, 71);
-		      mtolen = strlen (bufmess.toname);
-		      mfromlen = strlen (bufmess.fromname);
-		      msubjlen = strlen (bufmess.subj);
-		      bufmess.flags = 0x181;
-		      mbigmess = 1;
-		      tempmsg = templat (0, tmpl);
-		      lseek (tempmsg, 0, SEEK_SET);
-		      templen = (unsigned short)ptextlen;
-		      pmsglen = ptextlen = filelength (tempmsg);
-		      pmsglen += pkludlen - 1;
-		      mckludge = NULL;
-		      buftomsg (4);
-		      pmsglen = ptextlen = templen;
-		      cclose (&tempmsg, __FILE__, __LINE__);
-		      cclose (&tmpl, __FILE__, __LINE__);
-		      unlink (pttmpl);
-		      myfree ((void **)&bufmess.subj, __FILE__, __LINE__);
-		      myfree ((void **)&bufmess.toname, __FILE__, __LINE__);
-		      myfree ((void **)&bufmess.fromname, __FILE__, __LINE__);
-		    }
-		}
-	    }
-	  mustcopy = 0;
-	  wipearea = 1;
-	}
+  {
+    if (tname->move)
+      move = 1;
+    if (ttname == NULL)
+      {
+        ttname =
+    (struct sysname *)myalloc (szsysname, __FILE__, __LINE__);
+        ttt = ttname;
+      }
+    else
+      {
+        ttt = ttname;
+        while (ttt)
+    {
+      if ((strlen (tname->persarea) == strlen (ttt->persarea)) &&
+          (strcmp (tname->persarea, ttt->persarea) == 0))
+        goto copied;
+      ttt = ttt->next;
+    }
+        ttt = ttname;
+        while (ttt->next)
+    ttt = ttt->next;
+        ttt->next =
+    (struct sysname *)myalloc (szsysname, __FILE__, __LINE__);
+        ttt = ttt->next;
+      }
+    memcpy (ttt->persarea, tname->persarea, arealength);
+    ttt->next = NULL;
+    if ((setarea (tname->persarea, 1)) == 0)
+      {
+        wipearea = 0;
+        wascopy = 1;
+        totpers++;
+        gpers = 1;
+        buftosqd (persarea, pindex, 1);
+        gpers = 0;
+      }
+    if (type == 1)
+      {
+        if (tname->templ[0])
+    {
+      if ((tmpl =
+           (short)sopen (tname->templ, O_RDONLY | O_BINARY,
+             SH_DENYWR)) != -1)
+        {
+          bufmess.toname =
+      (char *)myalloc (36, __FILE__, __LINE__);
+          bufmess.fromname =
+      (char *)myalloc (36, __FILE__, __LINE__);
+          bufmess.subj = (char *)myalloc (72, __FILE__, __LINE__);
+          bufmess.tozone = bufpkt.fromzone;
+          bufmess.tonet = bufpkt.fromnet;
+          bufmess.tonode = bufpkt.fromnode;
+          bufmess.topoint = bufpkt.frompoint;
+          bufmess.fromzone = newarea->myaka.zone;
+          bufmess.fromnet = newarea->myaka.net;
+          bufmess.fromnode = newarea->myaka.node;
+          bufmess.frompoint = newarea->myaka.point;
+          mystrncpy (bufmess.toname, bufpkt.fromname, 35);
+          mystrncpy (bufmess.fromname, "Parma Tosser", 35);
+          mystrncpy (bufmess.subj, bufpkt.subj, 71);
+          mtolen = strlen (bufmess.toname);
+          mfromlen = strlen (bufmess.fromname);
+          msubjlen = strlen (bufmess.subj);
+          bufmess.flags = 0x181;
+          mbigmess = 1;
+          tempmsg = templat (0, tmpl);
+          lseek (tempmsg, 0, SEEK_SET);
+          templen = (unsigned short)ptextlen;
+          pmsglen = ptextlen = filelength (tempmsg);
+          pmsglen += pkludlen - 1;
+          mckludge = NULL;
+          buftomsg (4);
+          pmsglen = ptextlen = templen;
+          cclose (&tempmsg, __FILE__, __LINE__);
+          cclose (&tmpl, __FILE__, __LINE__);
+          unlink (pttmpl);
+          myfree ((void **)&bufmess.subj, __FILE__, __LINE__);
+          myfree ((void **)&bufmess.toname, __FILE__, __LINE__);
+          myfree ((void **)&bufmess.fromname, __FILE__, __LINE__);
+        }
+    }
+      }
+    mustcopy = 0;
+    wipearea = 1;
+  }
     copied:
       tname = tname->next;
     }
@@ -1000,13 +1002,13 @@ void writeboth (short type)
     {
       tlist = rlist;
       while (tlist)
-	{
-	  for (carea = 0; carea < tlist->numlists; carea++)
-	    if (stricmp (tlist->alist[carea].areaname, arealist) == 0 &&
-		strlen (tlist->alist[carea].areaname) == strlen (arealist))
-	      goto nfound;
-	  tlist = tlist->next;
-	}
+  {
+    for (carea = 0; carea < tlist->numlists; carea++)
+      if (stricmp (tlist->alist[carea].areaname, arealist) == 0 &&
+    strlen (tlist->alist[carea].areaname) == strlen (arealist))
+        goto nfound;
+    tlist = tlist->next;
+  }
     }
 nfound:
   if (type == 1 && both)
@@ -1014,17 +1016,17 @@ nfound:
       tarealen = arealen;
       tlkludlen = lkludlen;
       if (tlist)
-	{
-	  if (!tlist->alist[carea].scanned)
-	    {
-	      memcpy (&tpktaddr, &pktaddr, szmyaddr);
-	      scansqd ();
-	      memcpy (&pktaddr, &tpktaddr, szmyaddr);
-	      tlist->alist[carea].scanned = 1;
-	    }
-	}
+  {
+    if (!tlist->alist[carea].scanned)
+      {
+        memcpy (&tpktaddr, &pktaddr, szmyaddr);
+        scansqd ();
+        memcpy (&pktaddr, &tpktaddr, szmyaddr);
+        tlist->alist[carea].scanned = 1;
+      }
+  }
       if (newarea->numlinks > 1)
-	msgout (1);
+  msgout (1);
       arealen = tarealen;
       lkludlen = tlkludlen;
     }
@@ -1050,12 +1052,12 @@ void backup (short type)
        (short)sopen (btpack.name, O_RDWR | O_BINARY, SH_DENYWR)) == -1)
     {
       if ((btpack.handle =
-	   (short)sopen (btpack.name, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-			 S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-	{
-	  mystrncpy (errname, btpack.name, DirSize);
-	  errexit (2, __FILE__, __LINE__);
-	}
+     (short)sopen (btpack.name, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
+       S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+  {
+    mystrncpy (errname, btpack.name, DirSize);
+    errexit (2, __FILE__, __LINE__);
+  }
       btpack.touched = 0;
     }
   btpack.opened = 1;

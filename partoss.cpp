@@ -1,6 +1,8 @@
 // MaxiM: find_t _fullpath
 
 #include "partoss.h"
+#include "arealias.h"
+#include "version.h"
 
 /***ash  Use wlink OPTION STACK instead of _stklen
 #ifdef __DOS__

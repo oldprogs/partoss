@@ -135,8 +135,6 @@ extern unsigned long curhash;
 
 extern struct pool *glpool;
 
-extern list < areaalias > areaaliaslist;
-
 extern long int umask_val;
 
 extern char pttmpl[DirSize + 1];
