@@ -2,6 +2,12 @@
 
 #include "partoss.h"
 #include "globext.h"
+#include "globfunc.h"
+
+#include "parsrout.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "chains.h"
 
 void runroute (void)
 {

@@ -3,6 +3,8 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "environ.h"
+
 #ifdef M_I386
 #define intx86 int386
 #else

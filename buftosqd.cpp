@@ -3,7 +3,14 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "buftosqd.h"
 #include "partserv.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "control.h"
+#include "tossarcs.h"
+#include "partpost.h"
 
 short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
 {

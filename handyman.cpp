@@ -3,6 +3,10 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "handyman.h"
+#include "lowlevel.h"
+#include "partserv.h"
+
 void handyman (short argc, char **argv)
 {
   short i = 0, j = 0;

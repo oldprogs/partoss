@@ -28,6 +28,9 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "lowlevel.h"
+#include "crc32.h"
+
 //#define MALLOC_DEBUG
 // LINK_PROFILE включает пpофилиpование по вpемени исполнения.
 //#define LINK_PROFILE

@@ -1,0 +1,1 @@
+void buftomsg (short type);

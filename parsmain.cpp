@@ -2,11 +2,20 @@
 
 #include "partoss.h"
 #include "globext.h"
+#include "globfunc.h"
 
-#include "arealias.h"
 #include "parsmain.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "environ.h"
+#include "arealias.h"
+#include "chains.h"
+#include "control.h"
+
 #if defined (__linux__) || defined (__FreeBSD__)
 #include "mappath.h"
+#include "locks.h"
 #endif
 
 char *keywords[] = {
@@ -212,11 +221,15 @@ void runmainset (void)
   bcfg.guard = '#';
   cfname[strlen (cfname) - 1] = 'a';
   finish = 0;
-  while (!finish)
-    {
+   while (!finish)
+   {
+#if defined (__linux__) || defined (__FreeBSD__)
+      if (checklock(lockname))
+      {
+#else
       areaset = (short)sopen (cfname, O_RDWR | O_BINARY, SH_DENYNO);
       if (areaset == -1)
-  {
+      {
     switch (errno)
       {
       case ENOENT:
@@ -235,6 +248,7 @@ void runmainset (void)
         errexit (2, __FILE__, __LINE__);
       case EACCES:
       case -1:
+#endif
         if (mustdie)
     errexit (14, __FILE__, __LINE__);
         else if (lich)
@@ -243,15 +257,25 @@ void runmainset (void)
       logwrite (1, 1);
     }
         mtsleep (5);
+#if !defined (__linux__) && !defined (__FreeBSD__)
         break;
       default:
         mystrncpy (errname, cfname, DirSize);
         errexit (2, __FILE__, __LINE__);
       }
-  }
+#endif
+      }
       else
-  finish = 1;
-    }
+         finish = 1;
+   }
+#if defined (__linux__) || defined (__FreeBSD__)
+   if (writelock(lockname) == -1)
+   {
+      mystrncpy (errname, lockname, DirSize);
+      errexit (2, __FILE__, __LINE__);
+   };
+   lck = 1;
+#endif
   chsize (areaset, 0);
   lseek (areaset, 0, SEEK_SET);
   cfname[strlen (cfname) - 1] = 'i';

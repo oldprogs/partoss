@@ -4,6 +4,11 @@
 #include "globext.h"
 
 #include "linkbase.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "crc32.h"
+#include "partsqd.h"
+#include "linkareb.h"
 
 long maxmsg;
 short linkpos;

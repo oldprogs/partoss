@@ -1,0 +1,33 @@
+void mylocaltime(const time_t *timer, struct tm *localtimer);
+short hex (char hexdigit);
+unsigned long asciihex (char *string);
+void readblock (short handle, short level);
+void getstring (short level);
+void gettoken (short level);
+void tokencpy (char *string, short smax);
+void makebin (char *string);
+short cmpaddr (struct myaddr *first, struct myaddr *second);
+short cmpaddrw (struct myaddr *first, struct myaddr *second);
+unsigned long hash (char *string);
+void mywrite (short handle, char *string, char *file, unsigned short line);
+void logwrite (short first, short level);
+void badlog (struct area *barea);
+void parseaddr (char *address, struct myaddr *straddr, short length);
+void hexascii (unsigned long value, char *string);
+#ifdef __DOS__
+void lpselect (char page);
+void illpselect (char page);
+#endif
+void flushbuf (short handle);
+void sortfpkt (short what);
+void addpacket (char *path, short where);
+void addarcs (char *path, struct find_t *fblk, short secure);
+void *myalloc (unsigned length, char *file, unsigned short line);
+void *myrealloc (void *buf, unsigned length, char *file, unsigned short line);
+void myfree (void **buf, char *file, unsigned short line);
+char *mystrncpy (char *dest, const char *src, unsigned short len);
+char *mystrncat (char *dest, const char *src, unsigned short len, unsigned short maxsize);
+short rrename (char *from, char *to);
+short movefile (char *src, char *dst);
+short wildcard (char *mask, char *string);
+int wildnew (char *mask, char *string);

@@ -3,6 +3,11 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "morfiles.h"
+#include "lowlevel.h"
+#include "errors.h"
+#include "environ.h"
+
 #ifdef __DOS__
 unsigned int far *psp = NULL;
 #endif

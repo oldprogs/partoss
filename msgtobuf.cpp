@@ -3,6 +3,11 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "msgtobuf.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "control.h"
+
 short msgtobuf (char *fname)
 {
   short msg, noempty = 0, i, j;

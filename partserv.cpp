@@ -4,6 +4,20 @@
 #include "globext.h"
 
 #include "partserv.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "control.h"
+#include "scanbase.h"
+#include "times.h"
+#include "packets.h"
+#include "parsrout.h"
+#include "partsqd.h"
+#include "buftomsg.h"
+#include "template.h"
+#include "chains.h"
+#include "attach.h"
+#include "msgtobuf.h"
 
 struct uplname *uareas = NULL;
 short badlink, manager = 0, temptoklen;

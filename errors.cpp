@@ -3,6 +3,14 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "errors.h"
+#include "lowlevel.h"
+#include "partsqd.h"
+
+#if defined (__linux__) || defined (__FreeBSD__)
+#include "locks.h"
+#endif
+
 void errexit (short error, char *file, unsigned short line)
 {
   short retcode = 0, asis = 0;
@@ -180,6 +188,10 @@ void errexit (short error, char *file, unsigned short line)
       Close (areaset);
       areaset = 0;
     }
+#if defined (__linux__) || defined (__FreeBSD__)
+   removelock(lockname);
+   lck = 0;
+#endif
   cfname[strlen (cfname) - 1] = 'a';
   unlink (cfname);
   if (areandx)

@@ -2,17 +2,19 @@
 
 #include "partoss.h"
 #include "globext.h"
+#include "globfunc.h"
+
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "environ.h"
+#include "times.h"
 
 #ifdef M_I386
 #define intx86 int386
 #else
 #define intx86 int86
 #endif
-
-void mylocaltime(const time_t *timer, struct tm *localtimer)
-{
-   memcpy(localtimer, localtime(timer), sizeof(tm));
-};
 
 short hex (char hexdigit)
 {
@@ -970,3 +972,8 @@ int wildnew (char *mask, char *string)
   else
     return 1;
 }
+
+void mylocaltime(const time_t *timer, struct tm *localtimer)
+{
+   memcpy(localtimer, localtime(timer), sizeof(tm));
+};

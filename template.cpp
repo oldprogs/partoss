@@ -3,6 +3,12 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "template.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "times.h"
+
 short templat (short fhandle, short thandle)
 {
   short retfile, i, numalias = 16, thnd;

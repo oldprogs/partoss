@@ -3,6 +3,15 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "partsqd.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "chains.h"
+#include "attach.h"
+#include "environ.h"
+#include "partserv.h"
+
 short setarea (char *areaname, short pers)
 {
   wipearea = 1;

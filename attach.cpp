@@ -3,7 +3,16 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "attach.h"
 #include "archives.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "crc32.h"
+#include "chains.h"
+#include "times.h"
+#include "environ.h"
+#include "buftomsg.h"
 
 short make, exist;
 unsigned short addarc;

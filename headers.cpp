@@ -3,6 +3,10 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "headers.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+
 void writehead (void)
 {
   union pktheader pkth;

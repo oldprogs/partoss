@@ -1,10 +1,26 @@
 // MaxiM: find_t _fullpath
 
 #include "partoss.h"
+#include "globfunc.h"
 
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
 #include "arealias.h"
 #include "version.h"
 #include "rebuild.h"
+#include "partsqd.h"
+#include "environ.h"
+#include "partset.h"
+#include "partserv.h"
+#include "scanbase.h"
+#include "handyman.h"
+#include "attach.h"
+#include "killold.h"
+#include "partpost.h"
+#include "tossarcs.h"
+#include "packets.h"
+#include "chains.h"
 
 /***ash  Use wlink OPTION STACK instead of _stklen
 #ifdef __DOS__
@@ -163,6 +179,8 @@ list < areaalias > areaaliaslist;
 
 #if defined (__linux__) || defined (__FreeBSD__)
 long int umask_val;
+char lockname[DirSize + 1];
+short lck;
 #endif
 
 int main (int argc, char **argv)
@@ -255,14 +273,23 @@ int main (int argc, char **argv)
   {
     mystrncpy (crtreprt, bcfg.workdir, DirSize);
     mystrncpy (pttmpl, bcfg.workdir, DirSize);
+#if defined (__linux__) || defined (__FreeBSD__)
+    mystrncpy (lockname, bcfg.workdir, DirSize);
+#endif
   }
   else
   {
     mystrncpy (crtreprt, homedir, DirSize);
     mystrncpy (pttmpl, homedir, DirSize);
+#if defined (__linux__) || defined (__FreeBSD__)
+    mystrncpy (lockname, homedir, DirSize);
+#endif
   }
   mystrncat (crtreprt, (char *)"crtreprt.$$$", 16, DirSize);
   mystrncat (pttmpl, (char *)"parttmpl.$$$", 16, DirSize);
+#if defined (__linux__) || defined (__FreeBSD__)
+  mystrncat (lockname, (char *)"partoss.pid", 16, DirSize);
+#endif
   if (argc == 1)
     errexit (10, __FILE__, __LINE__);
   blog = secure = 0;

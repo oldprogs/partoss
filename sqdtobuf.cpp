@@ -3,6 +3,13 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "sqdtobuf.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "control.h"
+#include "times.h"
+#include "crc32.h"
+
 short sqdtobuf (struct area *ttarea, struct sqifile *tindex, long number)
 {
   long firstpos, tpos;

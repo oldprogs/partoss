@@ -3,6 +3,9 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "chains.h"
+#include "lowlevel.h"
+
 void addshort (struct shortchain *chain, unsigned short net,
 	       unsigned short node)
 {

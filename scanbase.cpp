@@ -3,8 +3,23 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "scanbase.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
 #include "rebuild.h"
 #include "linkbase.h"
+#include "packets.h"
+#include "control.h"
+#include "attach.h"
+#include "chains.h"
+#include "partsqd.h"
+#include "sqdtobuf.h"
+#include "times.h"
+#include "crc32.h"
+#include "parsrout.h"
+#include "buftopkt.h"
+#include "msgtobuf.h"
 
 void scanbase (char *arealist, short type)	// 1 - scan, 2 - link, 3 - purge, 4 - fix
 {

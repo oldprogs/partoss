@@ -3,6 +3,16 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "buftomsg.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "tossarcs.h"
+#include "crc32.h"
+#include "buftosqd.h"
+#include "times.h"
+#include "buftopkt.h"
+
 void buftomsg (short type)
 {
   struct kludge *tkludge = NULL;

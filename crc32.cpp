@@ -3,6 +3,9 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "crc32.h"
+#include "lowlevel.h"
+
 unsigned long cr3tab[256] = {	/* CRC polynomial 0xedb88320 */
   0x00000000ul, 0x77073096ul, 0xee0e612cul, 0x990951baul, 0x076dc419ul,
     0x706af48ful, 0xe963a535ul, 0x9e6495a3ul,

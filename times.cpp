@@ -3,7 +3,7 @@
 #include "partoss.h"
 #include "globext.h"
 
-struct tm timetottmt (char *time);
+#include "times.h"
 
 unsigned long strtime (char *mtime)
 {

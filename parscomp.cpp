@@ -2,8 +2,14 @@
 
 #include "partoss.h"
 #include "globext.h"
+#include "globfunc.h"
 
+#include "parscomp.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
 #include "archives.h"
+#include "environ.h"
 
 char *arckeys[] = {
   "Archiver",

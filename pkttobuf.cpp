@@ -3,6 +3,13 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "pkttobuf.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "times.h"
+#include "control.h"
+#include "crc32.h"
+
 void pkttobuf (void)
 {
   unsigned short i, j, fmax2, validdt, dtlen;

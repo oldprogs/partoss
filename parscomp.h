@@ -1,0 +1,1 @@
+void runcompset (void);

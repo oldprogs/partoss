@@ -3,6 +3,14 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "partset.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "parsmain.h"
+#include "parscomp.h"
+#include "attach.h"
+#include "parsrout.h"
+
 void readsetup (void)
 {
   short i, j, fset, inset, outset, servset, wo;

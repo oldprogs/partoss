@@ -136,5 +136,7 @@ extern unsigned long curhash;
 extern struct pool *glpool;
 
 extern long int umask_val;
+extern char lockname[DirSize + 1];
+extern short lck;
 
 extern char pttmpl[DirSize + 1];

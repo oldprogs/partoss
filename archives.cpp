@@ -4,6 +4,9 @@
 #include "globext.h"
 
 #include "archives.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
 
 #ifdef __DOS__
 

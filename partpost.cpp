@@ -2,6 +2,19 @@
 
 #include "partoss.h"
 #include "globext.h"
+#include "globfunc.h"
+
+#include "partpost.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "template.h"
+#include "times.h"
+#include "partsqd.h"
+#include "buftosqd.h"
+#include "buftomsg.h"
+#include "chains.h"
+#include "control.h"
 
 short poster (short type)
 {

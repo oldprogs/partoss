@@ -3,7 +3,15 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "buftopkt.h"
 #include "arealias.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "times.h"
+#include "control.h"
+#include "headers.h"
+#include "chains.h"
 
 void buftopkt (short type)
 {

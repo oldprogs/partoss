@@ -3,8 +3,25 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "tossarcs.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
 #include "archives.h"
 #include "partserv.h"
+#include "control.h"
+#include "attach.h"
+#include "partsqd.h"
+#include "crc32.h"
+#include "parsrout.h"
+#include "buftopkt.h"
+#include "buftomsg.h"
+#include "buftosqd.h"
+#include "headers.h"
+#include "pkttobuf.h"
+#include "template.h"
+#include "scanbase.h"
+#include "packets.h"
 
 long badpos;
 

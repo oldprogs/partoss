@@ -3,8 +3,17 @@
 #include "partoss.h"
 #include "globext.h"
 
-short kill (char *tmpname, short boxes, struct link *blink);
-short killbox (struct link *blink);
+#include "killold.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "times.h"
+#include "control.h"
+#include "msgtobuf.h"
+#include "crc32.h"
+#include "attach.h"
+#include "buftomsg.h"
+#include "template.h"
 
 char shname[16], fname[16], fpname[16];
 short zfile;

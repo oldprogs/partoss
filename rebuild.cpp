@@ -4,6 +4,17 @@
 #include "globext.h"
 
 #include "rebuild.h"
+#include "lowlevel.h"
+#include "morfiles.h"
+#include "errors.h"
+#include "partsqd.h"
+#include "buftosqd.h"
+#include "sqdtobuf.h"
+#include "times.h"
+#include "control.h"
+#include "tossarcs.h"
+#include "attach.h"
+#include "crc32.h"
 
 void rebuild (long aoffset, short type)
 {
