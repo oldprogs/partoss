@@ -2,6 +2,7 @@
 
 #include "partoss.h"
 #include "arealias.h"
+#include "rebuild.h"
 #include "version.h"
 
 /***ash  Use wlink OPTION STACK instead of _stklen

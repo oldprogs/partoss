@@ -13,7 +13,7 @@
 //#endif
 
 
-/* $Id: partoss.h,v 1.7 2003/03/07 21:59:10 saf2 Exp $ */
+/* $Id: partoss.h,v 1.8 2003/03/08 07:58:03 saf2 Exp $ */
 /* Ported partially */
 #ifdef HAVE_CONFIG_H
 
@@ -801,11 +801,6 @@ short diffdays (unsigned long a, unsigned long b);
 void killold (void);
 void handyman (short argc, char **argv);
 void writearea (short handle, struct area *ttarea, char *descr, short type);
-void areasort (short sort);
-void parser (char *file, short level);
-void chareacfg (struct uplname *areas, char *file);
-void chlinkcfg (struct link *blink, char *file);
-void tossbad (void);
 short rrename (char *from, char *to);
 void badlog (struct area *barea);
 void trans (char *string, short length);

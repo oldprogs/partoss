@@ -1,8 +1,10 @@
 // MaxiM: memicmp
 
 #include "partoss.h"
-#include "arealias.h"
 #include "globext.h"
+
+#include "arealias.h"
+#include "parsmain.h"
 #if defined (__linux__) || defined (__FreeBSD__)
 #include "mappath.h"
 #endif
