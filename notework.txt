@@ -15,3 +15,5 @@
     почты.
 
 - Команда Post выполнялась также как и PostF при сборке Borland C/C++
+
+- Портились кладжи при SaveControlInfo Path

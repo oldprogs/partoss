@@ -399,7 +399,11 @@ void buftopkt (short type)
       {
         fakeorigin (fake, tbuf, fmax2);
         if (type < 3)
-    temp = locseenby (tbuf);
+        {
+           temp = locseenby (tbuf);
+           if ((bcfg.delinfo == 2) && (temp == NULL))
+              temp = locpath (tbuf);
+        };
         if (temp == NULL || type > 2)
     {
       if (fmax2 == buflen)
@@ -458,7 +462,11 @@ void buftopkt (short type)
   {
     fakeorigin (fake, buftemp->text, textlen);
     if (type < 3)
-      temp = locseenby (buftemp->text);
+    {
+       temp = locseenby (buftemp->text);
+       if ((bcfg.delinfo == 2) && (temp == NULL))
+           temp = locpath (buftemp->text);
+    };
     if (temp == NULL || type > 2)
       {
         if (textlen > 0)
