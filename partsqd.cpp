@@ -404,7 +404,11 @@ void createarea (char *areaname, short pers, struct myaddr *pktaddr2)
   short i, j;
   short usingshablon = 0;
   unsigned short autonum = 0, tnum, fplen;
+#ifdef __BORLANDC__
+  unsigned date, time;
+#else
   unsigned short date, time /*,fyear,fmonth,fday */ ;
+#endif
   // unsigned short fhour,fmin,fsec;
   char newname[BufSize + 1], tareaname[arealength + 1], autotemp[5], *temp =
     NULL, *temp2 = NULL;
@@ -789,13 +793,9 @@ founddef:
       writearea (setf, crarea, NULL, 1);
 #ifdef __DOS__
 //    _dos_getftime(setf,&(unsigned short)date,&(unsigned short)time);
-      _dos_getftime (setf, &date, &time);
+      _dos_getftime (setf, &date, &time); // ???
 #else
-#ifdef __BORLANDC__
-    _dos_getftime(setf,(unsigned *)&date,(unsigned *)&time);
-#else
-      _dos_getftime (setf, &date, &time);
-#endif
+      _dos_getftime (setf, &date, &time); // ???
 #endif
 /*    fyear=(short)(((date&0xfe00)>>9)+1980);
     fmonth=(short)((date&0x1e0)>>5);

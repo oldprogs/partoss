@@ -8,7 +8,12 @@ short poster (short type)
   short i, j, makemess = 0, netmail, numkeys = 9, day, numflags =
     13, tfile, cfile;
   short istear, isorig, oldboth, waspost = 0;
-  unsigned short fmax2, tdate, ttime, fday, fmonth, fyear;
+  unsigned short fmax2, fday, fmonth, fyear;
+#ifdef __BORLANDC__
+  unsigned tdate, ttime;
+#else
+  unsigned short tdate, ttime;
+#endif
   // unsigned short fhour,fmin,fsec;
   char msgid[9], tear[81], orig[81], *temp =
     NULL, bfile[DirSize + 1], *tstring = NULL, hfile[DirSize + 1], sa[2];
@@ -31,11 +36,7 @@ short poster (short type)
 //      _dos_getftime(packset,&((unsigned)tdate),&((unsigned)ttime));
 	  _dos_getftime (packset, &tdate, &ttime);
 #else
-#ifdef __BORLANDC__
-      _dos_getftime(packset,(unsigned *)&tdate,(unsigned *)&ttime);
-#else
 	  _dos_getftime (packset, &tdate, &ttime);
-#endif
 #endif
 	  fyear = (unsigned short)(((tdate & 0xfe00) >> 9) /*+1980 */ );
 	  fmonth = (unsigned short)((tdate & 0x1e0) >> 5);
