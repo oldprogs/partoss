@@ -13,7 +13,7 @@
 //#endif
 
 
-/* $Id: partoss.h,v 1.8 2003/03/08 07:58:03 saf2 Exp $ */
+/* $Id: partoss.h,v 1.9 2003/03/14 18:35:25 saf2 Exp $ */
 /* Ported partially */
 #ifdef HAVE_CONFIG_H
 
@@ -829,12 +829,7 @@ void backup (short type);
 void addhome (char *dest, char *source);
 void addarcs (char *path, struct find_t *fblk, short secure);
 short wildcard (char *mask, char *string);
-void linknet (void);
-void setreplyn (short from, short to);
-void readnet2 (short pos, short type);
-void readnet (short file, short pos, short type);
 
-void untoss (void);
 
 #ifdef __DOS__
 

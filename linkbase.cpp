@@ -1,6 +1,7 @@
 // MaxiM: strupr stricmp
 
 #include "partoss.h"
+#include "linkbase.h"
 #include "globext.h"
 
 long maxmsg;
@@ -18,38 +19,38 @@ void linksqds (long aoffset)
   if (newarea->type != 0)
     {
       if (newarea->type != 2 && newarea->type != 3)
-	{
-	  if (!newarea->passthr)
-	    {
-	      if (bcfg.fastlink)
-		{
-		  if (newarea->linktype)
-		    linktype = newarea->linktype;
-		  else
-		    linktype = (short)(bcfg.linktype + 1);
-		  if (linktype == 5)
-		    return;
-		  if (!quiet)
-		    ccprintf ("%-60s\r", newarea->areaname);
+  {
+    if (!newarea->passthr)
+      {
+        if (bcfg.fastlink)
+    {
+      if (newarea->linktype)
+        linktype = newarea->linktype;
+      else
+        linktype = (short)(bcfg.linktype + 1);
+      if (linktype == 5)
+        return;
+      if (!quiet)
+        ccprintf ("%-60s\r", newarea->areaname);
 /* LMA !!!          linkArea(newarea->areafp,linktype); */
-		  linkArea (newarea->areafp, linktype);
-		}
-	      else
-		{
-		  tmustlog = mustlog;
-		  mustlog = 0;
-		  opensqd (newarea, nindex, 0, 0);
-		  if (!arealock)
-		    {
-		      newarea->links.chain = newarea->links.last = NULL;
-		      newarea->links.numelem = 0;
-		      linksqd ();
-		      closesqd (newarea, 0);
-		      mustlog = tmustlog;
-		    }
-		}
-	    }
-	}
+      linkArea (newarea->areafp, linktype);
+    }
+        else
+    {
+      tmustlog = mustlog;
+      mustlog = 0;
+      opensqd (newarea, nindex, 0, 0);
+      if (!arealock)
+        {
+          newarea->links.chain = newarea->links.last = NULL;
+          newarea->links.numelem = 0;
+          linksqd ();
+          closesqd (newarea, 0);
+          mustlog = tmustlog;
+        }
+    }
+      }
+  }
     }
   else if (bcfg.netlink)
     linknet ();
@@ -69,89 +70,89 @@ void linksqd (void)
   if (maxmsg)
     {
       msgid =
-	(unsigned long *)myalloc ((unsigned)(szlong * maxmsg), __FILE__,
-				  __LINE__);
+  (unsigned long *)myalloc ((unsigned)(szlong * maxmsg), __FILE__,
+          __LINE__);
       if (linktype != 2)
-	reply =
-	  (unsigned long *)myalloc ((unsigned)(szlong * maxmsg), __FILE__,
-				    __LINE__);
+  reply =
+    (unsigned long *)myalloc ((unsigned)(szlong * maxmsg), __FILE__,
+            __LINE__);
       for (i = 0; i < maxmsg; i++)
-	{
-	  j = readmsg (i, 0);
-	  if (j < 0)
-	    goto linkexit;
-	}
+  {
+    j = readmsg (i, 0);
+    if (j < 0)
+      goto linkexit;
+  }
       if ((linktype & 1) == 1)
-	{
-	  for (i = 0; i < maxmsg; i++)
-	    {
-	      if (msgid[(unsigned)i])
-		{
-		  for (j = 0; j < maxmsg; j++)
-		    {
-		      if ((reply[(unsigned)j] == msgid[(unsigned)i])
-			  && (i != j))
-			setreply (i + 1, j + 1);
-		    }
-		}
-	    }
-	  if (linktype == 1)
-	    {
-	      for (i = 0; i < maxmsg - 1; i++)
-		{
-		  if (reply[(unsigned)i])
-		    {
-		      for (j = i + 1; j < maxmsg; j++)
-			{
-			  if (reply[(unsigned)j] == reply[(unsigned)i])
-			    setreply (i + 1, j + 1);
-			}
-		    }
-		}
-	    }
-	}
+  {
+    for (i = 0; i < maxmsg; i++)
+      {
+        if (msgid[(unsigned)i])
+    {
+      for (j = 0; j < maxmsg; j++)
+        {
+          if ((reply[(unsigned)j] == msgid[(unsigned)i])
+        && (i != j))
+      setreply (i + 1, j + 1);
+        }
+    }
+      }
+    if (linktype == 1)
+      {
+        for (i = 0; i < maxmsg - 1; i++)
+    {
+      if (reply[(unsigned)i])
+        {
+          for (j = i + 1; j < maxmsg; j++)
+      {
+        if (reply[(unsigned)j] == reply[(unsigned)i])
+          setreply (i + 1, j + 1);
+      }
+        }
+    }
+      }
+  }
       else
-	{
-	  if (linktype == 2)
-	    {
-	      for (i = 0; i < maxmsg; i++)
-		{
+  {
+    if (linktype == 2)
+      {
+        for (i = 0; i < maxmsg; i++)
+    {
 //          if(msgid[i])
 //           {
-		  for (j = i + 1; j < maxmsg; j++)
-		    {
-		      if (msgid[(unsigned)j] == msgid[(unsigned)i])
-			{
-			  setreply (i + 1, j + 1);
-			  break;
-			}
-		    }
+      for (j = i + 1; j < maxmsg; j++)
+        {
+          if (msgid[(unsigned)j] == msgid[(unsigned)i])
+      {
+        setreply (i + 1, j + 1);
+        break;
+      }
+        }
 //           }
-		}
-	    }
-	  else
-	    {
-	      for (i = 0; i < maxmsg; i++)
-		{
-		  linkpos = 0;
-		  if (msgid[(unsigned)i])
-		    {
-		      for (j = 0; j < maxmsg && linkpos < 10; j++)
-			{
-			  if ((reply[(unsigned)j] == msgid[(unsigned)i])
-			      && (i != j))
-			    {
-			      setreply (i + 1, j + 1);
-			      linkpos++;
-			    }
-			}
-		    }
-		}
-	    }
-	}
+    }
+      }
+    else
+      {
+        for (i = 0; i < maxmsg; i++)
+    {
+      linkpos = 0;
+      if (msgid[(unsigned)i])
+        {
+          for (j = 0; j < maxmsg && linkpos < 10; j++)
+      {
+        if ((reply[(unsigned)j] == msgid[(unsigned)i])
+            && (i != j))
+          {
+            setreply (i + 1, j + 1);
+            linkpos++;
+          }
+      }
+        }
+    }
+      }
+  }
     linkexit:
       if (linktype != 2)
-	myfree ((void **)&reply, __FILE__, __LINE__);
+  myfree ((void **)&reply, __FILE__, __LINE__);
       myfree ((void **)&msgid, __FILE__, __LINE__);
     }
 }
@@ -173,57 +174,57 @@ void setreply (long from, long to)
   else
     {
       if (!(head.replyto))
-	{
-	  next = readmsg (from - 1, 1);
-	  loop = next;
-	  while (head.nextreply[0])
-	    {
-	      from = head.nextreply[0];
-	      loop2 = from;
-	      newarea->curindex = 0;
-	      lseek (newarea->sqd.sqi, 0, SEEK_SET);
-	      j =
-		rread (newarea->sqd.sqi, nindex,
-		       (unsigned short)(bufsqi * 12), __FILE__, __LINE__);
-	      while (j)
-		{
-		  for (i = 0; i < j / 12; i++)
-		    if (nindex[(unsigned)i].umsgid == from)
-		      goto ifound;
-		  newarea->curindex += bufsqi;
-		  j =
-		    rread (newarea->sqd.sqi, nindex,
-			   (unsigned short)(bufsqi * 12), __FILE__, __LINE__);
-		}
-	      goto infound;
-	    ifound:
-	      from = newarea->curindex + i + 1;
-	      if (from == loop2 && linktype == 2)
-		{
-		  sprintf (logout,
-			   "??? Index/Chain loop in area %s (# %ld), use SQFix",
-			   newarea->areaname, from);
-		  logwrite (1, 1);
-		  goto infound;
-		}
-	      next = readmsg (from - 1, 1);
-	      if (next == loop && linktype == 2)
-		{
-		  sprintf (logout,
-			   "??? Index/Chain loop in area %s (# %ld), use SQFix",
-			   newarea->areaname, from);
-		  logwrite (1, 1);
-		  goto infound;
-		}
-	    }
-	  head.nextreply[0] = prev;
-	  writemsg (from - 1);
-	  prev = readmsg (to - 1, 1);
-	  head.replyto = next;
-	  writemsg (to - 1);
-	infound:
-	  ;
-	}
+  {
+    next = readmsg (from - 1, 1);
+    loop = next;
+    while (head.nextreply[0])
+      {
+        from = head.nextreply[0];
+        loop2 = from;
+        newarea->curindex = 0;
+        lseek (newarea->sqd.sqi, 0, SEEK_SET);
+        j =
+    rread (newarea->sqd.sqi, nindex,
+           (unsigned short)(bufsqi * 12), __FILE__, __LINE__);
+        while (j)
+    {
+      for (i = 0; i < j / 12; i++)
+        if (nindex[(unsigned)i].umsgid == from)
+          goto ifound;
+      newarea->curindex += bufsqi;
+      j =
+        rread (newarea->sqd.sqi, nindex,
+         (unsigned short)(bufsqi * 12), __FILE__, __LINE__);
+    }
+        goto infound;
+      ifound:
+        from = newarea->curindex + i + 1;
+        if (from == loop2 && linktype == 2)
+    {
+      sprintf (logout,
+         "??? Index/Chain loop in area %s (# %ld), use SQFix",
+         newarea->areaname, from);
+      logwrite (1, 1);
+      goto infound;
+    }
+        next = readmsg (from - 1, 1);
+        if (next == loop && linktype == 2)
+    {
+      sprintf (logout,
+         "??? Index/Chain loop in area %s (# %ld), use SQFix",
+         newarea->areaname, from);
+      logwrite (1, 1);
+      goto infound;
+    }
+      }
+    head.nextreply[0] = prev;
+    writemsg (from - 1);
+    prev = readmsg (to - 1, 1);
+    head.replyto = next;
+    writemsg (to - 1);
+  infound:
+    ;
+  }
     }
 }
 
@@ -238,7 +239,7 @@ long readmsg (long number, short type)
       newarea->curindex = (number / bufsqi) * bufsqi;
       lseek (newarea->sqd.sqi, newarea->curindex * 12, SEEK_SET);
       rread (newarea->sqd.sqi, nindex, (unsigned short)(bufsqi * 12),
-	     __FILE__, __LINE__);
+       __FILE__, __LINE__);
     }
   firstpos = nindex[(unsigned)(number - newarea->curindex)].offset;
   realnum = nindex[(unsigned)(number - newarea->curindex)].umsgid;
@@ -247,10 +248,10 @@ long readmsg (long number, short type)
   if (head.ident != 0xAFAE4453L)
     {
       sprintf (logout,
-	       "??? Area %s is damaged or index file is corrupted (# %ld)",
-	       newarea->areaname, number);
+         "??? Area %s is damaged or index file is corrupted (# %ld)",
+         newarea->areaname, number);
       if (logfileok)
-	logwrite (1, 1);
+  logwrite (1, 1);
       ccprintf ("\r\n%s\r\n", logout);
       badlog (newarea);
       return -1;
@@ -261,58 +262,58 @@ long readmsg (long number, short type)
     {
       smsglen = head.msglength - 239;
       if (smsglen > 512)
-	smsglen = 512;
+  smsglen = 512;
       rread (newarea->sqd.sqd, sqdbuf, (unsigned short)(smsglen), __FILE__,
-	     __LINE__);
+       __LINE__);
       temp = strstr (sqdbuf, "\1MSGID: ");
       if (temp && (temp - sqdbuf) < smsglen)
-	{
-	  temp2 = temp + 7;
-	  while (*temp2
-		 && !(*temp2 == '\r' || *temp2 == '\n' || *temp2 == '\1'))
-	    temp2++;
-	  temp--;
-	  memset (tmsgid, 0, 80);
-	  memcpy (tmsgid, temp + 7,
-		  (unsigned)(((temp2 - temp - 7) >
-			      79) ? 79 : (temp2 - temp - 7)));
-	  tmsgid = strupr (tmsgid);
-	  msgid[(unsigned)number] =
-	    crc32block (tmsgid, (short)strlen (tmsgid));
-	}
+  {
+    temp2 = temp + 7;
+    while (*temp2
+     && !(*temp2 == '\r' || *temp2 == '\n' || *temp2 == '\1'))
+      temp2++;
+    temp--;
+    memset (tmsgid, 0, 80);
+    memcpy (tmsgid, temp + 7,
+      (unsigned)(((temp2 - temp - 7) >
+            79) ? 79 : (temp2 - temp - 7)));
+    tmsgid = strupr (tmsgid);
+    msgid[(unsigned)number] =
+      crc32block (tmsgid, (short)strlen (tmsgid));
+  }
       else
-	msgid[(unsigned)number] = 0;
+  msgid[(unsigned)number] = 0;
       temp = strstr (sqdbuf, "\1REPLY: ");
       if (temp && (temp - sqdbuf) < smsglen)
-	{
-	  temp2 = temp + 7;
-	  while (*temp2
-		 && !(*temp2 == '\r' || *temp2 == '\n' || *temp2 == '\1'))
-	    temp2++;
-	  temp--;
-	  memset (tmsgid, 0, 80);
-	  memcpy (tmsgid, temp + 7, (unsigned)(temp2 - temp - 7));
-	  tmsgid = strupr (tmsgid);
-	  reply[(unsigned)number] =
-	    crc32block (tmsgid, (short)strlen (tmsgid));
-	}
+  {
+    temp2 = temp + 7;
+    while (*temp2
+     && !(*temp2 == '\r' || *temp2 == '\n' || *temp2 == '\1'))
+      temp2++;
+    temp--;
+    memset (tmsgid, 0, 80);
+    memcpy (tmsgid, temp + 7, (unsigned)(temp2 - temp - 7));
+    tmsgid = strupr (tmsgid);
+    reply[(unsigned)number] =
+      crc32block (tmsgid, (short)strlen (tmsgid));
+  }
       else
-	reply[(unsigned)number] = 0;
+  reply[(unsigned)number] = 0;
     }
   else
     {
       temp = head.subj;
       while (isspace (*temp))
-	temp++;
+  temp++;
       while (memicmp (temp, "Re:", 3) == 0)
-	{
-	  temp += 3;
-	  while (isspace (*temp))
-	    temp++;
-	}
+  {
+    temp += 3;
+    while (isspace (*temp))
+      temp++;
+  }
       i = (short)strlen (temp);
       if (bcfg.linklength)
-	i = (short)((i > bcfg.linklength) ? bcfg.linklength : i);
+  i = (short)((i > bcfg.linklength) ? bcfg.linklength : i);
       msgid[(unsigned)number] = crc32block (temp, i);
     }
   if (type == 0)
@@ -332,7 +333,7 @@ void writemsg (long number)
       newarea->curindex = (number / bufsqi) * bufsqi;
       lseek (newarea->sqd.sqi, newarea->curindex * 12, SEEK_SET);
       rread (newarea->sqd.sqi, nindex, (unsigned short)(bufsqi * 12),
-	     __FILE__, __LINE__);
+       __FILE__, __LINE__);
     }
   firstpos = nindex[(unsigned)(number - newarea->curindex)].offset;
   lseek (newarea->sqd.sqd, firstpos, SEEK_SET);
@@ -362,34 +363,34 @@ void linknet (void)
   if (fgood == 0)
     {
       msgidn =
-	(struct msglink *)myalloc ((sizeof (struct msglink) * bcfg.maxnet),
-				   __FILE__, __LINE__);
+  (struct msglink *)myalloc ((sizeof (struct msglink) * bcfg.maxnet),
+           __FILE__, __LINE__);
 /*
     if(linktype!=2)
       replyn=(struct msglink *)myalloc((sizeof(struct msglink)*bcfg.maxnet),__FILE__,__LINE__);
 */
       while (fgood == 0)
-	{
-	  mystrncpy (cfilemsg, newarea->areafp, DirSize);
-	  mystrncat (cfilemsg, fblk.name, 15, DirSize);
-	  mess = (short)sopen (cfilemsg, O_RDWR | O_BINARY, SH_DENYWR);
-	  msgidn[curpos].number = (short)atoi (fblk.name);
+  {
+    mystrncpy (cfilemsg, newarea->areafp, DirSize);
+    mystrncat (cfilemsg, fblk.name, 15, DirSize);
+    mess = (short)sopen (cfilemsg, O_RDWR | O_BINARY, SH_DENYWR);
+    msgidn[curpos].number = (short)atoi (fblk.name);
 /*
       if(linktype!=2)
         replyn[curpos].number=(short)atoi(fblk.name);
 */
-	  readnet (mess, curpos, 0);
-	  cclose (&mess, __FILE__, __LINE__);
-	  curpos++;
-	  if (curpos >= bcfg.maxnet)
-	    goto linkit;
-	  fgood = (short)_dos_findnext (&fblk);
-	}
+    readnet (mess, curpos, 0);
+    cclose (&mess, __FILE__, __LINE__);
+    curpos++;
+    if (curpos >= bcfg.maxnet)
+      goto linkit;
+    fgood = (short)_dos_findnext (&fblk);
+  }
     }
   else
     {
       _dos_findclose (&fblk);
-			   /***ash***/
+         /***ash***/
       return;
     }
 linkit:
@@ -431,13 +432,13 @@ linkit:
   for (i = 0; i < curpos; i++)
     {
       for (j = (short)(i + 1); j < curpos; j++)
-	{
-	  if (msgidn[j].crc == msgidn[i].crc)
-	    {
-	      setreplyn (i, j);
-	      break;
-	    }
-	}
+  {
+    if (msgidn[j].crc == msgidn[i].crc)
+      {
+        setreplyn (i, j);
+        break;
+      }
+  }
     }
 /*
   if(linktype!=2)
@@ -508,7 +509,7 @@ void readnet (short file, short pos, short type)
   char *temp = NULL;
   lseek (file, 0, SEEK_SET);
   rread (file, &bufmsg, (unsigned short)(szmessage - szchar), __FILE__,
-	 __LINE__);
+   __LINE__);
   smsglen = filelength (file);
   if (smsglen > buflen)
     smsglen = buflen;
@@ -554,7 +555,7 @@ void readnet (short file, short pos, short type)
     {
       temp += 3;
       while (isspace (*temp))
-	temp++;
+  temp++;
     }
   i = (short)strlen (temp);
   if (bcfg.linklength)
@@ -565,7 +566,7 @@ void readnet (short file, short pos, short type)
     {
       lseek (file, 0, SEEK_SET);
       wwrite (file, &bufmsg, (unsigned short)(szmessage - szchar), __FILE__,
-	      __LINE__);
+        __LINE__);
     }
   return;
 }
