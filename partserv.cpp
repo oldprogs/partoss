@@ -437,10 +437,10 @@ void doserv (void)
         lseek (tempsrv, 0, SEEK_SET);
         break;
 
-      case 6:
-        if (bcfg.rescan)
+      case 6: // Рескан эхи
+        if (bcfg.rescan) // рескан разрешён
     {
-      if (alog == 0)
+      if (alog == 0) // echolog.$$$ не открыт
         {
           mustlog = -1;
           mystrncpy (echologt, bcfg.workdir, DirSize);
@@ -450,16 +450,27 @@ void doserv (void)
            O_RDWR | O_BINARY | O_CREAT,
            SH_DENYWR,
            S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-      {
+      { // не открылся
         mystrncpy (errname, echologt, DirSize);
         errexit (2, __FILE__, __LINE__);
       }
-          // chsize(alog,0); // these two string moved outside this block
-          // lseek(alog,0,SEEK_SET);
         }
-      chsize (alog, 0);
+      /* print file position */
+      sprintf(logout, "echolog.$$$ position before truncate = %ld", tell(alog));
+      logwrite (1, 13);
+
+      if(chsize (alog, 0) != 0)
+      {
+        sprintf(logout, "Error truncating %s, error %d", errname, errno);
+        logwrite (1, 13);
+      };
       lseek (alog, 0, SEEK_SET);
-      if (endstring[0])
+
+      /* print file position */
+      sprintf(logout, "echolog.$$$ position after truncate = %ld", tell(alog));
+      logwrite (1, 13);
+
+      if (endstring[0]) // а эха-то и не указана!
         break;
       gettoken (0);
       rstring = ::string;
@@ -467,7 +478,7 @@ void doserv (void)
       rendstring = endstring[0];
       rendblock = endblock[0];
       rendinput = endinput[0];
-      for (l = 0; l < numcomm; l++)
+      for (l = 0; l < numcomm; l++) // пробег по строке в поисках %all и %group
         if (strnicmp (token, commands[l], strlen (commands[l])) ==
       0)
           break;
@@ -502,7 +513,7 @@ void doserv (void)
           l = -1;
           break;
 
-        case 13:
+        case 13: // %all
         case 14:
           ttlist = rlist;
           while (ttlist)
@@ -528,7 +539,7 @@ void doserv (void)
       }
           break;
 
-        case 16:
+        case 16: // %group
         case 17:
           gettoken (0);
           for (k = 0; k < toklen; k++)
@@ -559,17 +570,14 @@ void doserv (void)
       }
           break;
 
-        default:
+        default: // нифига - значит имя эхи или шаблон
           if (toklen)
       {
-        tokencpy (wild,
-            (short)((toklen >=
-               arealength) ? (arealength -
-                  1) : toklen));
+        tokencpy (wild,(short)((toklen >= arealength) ? (arealength - 1) : toklen));
         temp = strchr (wild, '*');
         if (temp == NULL)
           temp = strchr (wild, '?');
-        if (temp)
+        if (temp) // шаблон
           {
             ttlist = rlist;
             while (ttlist)
@@ -578,23 +586,9 @@ void doserv (void)
             {
               if (ttlist->alist[i].type == 1)
           {
-            if ((wildcard
-                 (wild,
-            ttlist->alist[i].areaname) ==
-                 0)
-                && (bcfg.
-              gric
-              ? (strichr
-                 (blink->group,
-                  ttlist->alist[i].
-                  group) !=
-                 NULL) : (strchr (blink->
-                      group,
-                      ttlist->
-                      alist
-                      [i].
-                      group)
-                    != NULL)))
+            if ((wildcard(wild,ttlist->alist[i].areaname) == 0)
+                && (bcfg.gric ? (strichr(blink->group, ttlist->alist[i].group) != NULL) :
+                                (strchr (blink->group, ttlist->alist[i].group) != NULL)))
               {
                 inecholog (ttlist->alist[i].
                areaname);
@@ -604,7 +598,7 @@ void doserv (void)
           ttlist = ttlist->next;
         }
           }
-        else
+        else  // обычное имя эхи
           {
             tokencpy (ttoken, arealength - 1);
             inecholog (ttoken);
@@ -631,7 +625,7 @@ void doserv (void)
       tempsqd = temprescan;
     }
         else
-    {
+    { // рескан запрещён
       sprintf (logout, "ReScan Request detected but ignored");
       logwrite (1, 9);
     }
