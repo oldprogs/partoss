@@ -637,12 +637,12 @@ void parser(char *file, short level)
             *temp = 0;
           break;
 
-        case 14:
-        case 67:
-        case 91:
-        case 128:
-        case 129:
-        case 130:
+        case 14: // "SysOpName"
+        case 67: // "CarbonCopy"
+        case 91: // "CarbonMove"
+        case 128: // "SysOpNameExact"
+        case 129: // "CarbonCopyExact"
+        case 130: // "CarbonMoveExact"
           gettoken(level);
           memset(&ourname, 0, szsysname);
           tokencpy(logout, BufSize);
@@ -664,11 +664,11 @@ void parser(char *file, short level)
             else if(strnicmp(token, "To", 2) == 0)
               ourname.where = 1;
             else if(strnicmp(token, "Both", 4) == 0)
-              ourname.where = 3;
+              ourname.where = 3; // 2 + 1
             else if(strnicmp(token, "Subj", 4) == 0)
               ourname.where = 4;
             else if(strnicmp(token, "All", 3) == 0)
-              ourname.where = 7;
+              ourname.where = 7; // 2 + 1 + 4
           }
           if(!ourname.where)
             ourname.where = 1;

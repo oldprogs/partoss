@@ -787,7 +787,7 @@ void writeboth(short type)
   while(tname)
   {
     mustcopy = 0;
-    if(tname->where & 1)
+    if(tname->where & 1) // To:
     {
       if(tname->name[0])
       {
@@ -815,7 +815,7 @@ void writeboth(short type)
           mustcopy = 1;
       }
     }
-    if(tname->where & 2)
+    if(tname->where & 2) // From:
     {
       if(tname->name[0])
       {
@@ -846,7 +846,7 @@ void writeboth(short type)
         }
       }
     }
-    if(tname->where & 4)
+    if(tname->where & 4) // Subj
     {
       mystrncpy(logout, glsubj, BufSize);
       if(tname->exact)
