@@ -27,51 +27,52 @@ public:
   type data;
   list_el *next;
   list_el *prev;
-  list_el ()
-  {				// default constructor
+
+  list_el()
+  {                             // default constructor
     prev = NULL;
     next = NULL;
   }
-  list_el (type & c)
+  list_el(type & c)
   {
     data = c;
     prev = NULL;
     next = NULL;
   }
-  list_el (list_el < type > &c)
-  {				// copy constructor
+  list_el(list_el < type > &c)
+  {                             // copy constructor
     data = c.data;
     prev = c.prev;
     next = c.prev;
   }
-  list_el (list_el < type > *previous)
+  list_el(list_el < type > *previous)
   {
     prev = previous;
     next = NULL;
   }
-  list_el (list_el < type > *previous, type & c)
+  list_el(list_el < type > *previous, type & c)
   {
     data = c;
     prev = previous;
     next = NULL;
   }
-  list_el (list_el < type > *previous, list_el < type > *next_el)
+  list_el(list_el < type > *previous, list_el < type > *next_el)
   {
     prev = previous;
     next = next_el;
   }
-  list_el (list_el < type > *previous, list_el < type > *next_el, type & c)
+  list_el(list_el < type > *previous, list_el < type > *next_el, type & c)
   {
     data = c;
     prev = previous;
     next = next_el;
   }
-  list_el < type > &operator = (list_el < type > &el)
+  list_el < type > &operator =(list_el < type > &el)
   {
     data = el.data;
     return *this;
   }
-  int operator == (list_el < type > &el) {
+  int operator ==(list_el < type > &el) {
     return data == el.data;
   }
 };
@@ -82,237 +83,215 @@ protected:
   list_el < type > *head;
   list_el < type > *current;
 public:
-  list ()
-  {				// default constructor
+  list()
+  {                             // default constructor
     head = NULL;
     current = NULL;
   }
-  list (list & c)
-  {				// copy constructor
-    if (c.head == NULL)
-      {
-	head = NULL;
-	current = NULL;
-	return;
-      }
+  list(list & c)
+  {                             // copy constructor
+    if(c.head == NULL)
+    {
+      head = NULL;
+      current = NULL;
+      return;
+    }
     list_el < type > *sav_current;
     sav_current = c.current;
     head = new list_el < type > (c.head->data);
-    if (c.current == c.head)
+    if(c.current == c.head)
       current = head;
     list_el < type > *temp = c.head->next;
     list_el < type > *temp2;
     int i = 1;
-    while (i)
+
+    while(i)
+    {
+      if(temp == NULL)
+        i = 0;
+      else
       {
-	if (temp == NULL)
-	  i = 0;
-	else
-	  {
-	    temp2 = add_el (temp->data);
-	    if (temp == c.current)
-	      current = temp2;
-	    temp = temp->next;
-	  }
+        temp2 = add_el(temp->data);
+        if(temp == c.current)
+          current = temp2;
+        temp = temp->next;
       }
+    }
   }
-  list (int num)
-  {
+  list(int num) {
     list_el < type > *c_el;
 
     head = new list_el < type >;
     current = head;
     c_el = head;
-    for (int i = 1; i < num; i++)
-      {
-	c_el->next = new list_el < type > (c_el);
-	//c_el->next->prev=c_el;
-	c_el = c_el->next;
-      }
+    for(int i = 1; i < num; i++)
+    {
+      c_el->next = new list_el < type > (c_el);
+      //c_el->next->prev=c_el;
+      c_el = c_el->next;
+    }
   }
 
-  list & operator = (list & c)
+  list & operator =(list & c)
   {
-    while (size () != 0)
-      rem_el (head);
-    if (c.head == NULL)
-      {
-	head = NULL;
-	current = NULL;
-	return *this;
-      }
+    while(size() != 0)
+      rem_el(head);
+    if(c.head == NULL)
+    {
+      head = NULL;
+      current = NULL;
+      return *this;
+    }
     list_el < type > *sav_current;
     sav_current = c.current;
     head = new list_el < type > (c.head->data);
-    if (c.current == c.head)
+    if(c.current == c.head)
       current = head;
     list_el < type > *temp = c.head->next;
     list_el < type > *temp2;
     int i = 1;
-    while (i)
+
+    while(i)
+    {
+      if(temp == NULL)
+        i = 0;
+      else
       {
-	if (temp == NULL)
-	  i = 0;
-	else
-	  {
-	    temp2 = add_el (temp->data);
-	    if (temp == c.current)
-	      current = temp2;
-	    temp = temp->next;
-	  }
+        temp2 = add_el(temp->data);
+        if(temp == c.current)
+          current = temp2;
+        temp = temp->next;
       }
+    }
     return *this;
   }
-  list_el < type > *next ()
+  list_el < type > *next()
   {
-    if ((current->next) == NULL)
+    if((current->next) == NULL)
       return NULL;
     return current = (current->next);
   }
-  list_el < type > *prev ()
+  list_el < type > *prev()
   {
-    if ((current->prev) == NULL)
+    if((current->prev) == NULL)
       return NULL;
     return current = (current->prev);
   }
-  list_el < type > *curr ()
+  list_el < type > *curr()
   {
     return current;
   }
-  list_el < type > *curr (list_el < type > *c)
+  list_el < type > *curr(list_el < type > *c)
   {
     return current = c;
   }
-  list_el < type > *goto_head ()
+  list_el < type > *goto_head()
   {
     return current = head;
   }
-  list_el < type > *add_el (type & inf)
+  list_el < type > *add_el(type & inf)
   {
     list_el < type > *c_el;
 
-    //cout<<"Adding new area: "<<inf<<endl;
-    if (head != NULL)
+    if(head != NULL)
+    {
+      c_el = head;
+      while(c_el->next != NULL)
       {
-	c_el = head;
-	while (c_el->next != NULL)
-	  {
-	    /*printf("Comparing %s and %s, returned %d\n",inf.echotag,
-	       c_el->data.echotag,
-	       strcmp(inf.echotag,c_el->data.echotag)); */
-	    if (inf < c_el->data)
-	      {
-		/*if(c_el->prev==NULL)
-		   printf("Adding %s before %s\n",inf.echotag,
-		   c_el->data.echotag);
-		   else
-		   printf("Adding %s between %s and %s\n",inf.echotag,
-		   c_el->prev->data.echotag,c_el->data.echotag); */
-		c_el = new list_el < type > (c_el->prev, c_el);
-		c_el->next->prev = c_el;
-		if (c_el->prev == NULL)
-		  head = c_el;
-		else
-		  c_el->prev->next = c_el;
-		c_el->data = inf;
-		return c_el;
-	      }
-	    else
-	      c_el = c_el->next;
-	  }
-	/*printf("Comparing %s and %s, returned %d\n",inf.echotag,
-	   c_el->data.echotag,
-	   strcmp(inf.echotag,c_el->data.echotag)); */
-	if (inf < c_el->data)
-	  {
-	    /*if(c_el->prev==NULL)
-	       printf("Adding %s before %s\n",inf.echotag,
-	       c_el->data.echotag);
-	       else
-	       printf("Adding %s between %s and %s\n",inf.echotag,
-	       c_el->prev->data.echotag,c_el->data.echotag); */
-	    c_el = new list_el < type > (c_el->prev, c_el);
-	    c_el->next->prev = c_el;
-	    if (c_el->prev == NULL)
-	      head = c_el;
-	    else
-	      c_el->prev->next = c_el;
-	    c_el->data = inf;
-	    return c_el;
-	  }
-	else
-	  {
-	    /*printf("Adding %s after %s\n",inf.echotag,
-	       c_el->data.echotag); */
-	    c_el->next = new list_el < type > (c_el);
-	    c_el = c_el->next;
-	    c_el->data = inf;
-	    return c_el;
-	  }
+        if(inf < c_el->data)
+        {
+          c_el = new list_el < type > (c_el->prev, c_el);
+          c_el->next->prev = c_el;
+          if(c_el->prev == NULL)
+            head = c_el;
+          else
+            c_el->prev->next = c_el;
+          c_el->data = inf;
+          return c_el;
+        }
+        else
+          c_el = c_el->next;
       }
+      if(inf < c_el->data)
+      {
+        c_el = new list_el < type > (c_el->prev, c_el);
+        c_el->next->prev = c_el;
+        if(c_el->prev == NULL)
+          head = c_el;
+        else
+          c_el->prev->next = c_el;
+        c_el->data = inf;
+        return c_el;
+      }
+      else
+      {
+        c_el->next = new list_el < type > (c_el);
+        c_el = c_el->next;
+        c_el->data = inf;
+        return c_el;
+      }
+    }
     else
-      {
-	//printf("Adding %s at the head\n",inf.echotag);
-	head = new list_el < type >;
-	current = head;
-	c_el = head;
-      }
+    {
+      head = new list_el < type >;
+      current = head;
+      c_el = head;
+    }
     c_el->data = inf;
     return c_el;
   }
-  void rem_el (list_el < type > *c)
-  {
-    if (c == head)
-      {
-	head = c->next;
-      }
+  void rem_el(list_el < type > *c) {
+    if(c == head)
+    {
+      head = c->next;
+    }
     else
-      {
-	c->prev->next = c->next;
-      }
+    {
+      c->prev->next = c->next;
+    }
     c->next->prev = c->prev;
     delete c;
   }
-  list_el < type > *whichis (type c)
+  list_el < type > *whichis(type c)
   {
     list_el < type > *temp = head;
-    while (1)
-      {
-	if (temp == NULL)
-	  return NULL;
-	if ((temp->data) == c)
-	  return temp;
-	temp = temp->next;
-      }
+    while(1)
+    {
+      if(temp == NULL)
+        return NULL;
+      if((temp->data) == c)
+        return temp;
+      temp = temp->next;
+    }
   }
-  int size ()
-  {
+  int size() {
     int n = 0;
+
     list_el < type > *temp = head;
     //list_el<type>* savedcurr=current;
-    while (1)
+    while(1)
+    {
+      if(temp == NULL)
       {
-	if (temp == NULL)
-	  {
-	    //current=savedcurr;
-	    return n;
-	  }
-	n++;
-	temp = temp->next;
+        //current=savedcurr;
+        return n;
       }
+      n++;
+      temp = temp->next;
+    }
   }
 };
 
-template < class type > ostream & operator << (ostream & o, list < type > &l)
+template < class type > ostream & operator <<(ostream & o, list < type > &l)
 {
   list_el < type > *temp = head;
-  while (1)
-    {
-      if (temp == NULL)
-	return NULL;
-      o << temp->data;
-      temp = temp->next;
-    }
+  while(1)
+  {
+    if(temp == NULL)
+      return NULL;
+    o << temp->data;
+    temp = temp->next;
+  }
 }
 
 #endif //define _LIST_TPL
