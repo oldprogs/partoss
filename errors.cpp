@@ -5,6 +5,7 @@
 
 #include "errors.h"
 #include "lowlevel.h"
+#include "morfiles.h"
 #include "partsqd.h"
 
 #if defined (__linux__) || defined (__FreeBSD__)
@@ -28,17 +29,17 @@ void errexit (short error, char *file, unsigned short line)
 
     case 2:
       sprintf (logout, "!!! File %s open/create error, OS error %d", errname,
-	       errno);
+         errno);
       retcode = -1;
       break;
 
     case 3:
 #ifdef __DOS__
       sprintf (logout,
-	       "!!! SWAP error - not enough memory or disk space for swapping");
+         "!!! SWAP error - not enough memory or disk space for swapping");
 #else
       sprintf (logout,
-	       "!!! SPAWN error - not enough resources for run external progpam");
+         "!!! SPAWN error - not enough resources for run external progpam");
 #endif
       retcode = -2;
       break;
@@ -66,20 +67,20 @@ void errexit (short error, char *file, unsigned short line)
     case 8:
     case 9:
       sprintf (logout, "!!! Can't find %s",
-	       error == 8 ? "BadArea" : "DupeArea");
+         error == 8 ? "BadArea" : "DupeArea");
       retcode = 11;
       break;
 
     case 10:
       ccprintf
-	("\r\nUsage:\r\n  ParToss [<key...>] <command...> [<node>],\r\n\r\n");
+  ("\r\nUsage:\r\n  ParToss [<key...>] <command...> [<node>],\r\n\r\n");
       ccprintf ("Keys:  -c<filename> | -f<filename> | -q | -t\r\n");
       ccprintf
-	("Commands:  In, Out, Pack, Send, Squash, Link, Post, Purge,\r\n");
+  ("Commands:  In, Out, Pack, Send, Squash, Link, Post, Purge,\r\n");
       ccprintf ("           Kill, Serv, Hand, ReScan, Bad\r\n");
       ccprintf ("Node - full or short 4-D FTN address\r\n\r\n");
       ccprintf
-	("For further information about keys and commands read ParToss.Doc\r\n");
+  ("For further information about keys and commands read ParToss.Doc\r\n");
       retcode = 9;
       break;
 
@@ -119,16 +120,16 @@ void errexit (short error, char *file, unsigned short line)
   if (retcode && retcode != 9)
     {
       if (logfileok)
-	logwrite (1, 1);
+  logwrite (1, 1);
       ccprintf ("%s\r\n", logout);
     }
   if (retcode < 0)
     {
       sprintf (logout,
-	       "!!! Error was encountered in line %u of source file %s", line,
-	       file);
+         "!!! Error was encountered in line %u of source file %s", line,
+         file);
       if (logfileok)
-	logwrite (1, 1);
+  logwrite (1, 1);
       ccprintf ("%s\r\n", logout);
     }
   if (tottoss || totsent || totpers || totdupes || totbad)
@@ -136,37 +137,37 @@ void errexit (short error, char *file, unsigned short line)
       asis = 0;
       sprintf (logout, "Total:");
       if (tottoss)
-	{
-	  sprintf (areasbbs, " toss - %u", tottoss);
-	  mystrncat (logout, (char *)areasbbs, DirSize, BufSize);
-	  asis = 1;
-	}
+  {
+    sprintf (areasbbs, " toss - %u", tottoss);
+    mystrncat (logout, (char *)areasbbs, DirSize, BufSize);
+    asis = 1;
+  }
       if (totsent)
-	{
-	  sprintf (areasbbs, "%s sent - %u", asis ? "," : "", totsent);
-	  mystrncat (logout, areasbbs, DirSize, BufSize);
-	  asis = 1;
-	}
+  {
+    sprintf (areasbbs, "%s sent - %u", asis ? "," : "", totsent);
+    mystrncat (logout, areasbbs, DirSize, BufSize);
+    asis = 1;
+  }
       if (totpers)
-	{
-	  sprintf (areasbbs, "%s personal - %u", asis ? "," : "", totpers);
-	  mystrncat (logout, areasbbs, DirSize, BufSize);
-	  asis = 1;
-	}
+  {
+    sprintf (areasbbs, "%s personal - %u", asis ? "," : "", totpers);
+    mystrncat (logout, areasbbs, DirSize, BufSize);
+    asis = 1;
+  }
       if (totdupes)
-	{
-	  sprintf (areasbbs, "%s dupes - %u", asis ? "," : "", totdupes);
-	  mystrncat (logout, areasbbs, DirSize, BufSize);
-	  asis = 1;
-	}
+  {
+    sprintf (areasbbs, "%s dupes - %u", asis ? "," : "", totdupes);
+    mystrncat (logout, areasbbs, DirSize, BufSize);
+    asis = 1;
+  }
       if (totbad)
-	{
-	  sprintf (areasbbs, "%s bad - %u", asis ? "," : "", totbad);
-	  mystrncat (logout, areasbbs, DirSize, BufSize);
-	  asis = 1;
-	}
+  {
+    sprintf (areasbbs, "%s bad - %u", asis ? "," : "", totbad);
+    mystrncat (logout, areasbbs, DirSize, BufSize);
+    asis = 1;
+  }
       if (logfileok)
-	logwrite (1, 1);
+  logwrite (1, 1);
       ccprintf ("\r\n%s\r\n", logout);
     }
   if (ttempl)
