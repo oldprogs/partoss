@@ -9,7 +9,7 @@ void pkttobuf (void)
   long tpos;
   char *temp = NULL, tdt[22];
   sftime = time (NULL);
-  tmt = localtime (&sftime);
+  mylocaltime (&sftime, &tmt);
   memset (&bufpkt, 0, szpackmess);
   memcpy (&bufpkt, pktbuf + pcurpos, 34);
   bufpkt.flags &= 0xfeff;
@@ -44,13 +44,13 @@ gooddt:
     bufpkt.timefrom = strtime (bufpkt.datetime);
   else
     {
-      mystrncpy (tstrtime, asctime (tmt), 39);
+      mystrncpy (tstrtime, asctime (&tmt), 39);
       bufpkt.timefrom = strtime (tstrtime);
       if (converttime (bufpkt.datetime) == 0)
 	converttime (tstrtime);
       memcpy (bufpkt.datetime, ftstime, 20);
     }
-  mystrncpy (tstrtime, asctime (tmt), 39);
+  mystrncpy (tstrtime, asctime (&tmt), 39);
   bufpkt.timeto = strtime (tstrtime);
 //  pcurpos+=34;
   pcurpos = (unsigned short)(15 + dtlen);

@@ -3,6 +3,9 @@
 #include "partoss.h"
 #include "globext.h"
 
+#include "rebuild.h"
+#include "linkbase.h"
+
 void scanbase (char *arealist, short type)	// 1 - scan, 2 - link, 3 - purge, 4 - fix
 {
   char tempsqdn[(DirSize + 1)];
@@ -320,8 +323,8 @@ void scansqd (void)
 	      if (rescan && rescandays)
 		{
 		  sftime = time (NULL);
-		  tmt = localtime (&sftime);
-		  mystrncpy (tstrtime, asctime (tmt), 39);
+		  mylocaltime (&sftime, &tmt);
+		  mystrncpy (tstrtime, asctime (&tmt), 39);
 		  currtime = strtime (tstrtime);
 		  diff = diffdays (head.timeto, currtime);
 		  if (diff <= rescandays)

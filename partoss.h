@@ -13,7 +13,7 @@
 //#endif
 
 
-/* $Id: partoss.h,v 1.9 2003/03/14 18:35:25 saf2 Exp $ */
+/* $Id: partoss.h,v 1.10 2003/03/25 09:51:43 mozhaev Exp $ */
 /* Ported partially */
 #ifdef HAVE_CONFIG_H
 
@@ -694,7 +694,6 @@ short sqhtobuf (long number);
 unsigned wwrite (short handle, void *buf, unsigned len, char *file,
      short line);
 void cclose (short *handle, char *file, unsigned short line);
-long readmsg (long number, short type);
 unsigned long asciihex (char *string);
 unsigned long crc32block (char *ptr, short count, unsigned long tcrc = 0);
 unsigned long hash (char *f);
@@ -730,8 +729,6 @@ void flushbuf (short handle);
 void getctrl (char *text, unsigned short len, short type);
 void hexascii (unsigned long value, char *string);
 void killpkts (void);
-void linksqd (void);
-void linksqds (long aoffset);
 void logwrite (short first, short level);
 void makeattach (short type);
 void makebin (char *string);
@@ -766,7 +763,6 @@ void scanmsg (void);
 void scansqd (void);
 void scansqds (long aoffset);
 void setbadarea (void);
-void setreply (long from, long to);
 void sortfpkt (short what);
 void sortsnb (struct shortchain *chain);
 void quicksort (unsigned long *array, unsigned long *array2);
@@ -777,7 +773,6 @@ short tosspkts (void);
 void writeboth (short type);
 void writechain (short handle, struct shortchain *chain, short type);
 void writehead (void);
-void writemsg (long number);
 char *mystrncpy (char *dest, const char *src, unsigned short len);
 char *mystrncat (char *dest, const char *src, unsigned short len,
      unsigned short maxsize);
@@ -793,9 +788,6 @@ void swapaddr (struct myaddr *first, struct myaddr *second);
 short templat (short fhandle, short thandle);
 void makestatus (struct link *blink);
 void changelink (struct link *blink);
-void rebuild (long aoffset, short type);
-void purgesqd (void);
-void fixsqd (void);
 // struct ftime ultotmt(unsigned long ltime);
 short diffdays (unsigned long a, unsigned long b);
 void killold (void);
@@ -829,7 +821,7 @@ void backup (short type);
 void addhome (char *dest, char *source);
 void addarcs (char *path, struct find_t *fblk, short secure);
 short wildcard (char *mask, char *string);
-
+void mylocaltime(const time_t *timer, struct tm *localtimer);
 
 #ifdef __DOS__
 

@@ -1,8 +1,9 @@
 // MaxiM: find_t memicmp
 
 #include "partoss.h"
-#include "partserv.h"
 #include "globext.h"
+
+#include "partserv.h"
 
 struct uplname *uareas = NULL;
 short badlink, manager = 0, temptoklen;
@@ -287,8 +288,8 @@ void doserv (void)
   bufpkt.fromnode = bufmess.tonode;
   bufpkt.frompoint = bufmess.topoint;
   sftime = time (NULL);
-  tmt = localtime (&sftime);
-  mystrncpy (tstrtime, asctime (tmt), 39);
+  mylocaltime (&sftime, &tmt);
+  mystrncpy (tstrtime, asctime (&tmt), 39);
   converttime (tstrtime);
   mystrncpy (bufpkt.datetime, ftstime, 19);
   bufpkt.fromname = (char *)myalloc (36, __FILE__, __LINE__);
@@ -3250,9 +3251,9 @@ void delorph (struct uplname *utarea, struct uplname *ttname)
   ttemp = token + toklen;
   fpart = (unsigned short)(ttemp - ::string);
   sftime = time (NULL);
-  tmt = localtime (&sftime);
+  mylocaltime (&sftime, &tmt);
   wwrite (prttemp, ::string, fpart, __FILE__, __LINE__);
-  sprintf (logout, " %-4u%-2u%-2u ", tmt->tm_year, tmt->tm_mon, tmt->tm_mday);
+  sprintf (logout, " %-4u%-2u%-2u ", tmt.tm_year, tmt.tm_mon, tmt.tm_mday);
   wwrite (prttemp, ttemp + 1, maxstr[0] - fpart - 1, __FILE__, __LINE__);
 }
 
@@ -3321,10 +3322,10 @@ void delorphn (struct uplname *utarea, struct uplname *ttname, char * descr)
   ttemp = token + toklen;
   fpart = ttemp - ::string;
   sftime = time (NULL);
-  tmt = localtime (&sftime);
+  mylocaltime (&sftime, &tmt);
 //  wwrite(prttemp,string,fpart,__FILE__,__LINE__);
-  sprintf (logout, " %04u%02u%02u ", tmt->tm_year + 1900, tmt->tm_mon + 1,
-     tmt->tm_mday);
+  sprintf (logout, " %04u%02u%02u ", tmt.tm_year + 1900, tmt.tm_mon + 1,
+     tmt.tm_mday);
 /*  dtemp=itoa(tmt->tm_year+1900,dtemp,10);
   mystrncpy(logout," ",2);
   mystrncat(logout,dtemp,5,DirSize);
@@ -3376,7 +3377,7 @@ short delkill (short deltype)
   ttime.tm_min = 0;
   ttime.tm_hour = 0;
 
-  mystrncpy (tstrtime, asctime (tmt), 39);
+  mystrncpy (tstrtime, asctime (&tmt), 39);
 //  currtime=strtime(tstrtime);
 //  tokencpy(ttmp,9);
   tokencpy (ttmp, 4);
@@ -3514,8 +3515,8 @@ void relink (void)
     }
   chsize (tempsrv, 0);
   sftime = time (NULL);
-  tmt = localtime (&sftime);
-  mystrncpy (tstrtime, asctime (tmt), 39);
+  mylocaltime (&sftime, &tmt);
+  mystrncpy (tstrtime, asctime (&tmt), 39);
   converttime (tstrtime);
   tail = (char *)myalloc (BufSize, __FILE__, __LINE__);
   sprintf (tail, "\r--- ParToss %s\r", version);
@@ -3601,8 +3602,8 @@ void relink (void)
         bufpkt.fromnode = bufmess.tonode;
         bufpkt.frompoint = bufmess.topoint;
         sftime = time (NULL);
-        tmt = localtime (&sftime);
-        mystrncpy (tstrtime, asctime (tmt), 39);
+        mylocaltime (&sftime, &tmt);
+        mystrncpy (tstrtime, asctime (&tmt), 39);
         converttime (tstrtime);
         mystrncpy (bufpkt.datetime, ftstime, 19);
         bufpkt.fromname = (char *)myalloc (36, __FILE__, __LINE__);

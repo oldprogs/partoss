@@ -7,7 +7,7 @@ void writehead (void)
 {
   union pktheader pkth;
   sftime = time (NULL);
-  tmt = localtime (&sftime);
+  mylocaltime (&sftime, &tmt);
   pkth.twop.fromzone = tpack->fromaddr.zone;
   pkth.twop.fromnet = tpack->fromaddr.net;
   pkth.twop.fromnode = tpack->fromaddr.node;
@@ -20,13 +20,13 @@ void writehead (void)
   pkth.twop.origzone = tpack->fromaddr.zone;
   pkth.twop.destzone = tpack->outaddr.zone;
   pkth.twop.year =
-    (unsigned short)((tmt->tm_year > 1900) ? (tmt->tm_year)
-		     : (tmt->tm_year + 1900));
-  pkth.twop.month = (unsigned short)tmt->tm_mon;
-  pkth.twop.day = (unsigned short)tmt->tm_mday;
-  pkth.twop.hour = (unsigned short)tmt->tm_hour;
-  pkth.twop.minute = (unsigned short)tmt->tm_min;
-  pkth.twop.second = (unsigned short)tmt->tm_sec;
+    (unsigned short)((tmt.tm_year > 1900) ? (tmt.tm_year)
+		     : (tmt.tm_year + 1900));
+  pkth.twop.month = (unsigned short)tmt.tm_mon;
+  pkth.twop.day = (unsigned short)tmt.tm_mday;
+  pkth.twop.hour = (unsigned short)tmt.tm_hour;
+  pkth.twop.minute = (unsigned short)tmt.tm_min;
+  pkth.twop.second = (unsigned short)tmt.tm_sec;
   pkth.twop.baud = 0;
   pkth.twop.pkttype = 2;
   pkth.twop.prodcode = 0xFE;

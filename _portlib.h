@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #endif
 #include <dirent.h>
+
 #include "_dos.h"
 
 #ifndef __EMX__

@@ -1,9 +1,11 @@
 // MaxiM: itoa memicmp
 
-#include "partoss.h"
-#include "arealias.h"
-#include "globext.h"
 #include <string.h>
+
+#include "partoss.h"
+#include "globext.h"
+
+#include "arealias.h"
 
 char *kludges[10] = {
   "AREA:",

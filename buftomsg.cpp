@@ -159,8 +159,8 @@ nfound:
   else
     {
       sftime = time (NULL);
-      tmt = localtime (&sftime);
-      mystrncpy (tstrtime, asctime (tmt), 39);
+      mylocaltime (&sftime, &tmt);
+      mystrncpy (tstrtime, asctime (&tmt), 39);
       converttime (tstrtime);
       memcpy (bufmsg.datetime, ftstime, 20);
     }

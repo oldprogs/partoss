@@ -27,7 +27,7 @@ short poster (short type)
   addhome (hfile, type ? bcfg.post : bcfg.reptmpl);
   packset = mysopen (hfile, 0, __FILE__, __LINE__);
   sftime = time (NULL);
-  tmt = localtime (&sftime);
+  mylocaltime (&sftime, &tmt);
   if (type)
     {
       if (!forsed)
@@ -41,8 +41,8 @@ short poster (short type)
 	  fyear = (unsigned short)(((tdate & 0xfe00) >> 9) /*+1980 */ );
 	  fmonth = (unsigned short)((tdate & 0x1e0) >> 5);
 	  fday = (unsigned short)(tdate & 0x1f);
-	  if (fyear == (tmt->tm_year - 80) && fmonth == tmt->tm_mon + 1
-	      && fday == tmt->tm_mday)
+	  if (fyear == (tmt.tm_year - 80) && fmonth == tmt.tm_mon + 1
+	      && fday == tmt.tm_mday)
 	    {
 	      cclose (&packset, __FILE__, __LINE__);
 	      return 0;
@@ -112,7 +112,7 @@ short poster (short type)
 				{
 				  gettoken (0);
 				  day = (short)atoi (token);
-				  if (day == tmt->tm_mday)
+				  if (day == tmt.tm_mday)
 				    {
 				      makemess = 1;
 				      goto goodday;
@@ -137,7 +137,7 @@ short poster (short type)
 					      break;
 					    }
 				      day %= 7;
-				      if (day == tmt->tm_wday)
+				      if (day == tmt.tm_wday)
 					{
 					  makemess = 1;
 					  goto goodday;
@@ -166,7 +166,7 @@ short poster (short type)
 		      memset (oldarea, 0, arealength);
 		      bufpkt.flags = 0x100;
 		      bufpkt.packtype = 2;
-		      mystrncpy (tstrtime, asctime (tmt), 39);
+		      mystrncpy (tstrtime, asctime (&tmt), 39);
 		      bufpkt.timefrom = bufpkt.timeto = strtime (tstrtime);
 		      converttime (tstrtime);
 		      mystrncpy (bufpkt.datetime, ftstime, 19);

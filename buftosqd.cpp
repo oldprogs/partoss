@@ -1,8 +1,9 @@
 // MaxiM: ported, not changed.
 
 #include "partoss.h"
-#include "partserv.h"
 #include "globext.h"
+
+#include "partserv.h"
 
 short buftosqd (struct area *ttarea, struct sqifile *tindex, short type)
 {

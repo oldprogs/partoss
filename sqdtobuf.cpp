@@ -9,7 +9,7 @@ short sqdtobuf (struct area *ttarea, struct sqifile *tindex, long number)
   unsigned short j, k, scanned, fmax2, i, i1, validdt;
   char *temp = NULL, tdt[20];
   sftime = time (NULL);
-  tmt = localtime (&sftime);
+  mylocaltime (&sftime, &tmt);
   if (number >= (ttarea->curindex + bufsqi) || number < ttarea->curindex)
     {
       ttarea->curindex = (number / bufsqi) * bufsqi;
@@ -68,12 +68,12 @@ short sqdtobuf (struct area *ttarea, struct sqifile *tindex, long number)
 	bufsqd.timefrom = strtime (bufsqd.datetime);
       else
 	{
-	  mystrncpy (tstrtime, asctime (tmt), 39);
+	  mystrncpy (tstrtime, asctime (&tmt), 39);
 	  bufsqd.timefrom = strtime (tstrtime);
 	  converttime (tstrtime);
 	  memcpy (bufsqd.datetime, ftstime, 20);
 	}
-      mystrncpy (tstrtime, asctime (tmt), 39);
+      mystrncpy (tstrtime, asctime (&tmt), 39);
       bufsqd.timeto = strtime (tstrtime);
 
       i1 = (short)strlen (bufsqd.datetime);
@@ -88,8 +88,8 @@ short sqdtobuf (struct area *ttarea, struct sqifile *tindex, long number)
       if (bufsqd.timeto == 0)
 	{
 	  sftime = time (NULL);
-	  tmt = localtime (&sftime);
-	  mystrncpy (tstrtime, asctime (tmt), 39);
+	  mylocaltime (&sftime, &tmt);
+	  mystrncpy (tstrtime, asctime (&tmt), 39);
 	  bufsqd.timeto = strtime (tstrtime);
 	}
       if (nowpurge)
@@ -301,8 +301,8 @@ short sqhtobuf (long number)
   if (head.timeto == 0)
     {
       sftime = time (NULL);
-      tmt = localtime (&sftime);
-      mystrncpy (tstrtime, asctime (tmt), 39);
+      mylocaltime (&sftime, &tmt);
+      mystrncpy (tstrtime, asctime (&tmt), 39);
       head.timeto = strtime (tstrtime);
     }
   return 0;

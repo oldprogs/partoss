@@ -1,8 +1,9 @@
 // MaxiM: find_t
 
+#include <string.h>
+
 #include "partoss.h"
 #include "globext.h"
-#include <string.h>
 
 void createpkts (void)
 {

@@ -1,9 +1,9 @@
 // MaxiM: needed find_t _dos_findfirst/next/close
 
 #include "partoss.h"
-#include "archives.h"
-
 #include "globext.h"
+
+#include "archives.h"
 
 short make, exist;
 unsigned short addarc;
@@ -25,8 +25,8 @@ void makeattach (short type)
   unsigned long currtime, filetime;
   struct find_t fblk, ablk, fblo;
   sftime = time (NULL);
-  tmt = localtime (&sftime);
-  mystrncpy (tstrtime, asctime (tmt), 39);
+  mylocaltime (&sftime, &tmt);
+  mystrncpy (tstrtime, asctime (&tmt), 39);
   ext[0] = '.';
 #if defined (__linux__) || defined (__FreeBSD__)
   ext[1] = (char)tolower (tstrtime[0]);
@@ -491,7 +491,7 @@ void makeattach (short type)
         olds2 = _dos_findfirst (arcname, findattr, &ablk);
         if (olds2 == 0 || olds == 0)
           {
-            mystrncpy (tstrtime, asctime (tmt), 39);
+            mystrncpy (tstrtime, asctime (&tmt), 39);
             currtime = strtime (tstrtime);
             filetime = fblk.wr_time;
             filetime <<= 16;
@@ -716,7 +716,7 @@ void makeattach (short type)
             if (olds == 0)
         {
           exist = 0;
-          mystrncpy (tstrtime, asctime (tmt), 39);
+          mystrncpy (tstrtime, asctime (&tmt), 39);
           currtime = strtime (tstrtime);
           filetime = fblk.wr_time;
           filetime <<= 16;

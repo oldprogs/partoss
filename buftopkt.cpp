@@ -1,8 +1,9 @@
 // MaxiM: strupr strchr
 
 #include "partoss.h"
-#include "arealias.h"
 #include "globext.h"
+
+#include "arealias.h"
 
 void buftopkt (short type)
 {
@@ -253,7 +254,7 @@ void buftopkt (short type)
     if (buftemp->timefrom == 0)
       {
         sftime = time (NULL);
-        tmt = localtime (&sftime);
+        mylocaltime (&sftime, &tmt);
       }
     else
       {
@@ -264,14 +265,14 @@ void buftopkt (short type)
         tlmt <<= 16;
         tlmt += j;
         memcpy (&ttmt, &tlmt, szlong);
-        tmt->tm_year = ttmt.tm_year + 80;
-        tmt->tm_mon = ttmt.tm_mon;
-        tmt->tm_mday = ttmt.tm_mday;
-        tmt->tm_hour = ttmt.tm_hour;
-        tmt->tm_min = ttmt.tm_min;
-        tmt->tm_sec = ttmt.tm_sec << 1;
+        tmt.tm_year = ttmt.tm_year + 80;
+        tmt.tm_mon = ttmt.tm_mon;
+        tmt.tm_mday = ttmt.tm_mday;
+        tmt.tm_hour = ttmt.tm_hour;
+        tmt.tm_min = ttmt.tm_min;
+        tmt.tm_sec = ttmt.tm_sec << 1;
       }
-    mystrncpy (tstrtime, asctime (tmt), 39);
+    mystrncpy (tstrtime, asctime (&tmt), 39);
     converttime (tstrtime);
     mystrncpy (buftemp->datetime, ftstime, 19);
   }
@@ -492,8 +493,8 @@ void buftopkt (short type)
 //    if(!(bflags&0x100))
 //     {
       sftime = time (NULL);
-      tmt = localtime (&sftime);
-      mystrncpy (tstrtime, asctime (tmt), 39);
+      mylocaltime (&sftime, &tmt);
+      mystrncpy (tstrtime, asctime (&tmt), 39);
       converttime (tstrtime);
 /*
       sprintf(logout,"\1Via %u:%u/%u.%u @%4d%02d%02d.%02d%02d%02d ParToss %s\r",

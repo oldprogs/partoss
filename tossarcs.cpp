@@ -1,9 +1,10 @@
 // MaxiM: find_t
 
 #include "partoss.h"
+#include "globext.h"
+
 #include "archives.h"
 #include "partserv.h"
-#include "globext.h"
 
 long badpos;
 

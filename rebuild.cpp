@@ -1,9 +1,9 @@
 // MaxiM: Ported.
 
 #include "partoss.h"
+#include "globext.h"
 
 #include "rebuild.h"
-#include "globext.h"
 
 void rebuild (long aoffset, short type)
 {
@@ -126,8 +126,8 @@ void purgesqd (void)
       if (sqhtobuf (i) == -2)
         goto mnext;
       sftime = time (NULL);
-      tmt = localtime (&sftime);
-      mystrncpy (tstrtime, asctime (tmt), 39);
+      mylocaltime (&sftime, &tmt);
+      mystrncpy (tstrtime, asctime (&tmt), 39);
       currtime = strtime (tstrtime);
       diff = diffdays (head.timeto, currtime);
       if (diff >= newarea->days)
@@ -198,8 +198,8 @@ dowork:
       if (bcfg.analyse < 2)
         {
           sftime = time (NULL);
-          tmt = localtime (&sftime);
-          mystrncpy (tstrtime, asctime (tmt), 39);
+          mylocaltime (&sftime, &tmt);
+          mystrncpy (tstrtime, asctime (&tmt), 39);
           currtime = strtime (tstrtime);
           diff = diffdays (bufsqd.timeto, currtime);
           if (diff < newarea->days)

@@ -1,9 +1,10 @@
 // MaxiM: find_t _fullpath
 
 #include "partoss.h"
+
 #include "arealias.h"
-#include "rebuild.h"
 #include "version.h"
+#include "rebuild.h"
 
 /***ash  Use wlink OPTION STACK instead of _stklen
 #ifdef __DOS__
@@ -91,7 +92,7 @@ long pointer = 0, poffset = 0, soffset = 0, ndxlen = 0, times = 0, arclen =
 unsigned long *msgid = NULL, *reply = NULL;
 unsigned long arctime = 0, gstamp = 0;
 time_t sftime;
-struct tm *tmt;
+struct tm tmt;
 
 char filemsg[(DirSize + 1)], inpath[(DirSize + 1)], outpath[(DirSize + 1)],
   servpath[(DirSize + 1)], strtimes[9];

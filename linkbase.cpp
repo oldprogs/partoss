@@ -1,8 +1,9 @@
 // MaxiM: strupr stricmp
 
 #include "partoss.h"
-#include "linkbase.h"
 #include "globext.h"
+
+#include "linkbase.h"
 
 long maxmsg;
 short linkpos;

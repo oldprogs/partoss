@@ -1,8 +1,9 @@
 // MaxiM: memicmp
 
 #include "partoss.h"
-#include "archives.h"
 #include "globext.h"
+
+#include "archives.h"
 
 char *arckeys[] = {
   "Archiver",

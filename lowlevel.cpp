@@ -9,6 +9,11 @@
 #define intx86 int86
 #endif
 
+void mylocaltime(const time_t *timer, struct tm *localtimer)
+{
+   memcpy(localtimer, localtime(timer), sizeof(tm));
+};
+
 short hex (char hexdigit)
 {
   char ch = (char)toupper (hexdigit);
@@ -268,8 +273,8 @@ void logwrite (short first, short level)
   if (first)
     {
       sftime = time (NULL);
-      tmt = localtime (&sftime);
-      mystrncpy (tstrtime, asctime (tmt), 39);
+      mylocaltime (&sftime, &tmt);
+      mystrncpy (tstrtime, asctime (&tmt), 39);
       converttime (tstrtime);
       mywrite (logfile, "\r\n", __FILE__, __LINE__);
       ftstime[19] = ' ';

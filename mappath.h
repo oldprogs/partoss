@@ -1,6 +1,7 @@
 #ifndef __MAPPATH_H_
 #define __MAPPATH_H_
 #include <stdlib.h>
+
 #include "astring.h"
 
 #ifndef MAXPATHLEN

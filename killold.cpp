@@ -20,8 +20,8 @@ void killold (void)
 
   zfile = 0;
   sftime = time (NULL);
-  tmt = localtime (&sftime);
-  mystrncpy (tstrtime, asctime (tmt), 39);
+  mylocaltime (&sftime, &tmt);
+  mystrncpy (tstrtime, asctime (&tmt), 39);
   ext[0] = '.';
   ext[1] = tstrtime[0];
   ext[2] = tstrtime[1];
@@ -306,7 +306,7 @@ short kill (char *tmpname, short boxes, struct link *blink)
 	{
 	  if (fblk.size)
 	    {
-	      mystrncpy (tstrtime, asctime (tmt), 39);
+	      mystrncpy (tstrtime, asctime (&tmt), 39);
 	      currtime = strtime (tstrtime);
 	      filetime = fblk.wr_time;
 	      filetime <<= 16;

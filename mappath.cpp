@@ -1,8 +1,9 @@
 #ifndef __MAPPATH_CC_
 #define __MAPPATH_CC_
-#include "mappath.h"
 #include <string.h>
 #include <stdio.h>
+
+#include "mappath.h"
 
 mappath pmapper;
 

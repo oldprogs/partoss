@@ -72,7 +72,7 @@ extern long pointer, poffset, soffset, ndxlen, times, arclen, globold,
 extern unsigned long *msgid, *reply;
 extern unsigned long arctime, gstamp;
 extern time_t sftime;
-extern struct tm *tmt;
+extern struct tm tmt;
 
 extern char filemsg[(DirSize + 1)], inpath[(DirSize + 1)],
   outpath[(DirSize + 1)], servpath[(DirSize + 1)], strtimes[9];

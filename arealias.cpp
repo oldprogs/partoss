@@ -1,7 +1,7 @@
 #include "partoss.h"
-#include "arealias.h"
-
 #include "globext.h"
+
+#include "arealias.h"
 
 void areaaliasmaker ()
 {

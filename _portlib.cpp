@@ -15,11 +15,12 @@
 #include <dirent.h>
 #include <fnmatch.h>
 #include <fcntl.h>
-#include "_dos.h"
 #include <time.h>
 
 #include "partoss.h"
 #include "globext.h"
+
+#include "_dos.h"
 
 #ifdef __DEBUG__
 #define ccprintf printf
@@ -27,60 +28,6 @@
 
 //#define DIR_MODE 0666
 #define DIR_MODE 0777
-
-void mylocaltime (const time_t * timer, struct tm *loctime)
-{
-  time_t time1, time2;
-  unsigned char in_February;
-  unsigned char Number_of_Days_in_Month[12] =
-    { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-  time1 = *timer;
-
-  tzset();
-  time1 -= timezone;
-
-  time2 = time1 / 86400;
-  time2 = time2 - 365 * 2;
-
-  loctime->tm_year = (1972 + (4 * (time2 / 1461)));
-  time2 %= 1461;
-  if (time2 != 1460)
-    {
-      loctime->tm_year = loctime->tm_year + (time2 / 365);
-      loctime->tm_mday = time2 % 365;
-    }
-  else
-    {
-      loctime->tm_year += 3;
-      loctime->tm_mday = 365;
-    };
-
-  if ((loctime->tm_year % 4 == 0) && (loctime->tm_year % 100 != 0))
-    in_February = 1;
-  else
-    in_February = 0;
-
-  loctime->tm_year -= 1900;
-
-  unsigned char days;
-  for (loctime->tm_mon = 0; loctime->tm_mon < 12; loctime->tm_mon++)
-    {
-      days = Number_of_Days_in_Month[loctime->tm_mon];
-      days += (loctime->tm_mon == 1) ? in_February : 0;
-      if (loctime->tm_mday > days)
-	loctime->tm_mday -= days;
-      else
-	break;
-    };
-
-  time1 %= 86400;
-  loctime->tm_hour = time1 / 3600;
-  time1 %= 3600;
-  loctime->tm_min = time1 / 60;
-  loctime->tm_sec = time1 % 60;
-};
-
 
 #ifndef __EMX__
 char *strupr (char *__string)

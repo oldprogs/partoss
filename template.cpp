@@ -119,16 +119,16 @@ short templat (short fhandle, short thandle)
 
 		    case 8:
 		      sftime = time (NULL);
-		      tmt = localtime (&sftime);
-		      mystrncpy (tstrtime, asctime (tmt), 39);
+		      mylocaltime (&sftime, &tmt);
+		      mystrncpy (tstrtime, asctime (&tmt), 39);
 		      converttime (tstrtime);
 		      wwrite (retfile, ftstime, 9, __FILE__, __LINE__);
 		      break;
 
 		    case 9:
 		      sftime = time (NULL);
-		      tmt = localtime (&sftime);
-		      mystrncpy (tstrtime, asctime (tmt), 39);
+		      mylocaltime (&sftime, &tmt);
+		      mystrncpy (tstrtime, asctime (&tmt), 39);
 		      converttime (tstrtime);
 		      wwrite (retfile, ftstime + 11, 8, __FILE__, __LINE__);
 		      break;
