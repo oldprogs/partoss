@@ -33,6 +33,5 @@ struct find_t
   off_t dir_pos;
 #endif
 };
-
 #define _find_t find_t
 #endif
