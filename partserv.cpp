@@ -265,8 +265,8 @@ void doserv (void)
     errexit (2, __FILE__, __LINE__);
   }
     }
-//  mystrncpy(tempserv,bcfg.workdir,DirSize);
-  mystrncpy (tempserv, outbound, DirSize);
+//  mystrncpy (tempserv, outbound, DirSize);
+  mystrncpy (tempserv, bcfg.workdir, DirSize);
   mystrncat (tempserv, "tempserv.$$$", 16, DirSize);
   if ((tempsrv =
        (short)sopen (tempserv, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
@@ -428,10 +428,7 @@ void doserv (void)
       if (alog == 0)
         {
           mustlog = -1;
-          if (bcfg.workdir[0])
-      mystrncpy (echologt, bcfg.workdir, DirSize);
-          else
-      mystrncpy (echologt, homedir, DirSize);
+          mystrncpy (echologt, bcfg.workdir, DirSize);
           mystrncat (echologt, "echolog.$$$", DirSize, DirSize);
           if ((alog =
          (short)sopen (echologt,
@@ -2830,6 +2827,8 @@ void makemsg (short handle, char *what, char *templ)
 {
   long i, j, k, l, msglen, splitsize, bufsize;
   short tempsplt, mhandle, ihandle;
+  char tmpsplt[(DirSize + 1)];
+
   if (bcfg.setdir)
     setdir = 1;
   if (!noreport)
@@ -2860,11 +2859,13 @@ void makemsg (short handle, char *what, char *templ)
         j -= (bcfg.mansize - 100);
         i++;
       }
+    mystrncpy (tmpsplt, bcfg.workdir, DirSize);
+    mystrncat (tmpsplt, "partsplt.$$$", 16, DirSize);
     if ((tempsplt =
-         (short)sopen ("partsplt.$$$", O_RDWR | O_BINARY | O_CREAT,
+         (short)sopen (tmpsplt, O_RDWR | O_BINARY | O_CREAT,
            SH_DENYWR, S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
       {
-        mystrncpy (errname, "partsplt.$$$", DirSize);
+        mystrncpy (errname, tmpsplt, DirSize);
         errexit (2, __FILE__, __LINE__);
       }
     for (j = 1; j <= i; j++)
@@ -2949,7 +2950,7 @@ void makemsg (short handle, char *what, char *templ)
     ccprintf ("%s\r\n", logout);
       }
     cclose (&tempsplt, __FILE__, __LINE__);
-    unlink ("partsplt.$$$");
+    unlink (tmpsplt);
   }
       else
   {
@@ -3501,7 +3502,8 @@ void relink (void)
 //  struct link *blink = NULL;
   struct myaddr *taddr = NULL, tsnd, tprev;
   mbigmess = 1;
-  mystrncpy (tempserv, outbound, DirSize);
+//  mystrncpy (tempserv, outbound, DirSize);
+  mystrncpy (tempserv, bcfg.workdir, DirSize);
   mystrncat (tempserv, "tempserv.$$$", 16, DirSize);
   if ((tempsrv =
        (short)sopen (tempserv, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,

@@ -51,10 +51,7 @@ short poster (short type)
       if (alog == 0 && mode & 18)
 	{
 	  mustlog = -1;
-	  if (bcfg.workdir[0])
-	    mystrncpy (echologt, bcfg.workdir, DirSize);
-	  else
-	    mystrncpy (echologt, homedir, DirSize);
+     mystrncpy (echologt, bcfg.workdir, DirSize);
 	  mystrncat (echologt, (char *)"echolog.$$$", DirSize, DirSize);
 	  if ((alog =
 	       (short)sopen (echologt, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,

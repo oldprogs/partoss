@@ -580,7 +580,13 @@ void makeattach (short type)
             mystrncpy (ssystem, bcfg.sbp, DirSize);
             mystrncat (ssystem, "  ", 5, DirSize);
             mystrncat (ssystem, tmpname, DirSize, DirSize);
+#ifdef __NT__
+            GetConsoleTitle(logout, BufSize);
+#endif
             system (ssystem);
+#ifdef __NT__
+            SetConsoleTitle(logout);
+#endif
           }
         sprintf (logout, "Pack %s to %s", tmpname, boxname);
         logwrite (1, 9);
@@ -589,9 +595,14 @@ void makeattach (short type)
           {
             mystrncpy (ssystem, bcfg.sap, DirSize);
             mystrncat (ssystem, "  ", 5, DirSize);
-            mystrncat (ssystem, itoa (packerr, errbuf, 10),
-           DirSize, DirSize);
+            mystrncat (ssystem, itoa (packerr, errbuf, 10), DirSize, DirSize);
+#ifdef __NT__
+            GetConsoleTitle(logout, BufSize);
+#endif
             system (ssystem);
+#ifdef __NT__
+            SetConsoleTitle(logout);
+#endif
           }
         if (!packerr)
           {
@@ -633,22 +644,30 @@ void makeattach (short type)
         {
           mystrncpy (ssystem, bcfg.sbp, DirSize);
           mystrncat (ssystem, "  ", 5, DirSize);
-          mystrncat (ssystem, tmpname, DirSize,
-               DirSize);
+          mystrncat (ssystem, tmpname, DirSize, DirSize);
+#ifdef __NT__
+          GetConsoleTitle(logout, BufSize);
+#endif
           system (ssystem);
+#ifdef __NT__
+          SetConsoleTitle(logout);
+#endif
         }
-            sprintf (logout, "Pack %s to %s", tmpname,
-               arcname);
+            sprintf (logout, "Pack %s to %s", tmpname, arcname);
             logwrite (1, 9);
             packerr = archiver (arcname, tmpname, 2);
             if (bcfg.sap[0])
         {
           mystrncpy (ssystem, bcfg.sap, DirSize);
           mystrncat (ssystem, "  ", 5, DirSize);
-          mystrncat (ssystem,
-               itoa (packerr, errbuf, 10),
-               DirSize, DirSize);
+          mystrncat (ssystem, itoa (packerr, errbuf, 10), DirSize, DirSize);
+#ifdef __NT__
+          GetConsoleTitle(logout, BufSize);
+#endif
           system (ssystem);
+#ifdef __NT__
+          SetConsoleTitle(logout);
+#endif
         }
           }
         else
@@ -690,8 +709,7 @@ void makeattach (short type)
             if (temp)
         mystrncat (binkname, temp, 7, DirSize);
             else
-        mystrncat (binkname, arcname, DirSize,
-             DirSize);
+        mystrncat (binkname, arcname, DirSize, DirSize);
           reread2:
             olds =
         _dos_findfirst (binkname, findattr, &fblk);
@@ -741,22 +759,30 @@ void makeattach (short type)
         {
           mystrncpy (ssystem, bcfg.sbp, DirSize);
           mystrncat (ssystem, "  ", 5, DirSize);
-          mystrncat (ssystem, tmpname, DirSize,
-               DirSize);
+          mystrncat (ssystem, tmpname, DirSize, DirSize);
+#ifdef __NT__
+          GetConsoleTitle(logout, BufSize);
+#endif
           system (ssystem);
+#ifdef __NT__
+          SetConsoleTitle(logout);
+#endif
         }
-            sprintf (logout, "Pack %s to %s", tmpname,
-               binkname);
+            sprintf (logout, "Pack %s to %s", tmpname, binkname);
             logwrite (1, 9);
             packerr = archiver (binkname, tmpname, 2);
             if (bcfg.sap[0])
         {
           mystrncpy (ssystem, bcfg.sap, DirSize);
           mystrncat (ssystem, "  ", 5, DirSize);
-          mystrncat (ssystem,
-               itoa (packerr, errbuf, 10),
-               DirSize, DirSize);
+          mystrncat (ssystem, itoa (packerr, errbuf, 10), DirSize, DirSize);
+#ifdef __NT__
+          GetConsoleTitle(logout, BufSize);
+#endif
           system (ssystem);
+#ifdef __NT__
+          SetConsoleTitle(logout);
+#endif
         }
           }
         else

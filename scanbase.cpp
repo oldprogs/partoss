@@ -53,10 +53,7 @@ void scanbase (char *arealist, short type)	// 1 - scan, 2 - link, 3 - purge, 4 -
 	  mustlog = -1;
 	  if (alog <= 0)
 	    {
-	      if (bcfg.workdir[0])
-		mystrncpy (echologt, bcfg.workdir, DirSize);
-	      else
-		mystrncpy (echologt, homedir, DirSize);
+         mystrncpy (echologt, bcfg.workdir, DirSize);
 	      mystrncat (echologt, "echolog.$$$", DirSize, DirSize);
 	      if ((alog =
 		   (short)sopen (echologt, O_RDWR | O_BINARY,

@@ -4,7 +4,7 @@
 - При подписке на DeletedArea не создавалось уведомление:
   "Deleted Area restored to EchoArea by Echo Manager"
 
-- Мелкие недочеты в исправленной технологии DeletedArea.
+- Мелкие недочеты в исправленной технологии DeletedArea
 
 + Добавлены ключевые слова в partoss.cfg:
   - PurgeLastRead
@@ -17,3 +17,5 @@
 - Команда Post выполнялась также как и PostF при сборке Borland C/C++
 
 - Портились кладжи при SaveControlInfo Path
+
+- Не все вpеменные файлы создавались во вpеменном каталоге

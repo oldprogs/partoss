@@ -14,8 +14,10 @@ void killold (void)
   struct link *blink = NULL;
   struct myaddr *link = NULL;
   char ext[5], zonext[6], *temp = NULL, ttempl[DirSize + 1];
+  char hfile[DirSize + 1];
   short tmpl, waskill;
   unsigned long lpack, subnet, subnode;
+
   zfile = 0;
   sftime = time (NULL);
   tmt = localtime (&sftime);
@@ -27,11 +29,13 @@ void killold (void)
   zonext[0] = '.';
   zonext[4] = 0;
   zonext[5] = 0;
+  mystrncpy (hfile, bcfg.workdir, DirSize);
+  mystrncat (hfile, "$$temp$$.$$$", DirSize, DirSize);
   if ((zfile =
-       (short)sopen ("$$temp$$.$$$", O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
+       (short)sopen (hfile, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
 		     S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
     {
-      mystrncpy (errname, "$$temp$$.$$$", DirSize);
+      mystrncpy (errname, hfile, DirSize);
       errexit (2, __FILE__, __LINE__);
     }
   blink = bcfg.links.chain;
@@ -203,7 +207,7 @@ void killold (void)
       blink = blink->next;
     }
   cclose (&zfile, __FILE__, __LINE__);
-  unlink ("$$temp$$.$$$");
+  unlink (hfile);
 }
 
 short killbox (struct link *blink)

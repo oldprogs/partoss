@@ -47,10 +47,7 @@ void tossarcs (void)
       if (alog == 0)
   {
     mustlog = -1;
-    if (bcfg.workdir[0])
-      mystrncpy (echologt, bcfg.workdir, DirSize);
-    else
-      mystrncpy (echologt, homedir, DirSize);
+    mystrncpy (echologt, bcfg.workdir, DirSize);
     mystrncat (echologt, "echolog.$$$", DirSize, DirSize);
     if ((alog =
          (short)sopen (echologt, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
@@ -86,24 +83,33 @@ void tossarcs (void)
            tinbound->where ? 1 : 0);
             else
         {
-          mystrncpy (currname, tinbound->name,
-               DirSize);
-          mystrncat (currname, fblk.name, DirSize,
-               DirSize);
+          mystrncpy (currname, tinbound->name, DirSize);
+          mystrncat (currname, fblk.name, DirSize, DirSize);
           if (bcfg.sbu[0])
             {
               mystrncpy (ssystem, bcfg.sbu, DirSize);
               mystrncat (ssystem, "  ", 5, DirSize);
-              mystrncat (ssystem, currname, DirSize,
-             DirSize);
+              mystrncat (ssystem, currname, DirSize, DirSize);
+#ifdef __NT__
+              GetConsoleTitle(logout, BufSize);
+#endif
               system (ssystem);
+#ifdef __NT__
+              SetConsoleTitle(logout);
+#endif
             }
           archiver (currname, packname, 1);
           wasunp = 1;
           if (bcfg.sau[0])
             {
               ccprintf ("Execute [%s]\r\n", bcfg.sau);
+#ifdef __NT__
+              GetConsoleTitle(logout, BufSize);
+#endif
               system (bcfg.sau);
+#ifdef __NT__
+              SetConsoleTitle(logout);
+#endif
             }
           if (!bcfg.bunarc)
             cycle |= tosspkts ();
@@ -128,14 +134,26 @@ void tossarcs (void)
       mystrncpy (ssystem, bcfg.sbu, DirSize);
       mystrncat (ssystem, "  ", 5, DirSize);
       mystrncat (ssystem, tapkt->name, DirSize, DirSize);
+#ifdef __NT__
+      GetConsoleTitle(logout, BufSize);
+#endif
       system (ssystem);
+#ifdef __NT__
+      SetConsoleTitle(logout);
+#endif
     }
         archiver (tapkt->name, packname, 1);
         wasunp = 1;
         if (bcfg.sau[0])
     {
       ccprintf ("Execute [%s]\r\n", bcfg.sau);
+#ifdef __NT__
+      GetConsoleTitle(logout, BufSize);
+#endif
       system (bcfg.sau);
+#ifdef __NT__
+      SetConsoleTitle(logout);
+#endif
     }
         if (!bcfg.bunarc)
     cycle |= tosspkts ();
@@ -145,7 +163,15 @@ void tossarcs (void)
       }
   }
       if (bcfg.saua[0] && wasunp)
-  system (bcfg.saua);
+      {
+#ifdef __NT__
+         GetConsoleTitle(logout, BufSize);
+#endif
+         system (bcfg.saua);
+#ifdef __NT__
+         SetConsoleTitle(logout);
+#endif
+      };
       wasunp = 1;
       apkt = NULL;
       cycle |= tosspkts ();

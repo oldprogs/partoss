@@ -165,10 +165,7 @@ void errexit (short error, char *file, unsigned short line)
     {
       Close (ttempl);
       ttempl = 0;
-      if (bcfg.workdir[0])
-	mystrncpy (hfile, bcfg.workdir, DirSize);
-      else
-	mystrncpy (hfile, homedir, DirSize);
+      mystrncpy (hfile, bcfg.workdir, DirSize);
       mystrncat (hfile, "keytempl.$$$", DirSize, DirSize);
       unlink (hfile);
     }

@@ -250,12 +250,17 @@ int main (int argc, char **argv)
   memset (echolog, 0, (DirSize + 1));
   mystrncpy (mainconf, homedir, DirSize);
   mystrncat (mainconf, (char *)"partoss.cfg", 16, DirSize);
-  mystrncpy (crtreprt, homedir, DirSize);
-  mystrncat (crtreprt, (char *)"crtreprt.$$$", 16, DirSize);
   if (bcfg.workdir[0])
+  {
+    mystrncpy (crtreprt, bcfg.workdir, DirSize);
     mystrncpy (pttmpl, bcfg.workdir, DirSize);
+  }
   else
+  {
+    mystrncpy (crtreprt, homedir, DirSize);
     mystrncpy (pttmpl, homedir, DirSize);
+  }
+  mystrncat (crtreprt, (char *)"crtreprt.$$$", 16, DirSize);
   mystrncat (pttmpl, (char *)"parttmpl.$$$", 16, DirSize);
   if (argc == 1)
     errexit (10, __FILE__, __LINE__);
@@ -477,10 +482,7 @@ int main (int argc, char **argv)
   }
       logwrite (1, 9);
     }
-  if (bcfg.workdir[0])
-    mystrncpy (hfile, bcfg.workdir, DirSize);
-  else
-    mystrncpy (hfile, homedir, DirSize);
+  mystrncpy (hfile, bcfg.workdir, DirSize);
   mystrncat (hfile, "keytempl.$$$", DirSize, DirSize);
 #if HAVE_SOPEN
   if ((ttempl =
@@ -495,10 +497,7 @@ int main (int argc, char **argv)
       mystrncpy (errname, hfile, DirSize);
       errexit (2, __FILE__, __LINE__);
     }
-  if (bcfg.workdir[0])
-    mystrncpy (temppktn, bcfg.workdir, DirSize);
-  else
-    mystrncpy (temppktn, homedir, DirSize);
+  mystrncpy (temppktn, bcfg.workdir, DirSize);
   mystrncat (temppktn, "temppkt.$$$", 16, DirSize);
 #if HAVE_SOPEN
   if ((temppkt =

@@ -13,14 +13,11 @@ short templat (short fhandle, short thandle)
                     "file:"
   };
   char *temp = NULL, *temp2 = NULL, *temp3 = NULL;
-//  retfile =
-//    (short)sopen ("parttmpl.$$$", O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-//		  S_IRWXU | S_IRWXG | S_IRWXO);
   retfile = (short)sopen (pttmpl, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
                                   S_IRWXU| S_IRWXG | S_IRWXO);
   if (retfile == -1)
     {
-      mystrncpy (errname, "parttmpl.$$$", DirSize);
+      mystrncpy (errname, pttmpl, DirSize);
       errexit (2, __FILE__, __LINE__);
     }
   chsize (retfile, 0);
