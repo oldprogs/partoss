@@ -196,9 +196,12 @@ char *keywords[] = {
   "StripToFTS",     // 174
   "PurgeLastRead",      // 175
   "LogAlwaysOpen",      // 176 Synonym for KeepLogFileOpened
-  "DoNotCheckFD"       // 177
+  "DoNotCheckFD",       // 177
+  "FixManagerReadOnly", // 178
+  "DeletedAreaList",    // 179
+  "UseTID"              // 180
 };
-short numtoken = 178;
+short numtoken = 181;
 
 void runmainset (void)
 {
@@ -1812,9 +1815,10 @@ void parser (char *file, short level)
         {
           gettoken (level);
           if (strnicmp (token, "Name", 4) == 0)
-      bcfg.sort = 2;
-          else if (strnicmp (token, "Group", 5) == 0)
-      bcfg.sort = 4;
+            bcfg.sort = 2;
+          else
+           if (strnicmp (token, "Group", 5) == 0)
+             bcfg.sort = 4;
         }
       break;
 
@@ -2518,6 +2522,22 @@ void parser (char *file, short level)
       break;
     case 177:
       bcfg.dncfd = 1;
+      break;
+    case 178:
+      bcfg.fixro = 1;
+      break;
+    case 179:
+      gettoken (level);
+      if (strnicmp (token, "NA", 2) == 0)
+      {
+        gettoken (level);
+        tokencpy (bcfg.dalist, DirSize);
+      };
+      break;
+    case 180:
+      gettoken (level);
+      if (strnicmp (token, "No", 2) == 0)
+        bcfg.dnutid = 1;
       break;
     }
       }

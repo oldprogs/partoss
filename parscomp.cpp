@@ -130,7 +130,7 @@ void runcompset (void)
         if (memicmp (token, arckeys[i], strlen (arckeys[i])) == 0)
           break;
     }
-        if (i == 8 || i == 9 || i == 10)
+        if (i == 8 || i == 9 || i == 10 || i == 11)
     {
       left = 1;
       gettoken (0);
@@ -190,9 +190,12 @@ void runcompset (void)
       if (memicmp (temp, ".bat", 4) == 0)
 #elif defined( __OS2__ )
       if (memicmp (temp, ".cmd", 4) == 0)
-#else
+#elif defined( __NT__ )
       if ((memicmp (temp, ".cmd", 4) == 0)
           || (memicmp (temp, ".bat", 4) == 0))
+#elif defined(__linux__) || defined(__FreeBSD__)
+      if (memicmp (temp, ".sh", 3) == 0)
+#else
 #endif
         pack.addbat = 1;
           radd = 1;
@@ -209,9 +212,12 @@ void runcompset (void)
           if (memicmp (temp, ".bat", 4) == 0)
 #elif defined( __OS2__ )
           if (memicmp (temp, ".cmd", 4) == 0)
-#else
+#elif defined( __NT__ )
           if ((memicmp (temp, ".cmd", 4) == 0)
         || (memicmp (temp, ".bat", 4) == 0))
+#elif defined(__linux__) || defined(__FreeBSD__)
+          if (memicmp (temp, ".sh", 3) == 0)
+#else
 #endif
             pack.addbat = 1;
       }
@@ -230,9 +236,12 @@ void runcompset (void)
       if (memicmp (temp, ".bat", 4) == 0)
 #elif defined( __OS2__ )
       if (memicmp (temp, ".cmd", 4) == 0)
-#else
+#elif defined( __NT__ )
       if ((memicmp (temp, ".cmd", 4) == 0)
           || (memicmp (temp, ".bat", 4) == 0))
+#elif defined(__linux__) || defined(__FreeBSD__)
+      if (memicmp (temp, ".sh", 3) == 0)
+#else
 #endif
         pack.extrbat = 1;
           rextr = 1;
@@ -249,9 +258,12 @@ void runcompset (void)
           if (memicmp (temp, ".bat", 4) == 0)
 #elif defined( __OS2__ )
           if (memicmp (temp, ".cmd", 4) == 0)
-#else
+#elif defined( __NT__ )
           if ((memicmp (temp, ".cmd", 4) == 0)
         || (memicmp (temp, ".bat", 4) == 0))
+#elif defined(__linux__) || defined(__FreeBSD__)
+      if (memicmp (temp, ".sh", 3) == 0)
+#else
 #endif
             pack.extrbat = 1;
       }
@@ -268,6 +280,8 @@ void runcompset (void)
 
     case 8:
     case 9:
+    case 10:
+    case 11:
       break;
     }
       }

@@ -465,17 +465,20 @@ void getctrl (char *text, unsigned short len, short type)
       (*kludlen) += i;
       if (local && 1)
   {
-    tkludge->next =
-      (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
-    tkludge = tkludge->next;
-    tkludge->next = NULL;
-    memset (att, 0, DirSize + 1);
-    sprintf (att, "\1TID: ParToss %s", version);
-    tkludge->str =
-      (char *)myalloc (strlen (att) + 3, __FILE__, __LINE__);
-    mystrncpy (tkludge->str, att, (short)(strlen (att) + 2));
-    (*kludnum)++;
-    (*kludlen) += (unsigned short)(strlen (att) + 1);
+    if (!bcfg.dnutid)
+    {
+      tkludge->next =
+        (struct kludge *)myalloc (szkludge, __FILE__, __LINE__);
+      tkludge = tkludge->next;
+      tkludge->next = NULL;
+      memset (att, 0, DirSize + 1);
+      sprintf (att, "\1TID: ParToss %s", version);
+      tkludge->str =
+        (char *)myalloc (strlen (att) + 3, __FILE__, __LINE__);
+      mystrncpy (tkludge->str, att, (short)(strlen (att) + 2));
+      (*kludnum)++;
+      (*kludlen) += (unsigned short)(strlen (att) + 1);
+    };
   }
     }
   else

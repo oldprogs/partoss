@@ -314,11 +314,13 @@ int archiver (char *arcname, char *packname, short type)
        }
       else*/
        {
+        GetConsoleTitle(logout, BufSize);
 #ifdef __BORLANDC__
         retcode=spawnvp(P_WAIT,param[0],(char *const *)param);
 #else
         retcode=spawnvp(P_WAIT,param[0],(char const * const *)param);
 #endif
+        SetConsoleTitle(logout);
        }
 #else
 #if defined (__linux__) || defined (__FreeBSD__)
@@ -358,10 +360,14 @@ int archiver (char *arcname, char *packname, short type)
 #ifdef __DOS__
           spawnvp (P_WAIT, param[0], (char const *const *)param);
 #else
+#ifdef __NT__
+              GetConsoleTitle(logout, BufSize);
 #ifdef __BORLANDC__
               spawnvp(P_WAIT,param[0],(char *const *)param);
 #else
               spawnvp(P_WAIT,param[0],(char const * const *)param);
+#endif
+              SetConsoleTitle(logout);
 #endif
 #endif
 #endif

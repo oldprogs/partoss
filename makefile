@@ -4,7 +4,7 @@ OBJS = archives.o attach.o buftomsg.o buftopkt.o \
        morfiles.o msgtobuf.o packets.o parscomp.o parsmain.o parsrout.o \
        partoss.o partpost.o partserv.o partset.o partsqd.o \
        pkttobuf.o rebuild.o scanbase.o sqdtobuf.o template.o version.o \
-       times.o tossarcs.o _portlib.o mappath.o astring.o arealias.o
+       times.o tossarcs.o _portlib.o mappath.o astring.o arealias.o locks.o
 SRCS = archives.cc attach.cc buftomsg.cc \
        buftopkt.cc buftosqd.cc chains.cc control.cc crc32.cc environ.cc \
        errors.cc handyman.cc headers.cc killold.cc linkareb.cc \
@@ -13,7 +13,7 @@ SRCS = archives.cc attach.cc buftomsg.cc \
        partpost.cc partserv.cc partset.cc partsqd.cc \
        pkttobuf.cc rebuild.cc scanbase.cc sqdtobuf.cc version.cc \
        template.cc times.cc tossarcs.cc _portlib.cc mappath.cc astring.cc \
-       arealias.cc
+       arealias.cc locks.cc
 
 BINS = partossl
 
@@ -25,9 +25,9 @@ CFLAGS += -D_GNU_SOURCE -D_BSD_SOURCE
 #CFLAGS += -D__REMAP__ -D__REMAP_LOWER__
 CPPFLAGS=$(CFLAGS)
 
-all: partossl
+all: partoss
 
-partossl: $(OBJS)
+partoss: $(OBJS)
 	$(CC) $(CFLAGS) -o $(BINS) $(OBJS)
 
 clean:

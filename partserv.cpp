@@ -969,7 +969,7 @@ void doserv (void)
         makelist (4, sort);
         cclose (&tempsrv, __FILE__, __LINE__);
         mystrncpy (fname, outbound, DirSize);
-        mystrncat (fname, "echoList.", 12, DirSize);
+        mystrncat (fname, "EchoList.", 12, DirSize);
         logout[0] = duotrice[(bcfg.address.chain->node >> 8) & 0x0f];
         logout[1] = duotrice[(bcfg.address.chain->node >> 4) & 0x0f];
         logout[2] = duotrice[(bcfg.address.chain->node) & 0x0f];
@@ -1165,22 +1165,11 @@ void doserv (void)
           {
             if (ttlist->alist[i].type == 1)
         {
-          if ((wildcard
-               (wild, ttlist->alist[i].areaname) == 0)
-              && (bcfg.
-            gric
-            ? (strichr
-               (blink->group,
-                ttlist->alist[i].group) !=
-               NULL) : (strchr (blink->group,
-                    ttlist->
-                    alist[i].
-                    group) !=
-                  NULL)))
+          if ((wildcard (wild, ttlist->alist[i].areaname) == 0) &&
+              (bcfg.gric ? (strichr(blink->group, ttlist->alist[i].group) != NULL) :
+              (strchr (blink->group, ttlist->alist[i].group) != NULL)))
             {
-              addsarea (&areas, &ttaname,
-            ttlist->alist[i].areaname, 1,
-            1);
+              addsarea (&areas, &ttaname, ttlist->alist[i].areaname, 1, 1);
             }
         }
           }
@@ -1962,7 +1951,8 @@ fordelarea:
             };
             //3
             if (ttname)
-               if (tfound = seekarea (ttname, tname->persarea))
+               if (!seekarea(bcfg.dalist, tname->persarea))
+               if (tfound = seekarea (ttname->echolist, tname->persarea))
                {
                   tuplink = ttname;
                   if (tname->found == 2)
@@ -1973,8 +1963,8 @@ fordelarea:
                };
          };
 
-        tfound = seekarea (tuplink, tname->persarea);
-      if (tfound)
+      if (!seekarea(bcfg.dalist, tname->persarea))
+      if (tfound = seekarea (tuplink->echolist, tname->persarea))
         {
             if (tname->found == 2)
             {
@@ -1987,13 +1977,12 @@ fordelarea:
 
             if (tname->found < 5)
             {
-            sprintf (logout, "Area %s added\r\n", tname->persarea);
-          mywrite (tempsrv, logout, __FILE__, __LINE__);
-          };
+               sprintf (logout, "Area %s added\r\n", tname->persarea);
+               mywrite (tempsrv, logout, __FILE__, __LINE__);
+            };
 
-            memcpy (&utarea, tuplink, sizeof (struct uplname));
-          mystrncpy (utarea.persarea, tname->persarea,
-         arealength);
+          memcpy (&utarea, tuplink, sizeof (struct uplname));
+          mystrncpy (utarea.persarea, tname->persarea, arealength);
           utarea.where = 1;
 //            memcpy(&utarea.upaddr,&tuplink->upaddr,szmyaddr);
           if (uareas == NULL)
@@ -2049,14 +2038,14 @@ fordelarea:
     }
 }
 
-short seekarea (struct uplname *upl, char *area)
+short seekarea (char *echolist, char *area)
 {
   short alist;
 //  char tdesc[128];
-  alist = mysopen (upl->echolist, 2, __FILE__, __LINE__);
+  alist = mysopen (echolist, 2, __FILE__, __LINE__);
   if (alist == -1)
     return 0;
-  mystrncpy (confile, upl->echolist, DirSize);
+  mystrncpy (confile, echolist, DirSize);
   lineno[2] = 0;
   endinput[2] = 0;
   while (!endinput[2])

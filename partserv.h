@@ -5,7 +5,7 @@ void makelist (short type, short sort);
 void makestatus (struct link *blink);
 void makelinks (char *areaname);
 void changearea (struct uplname *areas);
-short seekarea (struct uplname *upl, char *area);
+short seekarea (char *echolist, char *area);
 void chareacfg (struct uplname *areas, char *file);
 void changelink (struct link *blink);
 void chlinkcfg (struct link *blink, char *file);

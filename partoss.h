@@ -13,7 +13,7 @@
 //#endif
 
 
-/* $Id: partoss.h,v 1.11 2003/04/04 17:57:11 mozhaev Exp $ */
+/* $Id: partoss.h,v 1.12 2003/04/16 16:10:30 mozhaev Exp $ */
 /* Ported partially */
 #ifdef HAVE_CONFIG_H
 
@@ -565,7 +565,7 @@ struct bincfg
     bshablon[DirSize + 1], unname[DirSize + 1], workout[DirSize + 1],
     netsem[DirSize + 1], echosem[DirSize + 1], sbu[DirSize + 1],
     sbp[DirSize + 1], saua[DirSize + 1], sau[DirSize + 1], sap[DirSize + 1],
-    defdomain[8];
+    defdomain[8], dalist[DirSize + 1];
   long pktsize, mansize, arcsize, minunp, mintoss;
   unsigned short bunarc, bufsize, killdupes, loglevel, isnode, renbad, method,
     numaddr, numts, numnames, numseenby, numgates, numdg, numlink, numinbound,
@@ -580,7 +580,7 @@ struct bincfg
     single, fastlink, linkverb, transl, levels, rescdays, longfp, setloc,
     dnccsy, logoutl, boxstyle, test, dncbsy, dropbad, setdir, passci,
     rulesent, nocarbon, deldays, nrenum, strip2fts, dnsipkt, dncloselog,
-    purgelr, dncfd;
+    purgelr, dncfd, fixro, dnutid;
   unsigned maxdupes;
   struct area defarea;
   struct shortaddr delseen;
