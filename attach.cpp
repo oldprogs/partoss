@@ -214,7 +214,8 @@ void makeattach (short type)
 			}
 		    }
 // FrontDoor-like Busy flags
-		  if (bcfg.busy[0])
+        if (!bcfg.dncfd)
+        if (bcfg.busy[0])
 		    {
 		      if (tpack->outaddr.point)
 			sprintf (straddr, "%u:%u/%u.%u", tpack->outaddr.zone,
@@ -288,6 +289,7 @@ void makeattach (short type)
 			  cclose ((short *)&tbsy, __FILE__, __LINE__);
 			}
 		    }
+        if (!bcfg.dncfd)
 		  if (bcfg.busy[0])
 		    {
 		      mystrncpy (bsynamef, bcfg.busy, DirSize);

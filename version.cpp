@@ -1,7 +1,7 @@
 #include "partoss.h"
 #include "globext.h"
 
-#define VERSION "1.10.063/HSH"
+#define VERSION "1.10.064/HSH"
 
 #define vertype 5
 // 1 - alpha, 2 - beta, 3 - gamma, 4 - rev. x, 5 - developer, 0 - none

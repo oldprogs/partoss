@@ -183,9 +183,10 @@ char *keywords[] = {
   "KeepLogFileOpened",		// 173   (must be 1.06.09 LogAlwaysOpen <YES|NO>)
   "StripToFTS",			// 174
   "PurgeLastRead",      // 175
-  "LogAlwaysOpen"       // 176 Synonym for KeepLogFileOpened
+  "LogAlwaysOpen",      // 176 Synonym for KeepLogFileOpened
+  "DoNotCheckFD" 		   // 177
 };
-short numtoken = 177;
+short numtoken = 178;
 
 void runmainset (void)
 {
@@ -2487,6 +2488,9 @@ void parser (char *file, short level)
 		  break;
 		case 175:
 		  bcfg.purgelr = 1;
+		  break;
+		case 177:
+		  bcfg.dncfd = 1;
 		  break;
 		}
 	    }

@@ -13,7 +13,7 @@
 //#endif
 
 
-/* $Id: partoss.h,v 1.5 2003/02/26 17:36:36 saf2 Exp $ */
+/* $Id: partoss.h,v 1.6 2003/02/28 08:48:56 mozhaev Exp $ */
 /* Ported partially */
 #ifdef HAVE_CONFIG_H
 
@@ -627,7 +627,8 @@ struct bincfg
     savepath, nummans2, selfaka, asavail, asfull, carbnet, stripext, echoonly,
     single, fastlink, linkverb, transl, levels, rescdays, longfp, setloc,
     dnccsy, logoutl, boxstyle, test, dncbsy, dropbad, setdir, passci,
-    rulesent, nocarbon, deldays, nrenum, strip2fts, dnsipkt, dncloselog, purgelr;
+    rulesent, nocarbon, deldays, nrenum, strip2fts, dnsipkt, dncloselog,
+    purgelr, dncfd;
   unsigned maxdupes;
   struct area defarea;
   struct shortaddr delseen;
