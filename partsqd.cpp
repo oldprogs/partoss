@@ -409,7 +409,7 @@ void createarea (char *areaname, short pers, struct myaddr *pktaddr2)
   char newname[BufSize + 1], tareaname[arealength + 1], autotemp[5], *temp =
     NULL, *temp2 = NULL;
   struct areaindex *anew = NULL;
-  struct area *crarea = NULL, tdefarea;
+  struct area *crarea = NULL, tdefarea, testarea;
   struct link *blink = NULL;
   struct uplname *bladv = NULL;
   mystrncpy (tareaname, areaname, arealength + 1);
@@ -506,14 +506,14 @@ founddef:
        for (i = 0; i < tlist->numlists; i++)
        {
          lseek (areaset, tlist->alist[i].areaoffs, SEEK_SET);
-         rread (areaset, crarea, szarea, __FILE__, __LINE__);
-         fplen = (short)strlen (crarea->areafp);
-         if (memicmp (crarea->areafp + fplen - 8, "auto", 4) == 0)
+         rread (areaset, &testarea, szarea, __FILE__, __LINE__);
+         fplen = (short)strlen (testarea.areafp);
+         if (memicmp (testarea.areafp + fplen - 8, "auto", 4) == 0)
          {
-           tnum = (short)((hex (*(crarea->areafp + fplen - 4)) << 12) +
-                          (hex (*(crarea->areafp + fplen - 3)) << 8) +
-                          (hex (*(crarea->areafp + fplen - 2)) << 4) +
-                          (hex (*(crarea->areafp + fplen - 1))));
+           tnum = (short)((hex (*(testarea.areafp + fplen - 4)) << 12) +
+                          (hex (*(testarea.areafp + fplen - 3)) << 8) +
+                          (hex (*(testarea.areafp + fplen - 2)) << 4) +
+                          (hex (*(testarea.areafp + fplen - 1))));
            checkbuf[tnum/8]|=(1<<(tnum%8));
          }
       }
@@ -571,15 +571,15 @@ founddef:
 	      for (i = 0; i < tlist->numlists; i++)
 		{
 		  lseek (areaset, tlist->alist[i].areaoffs, SEEK_SET);
-		  rread (areaset, crarea, szarea, __FILE__, __LINE__);
-		  fplen = (short)strlen (crarea->areafp);
-		  if (memicmp (crarea->areafp + fplen - 8, "auto", 4) == 0)
+		  rread (areaset, &testarea, szarea, __FILE__, __LINE__);
+		  fplen = (short)strlen (testarea.areafp);
+		  if (memicmp (testarea.areafp + fplen - 8, "auto", 4) == 0)
 		    {
 		      tnum =
-			(short)((hex (*(crarea->areafp + fplen - 4)) << 12) +
-				(hex (*(crarea->areafp + fplen - 3)) << 8) +
-				(hex (*(crarea->areafp + fplen - 2)) << 4) +
-				(hex (*(crarea->areafp + fplen - 1))));
+			(short)((hex (*(testarea.areafp + fplen - 4)) << 12) +
+				(hex (*(testarea.areafp + fplen - 3)) << 8) +
+				(hex (*(testarea.areafp + fplen - 2)) << 4) +
+				(hex (*(testarea.areafp + fplen - 1))));
 		      if (tnum >= autonum)
 			autonum = (short)(tnum + 1);
 		    }
@@ -629,11 +629,9 @@ founddef:
     }
 	}
   if (usingshablon == 0)
-    {
       memcpy (&tdefarea, &bcfg.defarea, szarea);
-      mystrncpy (crarea->areaname, areaname, arealength);
-      mystrncpy (crarea->areafp, newname, DirSize);
-    }
+  mystrncpy (crarea->areaname, areaname, arealength);
+  mystrncpy (crarea->areafp, newname, DirSize);
   crarea->type = 1;
   crarea->days = tdefarea.days;
   crarea->messages = tdefarea.messages;

@@ -2016,15 +2016,20 @@ fordelarea:
                tname->found = 6;
                goto fordelarea;
             };
-            if (tname->found == 4)
+            if (tname->found == 4 || tname->found == 0)
                tname->found = 7;
 		      goto next;
 		    }
 		  tuplink = tuplink->next;
 		}
 	    }
+     if (tname->found != 8)
+     {
 	  sprintf (logout, "Area %s not found\r\n", tname->persarea);
 	  mywrite (tempsrv, logout, __FILE__, __LINE__);
+	  }
+     if (tname->found == 2)
+        tname->found = 8;
 	}
     next:
       tname = tname->next;
@@ -2118,7 +2123,7 @@ void chareacfg (struct uplname *areas, char *file)
 		}
 	      if (tname)
 		{
-         if (tname->found == 7)
+         if (tname->found == 7 || tname->found == 1)
          {
             wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
             continue;
@@ -2515,7 +2520,9 @@ void chareacfg (struct uplname *areas, char *file)
                      if (!delkill(0))
                         tname->found = 2;
                      break;
+                  case 1:
                   case 2:
+                  case 8:
                      wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
                      break;
                   case 3: //restored from deleted
@@ -2548,7 +2555,11 @@ void chareacfg (struct uplname *areas, char *file)
 				    };
             }
             else
-               wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
+            {
+               curtpos[0] = 0;
+               gettoken (0);
+               delkill(0);
+            }
          }
          else
             wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
@@ -3390,7 +3401,8 @@ short delkill (short deltype)
       while (tlist)
 	{
 	  for (i = 0; i < tlist->numlists; i++)
-	    if (strnicmp (tlist->alist[i].areaname, token, toklen) == 0)
+	    if ((strnicmp (tlist->alist[i].areaname, token, toklen) == 0) &&
+           (strlen (tlist->alist[i].areaname) == toklen))
 	      goto nfoundd;
 	  tlist = tlist->next;
 	}

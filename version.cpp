@@ -1,10 +1,10 @@
 #include "partoss.h"
 #include "globext.h"
 
-#define VERSION "1.10.061/SAF"
+#define VERSION "1.10.062/HSH"
 
-#define vertype 1
-// 1 - alpha, 2 - beta, 3 - gamma, 4 - rev. x, 0 - none
+#define vertype 5
+// 1 - alpha, 2 - beta, 3 - gamma, 4 - rev. x, 5 - developer, 0 - none
 #if vertype == 0
 #define vversion
 #elif vertype == 1
@@ -15,6 +15,8 @@
 #define vversion " gamma"
 #elif vertype == 4
 #define vversion " rev. x"
+#elif vertype == 5
+#define vversion " devel"
 #endif
 
 

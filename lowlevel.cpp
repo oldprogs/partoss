@@ -283,7 +283,7 @@ void logwrite (short first, short level)
     }
   mywrite (logfile, logout, __FILE__, __LINE__);
   flushbuf (logfile);
-  if (!dncloselog)
+  if (!bcfg.dncloselog)
     cclose (&logfile, __FILE__, __LINE__);
 }
 

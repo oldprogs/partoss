@@ -174,7 +174,7 @@ short tosspkts (void)
   struct pktname *cpkt = NULL, *tpkt = NULL, *tinbound = NULL;
   char pbadname[(DirSize + 1)], *temp = NULL;
   short retcode, retc = 0;
-  if (!dnsipkt)
+  if (!bcfg.dnsipkt)
     {
       tinbound = bcfg.inbound;
       while (tinbound)

@@ -139,7 +139,4 @@ extern list < areaalias > areaaliaslist;
 
 extern long int umask_val;
 
-extern unsigned short dnsipkt;
-extern unsigned short dncloselog;
-
 extern char pttmpl[DirSize + 1];

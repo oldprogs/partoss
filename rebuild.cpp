@@ -40,10 +40,10 @@ void purgesqd (void)
   char fulname[(DirSize + 1)], pname[(DirSize + 1)], iname[(DirSize + 1)],
     *bitmap = NULL;
   long maxmsg, i, newmess = 0, oldsize, newsize, sumdel = 0;
-  /*
-     long firstmsg,lastread=1000000000L,lastread2;
-     short sql;
-   */
+  /**/
+   long firstmsg,lastread=1000000000L,lastread2;
+   short sql;
+  /**/
   unsigned long currtime;
   short needcopy, needwork, balloc;
   unsigned short diff;
@@ -61,28 +61,29 @@ void purgesqd (void)
   oldsize = filelength (newarea->sqd.sqd) + filelength (newarea->sqd.sqi);
   lseek (newarea->sqd.sqd, 8, SEEK_SET);
   rread (newarea->sqd.sqd, &maxmsg, 4, __FILE__, __LINE__);
-  /*
-     maxp=maxmsg;
-     if(bcfg.purgelr)
-     {
-     mystrncpy(iname,newarea->areafp,DirSize);
-     mystrncat(iname,".sql",5,DirSize);
-     if((sql=(short)sopen(iname,O_RDONLY|O_BINARY,S_IRWXU|S_IRWXG|S_IRWXO))==-1)
-     firstmsg=0;
-     else
-     {
-     while(rread(sql,&lastread2,4,__FILE__,__LINE__)==4)
-     {
-     if(lastread>lastread2)
-     lastread=lastread2;
-     }
-     cclose(&sql,__FILE__,__LINE__);
-     maxp=0;
-
-
-
-   */
-
+  /**/
+   if(bcfg.purgelr)
+   {
+      lastread = maxmsg;
+      mystrncpy(iname,newarea->areafp,DirSize);
+      mystrncat(iname,".sql",5,DirSize);
+      if((sql=(short)sopen(iname,O_RDWR|O_BINARY,SH_DENYWR,S_IRWXU|S_IRWXG|S_IRWXO))==-1)
+         firstmsg=0;
+      else
+      {
+         while(rread(sql, &lastread2, 4, __FILE__, __LINE__)==4)
+         {
+            if(lastread < lastread2)
+            {
+               lseek (sql, -4, SEEK_CUR);
+               if (wwrite(sql, &lastread, 4, __FILE__, __LINE__) != 4)
+                  lseek (sql, 4, SEEK_CUR);
+            };
+         };
+         cclose(&sql,__FILE__,__LINE__);
+      };
+   };
+  /**/
   if (oldsize > 256)
     needwork = 1;
   else

@@ -161,9 +161,6 @@ list < areaalias > areaaliaslist;
 long int umask_val;
 #endif
 
-unsigned short dnsipkt = 0;
-unsigned short dncloselog = 0;
-
 int main (int argc, char **argv)
 {
 #ifdef __NT__

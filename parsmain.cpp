@@ -47,7 +47,7 @@ char *keywords[] = {
   "PackNetmail",		// 37 Enable pack and archive netmail
   "BinkMode",			// 38 Bink-style outbound (disable other modes)
   "LinkType",			// 39 Type of reply-linking - @MSGID/@REPLY or Subj
-  "Linklength",			// 40 Length of subj's part for linking
+  "LinkLength",			// 40 Length of subj's part for linking
   "SecureInbound",		// 41 Set secure inbound directory
   "KillInTransit",		// 42 Kill transit netmail after sending
   "StripAttributes",		// 43 Strip Cra and Hld attributes in received netmail
@@ -104,9 +104,9 @@ char *keywords[] = {
   "NetMailDupes",		// 94
   "VisualSleep",		// 95
   "PurgePassThrough",		// 96
-  "LockedAsBad",		// 97 (obsoleted)
+  "LockedAsBad",		// 97 (obsoleted - see LockedAreaBehavior)
   "DelKilledPassThru",		// 98
-  "MultiTaskNoLock",		// 99 (obsoleted)
+  "MultiTaskNoLock",		// 99 (obsoleted - see LockedAreaBehavior)
   "ManagerFromName",		// 100
   "ManagerBadTemplate",		//101
   "LockedAreaBehavior",		// 102
@@ -181,9 +181,11 @@ char *keywords[] = {
   "Umask",			// 171
   "DoNotSearchInboundPKT",	// 172
   "KeepLogFileOpened",		// 173   (must be 1.06.09 LogAlwaysOpen <YES|NO>)
-  "StripToFTS"			// 174
+  "StripToFTS",			// 174
+  "PurgeLastRead",      // 175
+  "LogAlwaysOpen"       // 176 Synonym for KeepLogFileOpened
 };
-short numtoken = 175;
+short numtoken = 177;
 
 void runmainset (void)
 {
@@ -467,15 +469,6 @@ void parser (char *file, short level)
 //    printf("umask: %d & 0777 = %d\n",umask_val,(umask_val&777));
 		  break;
 #endif
-		case 172:
-		  dnsipkt = 1;
-		  break;
-		case 173:
-		  dncloselog = 1;
-		  break;
-		case 174:
-		  bcfg.strip2fts = 1;
-		  break;
 
 		case 0:
 		  gettoken (level);
@@ -2481,6 +2474,19 @@ void parser (char *file, short level)
 
 		case 170:
 		  bcfg.nrenum = 1;
+		  break;
+		case 172:
+		  bcfg.dnsipkt = 1;
+		  break;
+		case 173:
+		case 176:
+		  bcfg.dncloselog = 1;
+		  break;
+		case 174:
+		  bcfg.strip2fts = 1;
+		  break;
+		case 175:
+		  bcfg.purgelr = 1;
 		  break;
 		}
 	    }
