@@ -1,8 +1,48 @@
 #include "partoss.h"
 #include "globext.h"
 
+#define VERSION "1.10.061/SAF"
+
+#define vertype 1
+// 1 - alpha, 2 - beta, 3 - gamma, 4 - rev. x, 0 - none
+#if vertype == 0
+#define vversion
+#elif vertype == 1
+#define vversion " alpha"
+#elif vertype == 2
+#define vversion " beta"
+#elif vertype == 3
+#define vversion " gamma"
+#elif vertype == 4
+#define vversion " rev. x"
+#endif
+
+
 void printversion(void)
 {
+#if defined( __DOS__ )
+#define verplatform "/DOS"
+#elif defined( __NT__ )
+#define verplatform "/W32"
+#elif defined( __OS2__)
+#define verplatform "/OS2"
+#elif defined( __EMX__)
+#define verplatform "/EMX"
+#elif defined( __linux__)
+#define verplatform "/LNX"
+#elif defined( __FreeBSD__)
+#define verplatform "/FreeBSD"
+#elif defined( SYSTEM_NAME)
+/*
+ * If there is any macro with the same function then this
+ * one should be removed.
+ */
+#define verplatform SYSTEM_NAME
+#else
+#warning So, what system we are building for?
+#define verplatform "/UNK"
+#endif
+  mystrncpy (version, VERSION verplatform vversion, MAX_VERSIONLEN - 1);
   sprintf(logout, "The Parma Tosser version %s", version);
   ccprintf("%s\r\n", logout);
 #ifdef __NT__

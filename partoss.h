@@ -13,7 +13,7 @@
 //#endif
 
 
-/* $Id: partoss.h,v 1.3 2003/02/17 18:43:34 saf2 Exp $ */
+/* $Id: partoss.h,v 1.4 2003/02/17 19:39:34 saf2 Exp $ */
 /* Ported partially */
 #ifdef HAVE_CONFIG_H
 
@@ -205,9 +205,9 @@ extern int int86 (int intr_no, const union REGS *inreg, union REGS *outreg);
 #endif
 // Watcom
 /* group permission.  same as owner's on PC and PenPoint*/
-#define S_IRWXG 	0000070
+#define S_IRWXG   0000070
 /* other permission.  same as owner's on PC and PenPoint*/
-#define S_IRWXO 	0000007
+#define S_IRWXO   0000007
 // Windows
 #include <windows.h>
 // Watcom
@@ -225,9 +225,9 @@ int _grow_handles( int new_count ) { return new_count; };
 #include "swapexec.hhh"
 
 extern "C" unsigned pascal SwapExec (char *FileNameToSwap,
-				     char *ProgramToExecute,
-				     char *CommandString, unsigned Actions,
-				     unsigned EnvSeg);
+             char *ProgramToExecute,
+             char *CommandString, unsigned Actions,
+             unsigned EnvSeg);
 
 #endif
 
@@ -259,7 +259,6 @@ extern "C" unsigned pascal SwapExec (char *FileNameToSwap,
 #define HAVE_SOPEN 1
 
 // ... and automake.
-#define VERSION "1.10.061/HSH"
 
 #endif /* HAVE_CONFIG_H */
 
@@ -504,7 +503,7 @@ struct incl
 {
   char name[DirSize + 1];
   unsigned long stamp;
-  char group;			//not for Include, but for group descriptions
+  char group;     //not for Include, but for group descriptions
   struct incl *next;
 };
 
@@ -578,8 +577,8 @@ public:
     if (stricmp (sarea, a.sarea) != 0 || stricmp (darea, a.darea) != 0)
       return 0;
     if (linkaddr.zone != a.linkaddr.zone || linkaddr.net != a.linkaddr.net ||
-	linkaddr.node != a.linkaddr.node
-	|| linkaddr.point != a.linkaddr.point)
+  linkaddr.node != a.linkaddr.node
+  || linkaddr.point != a.linkaddr.point)
       return 0;
     return 1;
   }
@@ -599,7 +598,7 @@ struct bincfg
 {
   unsigned long maindt, packdt, areadt;
   // char version[20]; // This is original value.
-  char version[40];		// Changed by Voland to handle OS names like
+  char version[40];   // Changed by Voland to handle OS names like
   // freebsd2.2.6-386.
   char packcfg[(DirSize + 1)], areacfg[(DirSize + 1)], logfile[(DirSize + 1)],
     swapfile[(DirSize + 1)], route[(DirSize + 1)], outbound[(DirSize + 1)],
@@ -736,12 +735,12 @@ short mmsgout (void);
 short msgtobuf (char *fname);
 short readhead (short handle, struct myaddr *from, struct myaddr *to);
 unsigned rread (short handle, void *buf, unsigned len, char *file,
-		short line);
+    short line);
 short setarea (char *areaname, short pers);
 short sqdtobuf (struct area *ttarea, struct sqifile *tindex, long number);
 short sqhtobuf (long number);
 unsigned wwrite (short handle, void *buf, unsigned len, char *file,
-		 short line);
+     short line);
 void cclose (short *handle, char *file, unsigned short line);
 long readmsg (long number, short type);
 unsigned long asciihex (char *string);
@@ -751,7 +750,7 @@ unsigned long strtime (char *time);
 void *myalloc (unsigned length, char *file, unsigned short line);
 void *myrealloc (void *buf, unsigned length, char *file, unsigned short line);
 void addshort (struct shortchain *chain, unsigned short net,
-	       unsigned short node);
+         unsigned short node);
 short addaddr (struct addrchain *chain, struct myaddr *addr);
 void addname (struct namechain *chain, struct sysname *name);
 void addlink (struct linkchain *chain, struct link *link);
@@ -789,15 +788,15 @@ short movefile (char *src, char *dst);
 // void movetobox(struct myaddr *address,char *arcname,short hold);
 void msgout (short type);
 void msgwrite (struct myaddr *from, struct myaddr *to, char *fromname,
-	       char *toname, char *subj, unsigned short flags, char *klflags,
-	       char *text);
+         char *toname, char *subj, unsigned short flags, char *klflags,
+         char *text);
 void myfree (void **buf, char *file, unsigned short line);
 void mywrite (short handle, char *string, char *file, unsigned short line);
 void newaddr (char *addr, struct myaddr **chain);
 void newtpack (void);
 int openarea (unsigned short i, short pers);
 void opensqd (struct area *ttarea, struct sqifile *tindex, short dup,
-	      short pers);
+        short pers);
 void parseaddr (char *address, struct myaddr *straddr, short length);
 void parsesnb (char *string, short type);
 void pkttobuf (void);
@@ -829,7 +828,7 @@ void writehead (void);
 void writemsg (long number);
 char *mystrncpy (char *dest, const char *src, unsigned short len);
 char *mystrncat (char *dest, const char *src, unsigned short len,
-		 unsigned short maxsize);
+     unsigned short maxsize);
 void server (void);
 void doserv (void);
 void makehelp (void);
@@ -878,9 +877,9 @@ void adjustname (char *name);
 short seekarea (struct uplname *uplink, char *area);
 short mysopen (char *fname, short type, char *file, short line);
 short sqread (struct area *tarea, long pos, struct pointers *pnt, char *file,
-	      short line);
+        short line);
 void addsarea (struct uplname **chain, struct uplname *tempor, char *areaname,
-	       short where, short wild);
+         short where, short wild);
 void backup (short type);
 void addhome (char *dest, char *source);
 void addarcs (char *path, struct find_t *fblk, short secure);
@@ -913,4 +912,5 @@ void dupundo (void);
 char *makebox (struct myaddr *toaddr, int type, int hold);
 void areaaliasmaker ();
 char *areaaliasrestorer (char *);
+void printversion(void);
 #endif

@@ -10,19 +10,6 @@ unsigned _stklen=65536;
 #endif
 */
 
-#define vertype 1
-// 1 - alpha, 2 - beta, 3 - gamma, 4 - rev. x, 0 - none
-#if vertype == 0
-#define vversion
-#elif vertype == 1
-#define vversion " alpha"
-#elif vertype == 2
-#define vversion " beta"
-#elif vertype == 3
-#define vversion " gamma"
-#elif vertype == 4
-#define vversion " rev. x"
-#endif
 char version[MAX_VERSIONLEN] = { 0 };
 char *duotrice = "0123456789abcdefghijklmnopqrstuv";
 char *indicator = "|/-\\";
@@ -179,29 +166,6 @@ unsigned short dncloselog = 0;
 
 int main (int argc, char **argv)
 {
-#if defined( __DOS__ )
-#define verplatform "/DOS"
-#elif defined( __NT__ )
-#define verplatform "/W32"
-#elif defined( __OS2__)
-#define verplatform "/OS2"
-#elif defined( __EMX__)
-#define verplatform "/EMX"
-#elif defined( __linux__)
-#define verplatform "/LNX"
-#elif defined( __FreeBSD__)
-#define verplatform "/FreeBSD"
-#elif defined( SYSTEM_NAME)
-/*
- * If there is any macro with the same function then this
- * one should be removed.
- */
-#define verplatform SYSTEM_NAME
-#else
-#warning So, what system we are building for?
-#define verplatform "/UNK"
-#endif
-  mystrncpy (version, VERSION verplatform vversion, MAX_VERSIONLEN - 1);
 #ifdef __NT__
   SetConsoleTitle ("Parma Tosser");
 #endif
@@ -267,32 +231,14 @@ int main (int argc, char **argv)
 //#else
 //#error There is no way to resolve full pathname!
 //#endif
-  temp = strrchr (homedir, DIRSEP[0]);	// Changed by Voland.
+  temp = strrchr (homedir, DIRSEP[0]);  // Changed by Voland.
   if (temp)
     *(temp + 1) = 0;
   else
     memset (homedir, 0, DirSize + 1);
-  sprintf (logout, "The Parma Tosser version %s", version);
-  ccprintf ("%s\r\n", logout);
-#ifdef __NT__
-  SetConsoleTitle (logout);
-#endif
 
-#ifndef __VERSION__
-#ifdef __BORLANDC__
-#define __VERSION__ "Borland C/C++"
-#else
-#ifdef __WATCOMC__
-#define __VERSION__ "Watcom C/C++"
-#else
-#define __VERSION__ "Unknown C/C++ compiler"
-#endif
-#endif
-#endif
+  printversion();
 
-//#ifdef __linux__
-  ccprintf ("Compiled on %s %s with %s\r\n", __DATE__, __TIME__, __VERSION__);
-//#endif
 //  ccprintf("The Parma Tosser has started from directory\r\n  %s\r\n",homedir);
   ver = (unsigned short)dvtest ();
   if ((dupreserv = (short)open (NULL_DEV, O_WRONLY)) == -1)
@@ -318,16 +264,16 @@ int main (int argc, char **argv)
   for (i = 1; i < argc; i++)
     {
       if (argv[i][0] == '-' && !(mode & 1024))
-	{
-	  switch (argv[i][1])
-	    {
-	    case '8':		// 8.3 mode for echoareas
-	      fatmode = 1;
-	      break;
-	    case 'a':
-	    case 'A':		// смена файла Areas.bbs
-	      mystrncpy (areasbbs, &argv[i][2], DirSize);
-	      break;
+  {
+    switch (argv[i][1])
+      {
+      case '8':   // 8.3 mode for echoareas
+        fatmode = 1;
+        break;
+      case 'a':
+      case 'A':   // смена файла Areas.bbs
+        mystrncpy (areasbbs, &argv[i][2], DirSize);
+        break;
 /*
         case 'b': case 'B':
           mystrncpy(blogname,&argv[i][2],DirSize);
@@ -339,114 +285,114 @@ int main (int argc, char **argv)
              }
           break;
 */
-	    case 'c':
-	    case 'C':		// смена файла конфигуpации
-	      mystrncpy (mainconf, &argv[i][2], DirSize);
-	      break;
-	    case 'd':
-	    case 'D':		// отладочный уровень лога
-	      logdebug = 1;
-	      break;
-	    case 'k':
-	    case 'K':		// смена файла Echotoss.log и его удаление
-	      killlog = 1;
-	    case 'f':
-	    case 'F':		// смена файла Echotoss.log
-	      mystrncpy (echolog, &argv[i][2], DirSize);
-	      break;
-	    case 'l':
-	    case 'L':
-	    case 'o':
-	    case 'O':		// BinkleyTerm only
-	      ccprintf ("BinkleyTerm mode keys are not supported (%s)\r\n",
-			argv[i]);
-	      break;
-	    case 'q':
-	    case 'Q':		// Quiet mode
-	      quiet = 1;
-	      break;
-	    case 's':
-	    case 'S':		// Scan all messages
-	      fullscan = 1;
-	      break;
-	    case 't':
-	    case 'T':		// Toggle secure mode
-	      secure = 1;
-	      break;
-	    case 'v':
-	    case 'V':		// Toggle statistic mode
-	      statistic = !statistic;
-	      break;
-	    case 'w':
-	    case 'W':
-	      mustdie = 0;
-	      break;
-	    case 'z':
-	    case 'Z':		// Don't scan passthru areas
-	      ptnoscan = 1;
-	      break;
-	    }
-	}
+      case 'c':
+      case 'C':   // смена файла конфигуpации
+        mystrncpy (mainconf, &argv[i][2], DirSize);
+        break;
+      case 'd':
+      case 'D':   // отладочный уровень лога
+        logdebug = 1;
+        break;
+      case 'k':
+      case 'K':   // смена файла Echotoss.log и его удаление
+        killlog = 1;
+      case 'f':
+      case 'F':   // смена файла Echotoss.log
+        mystrncpy (echolog, &argv[i][2], DirSize);
+        break;
+      case 'l':
+      case 'L':
+      case 'o':
+      case 'O':   // BinkleyTerm only
+        ccprintf ("BinkleyTerm mode keys are not supported (%s)\r\n",
+      argv[i]);
+        break;
+      case 'q':
+      case 'Q':   // Quiet mode
+        quiet = 1;
+        break;
+      case 's':
+      case 'S':   // Scan all messages
+        fullscan = 1;
+        break;
+      case 't':
+      case 'T':   // Toggle secure mode
+        secure = 1;
+        break;
+      case 'v':
+      case 'V':   // Toggle statistic mode
+        statistic = !statistic;
+        break;
+      case 'w':
+      case 'W':
+        mustdie = 0;
+        break;
+      case 'z':
+      case 'Z':   // Don't scan passthru areas
+        ptnoscan = 1;
+        break;
+      }
+  }
       else
-	{
-	  if (stricmp (argv[i], "IN") == 0)
-	    {
-	      mode |= 1;
-	      sinv = pinv = 1;
-	    }
-	  else if (stricmp (argv[i], "OUT") == 0)
-	    mode |= 2;
-	  else if (stricmp (argv[i], "RESCAN") == 0)
-	    mode |= 4;
-	  else
-	    if ((stricmp (argv[i], "SEND") == 0)
-		|| (stricmp (argv[i], "SQUASH") == 0)
-		|| (stricmp (argv[i], "PACK") == 0))
-	    mode |= 8;
-	  else if (strnicmp (argv[i], "LINK", 4) == 0)
-	    {
-	      mode |= 16;
-	      if (toupper (argv[i][4]) == 'F')
-		fastlink = 1;
-	    }
-	  else if (strnicmp (argv[i], "POST", 4) == 0)
-	    {
-	      mode |= 32;
-	      if (toupper (argv[i][4]) == 'F')
-		forsed = 1;
-	      if (toupper (argv[i][4]) == 'D')
-		forsed = 2;
-	    }
-	  else if (stricmp (argv[i], "SERV") == 0)
-	    {
-	      mode |= 64;
-	      sinv = 0;
-	    }
-	  else if (stricmp (argv[i], "PURGE") == 0)
-	    {
-	      mode |= 128;
-	      pinv = 0;
-	    }
-	  else
-	    if (stricmp (argv[i], "REBUILD") == 0
-		|| stricmp (argv[i], "FIX") == 0)
-	    mode |= 256;
-	  else if (stricmp (argv[i], "KILL") == 0)
-	    mode |= 512;
-	  else if (strnicmp (argv[i], "HAND", 4) == 0)
-	    {
-	      mode |= 1024;
-	      hand_argv_number = i;
-	    }
-	  else if (strnicmp (argv[i], "BAD", 3) == 0)
-	    mode |= 2048;
-	  else if (strnicmp (argv[i], "UNTOSS", 6) == 0)
-	    mode |= 4096;
-	  else if (strnicmp (argv[i], "RELINK", 6) == 0)
-	    mode |= 8192;
-	  else
-	    parseaddr (argv[i], &rnode, (short)strlen (argv[i]));
-	}
+  {
+    if (stricmp (argv[i], "IN") == 0)
+      {
+        mode |= 1;
+        sinv = pinv = 1;
+      }
+    else if (stricmp (argv[i], "OUT") == 0)
+      mode |= 2;
+    else if (stricmp (argv[i], "RESCAN") == 0)
+      mode |= 4;
+    else
+      if ((stricmp (argv[i], "SEND") == 0)
+    || (stricmp (argv[i], "SQUASH") == 0)
+    || (stricmp (argv[i], "PACK") == 0))
+      mode |= 8;
+    else if (strnicmp (argv[i], "LINK", 4) == 0)
+      {
+        mode |= 16;
+        if (toupper (argv[i][4]) == 'F')
+    fastlink = 1;
+      }
+    else if (strnicmp (argv[i], "POST", 4) == 0)
+      {
+        mode |= 32;
+        if (toupper (argv[i][4]) == 'F')
+    forsed = 1;
+        if (toupper (argv[i][4]) == 'D')
+    forsed = 2;
+      }
+    else if (stricmp (argv[i], "SERV") == 0)
+      {
+        mode |= 64;
+        sinv = 0;
+      }
+    else if (stricmp (argv[i], "PURGE") == 0)
+      {
+        mode |= 128;
+        pinv = 0;
+      }
+    else
+      if (stricmp (argv[i], "REBUILD") == 0
+    || stricmp (argv[i], "FIX") == 0)
+      mode |= 256;
+    else if (stricmp (argv[i], "KILL") == 0)
+      mode |= 512;
+    else if (strnicmp (argv[i], "HAND", 4) == 0)
+      {
+        mode |= 1024;
+        hand_argv_number = i;
+      }
+    else if (strnicmp (argv[i], "BAD", 3) == 0)
+      mode |= 2048;
+    else if (strnicmp (argv[i], "UNTOSS", 6) == 0)
+      mode |= 4096;
+    else if (strnicmp (argv[i], "RELINK", 6) == 0)
+      mode |= 8192;
+    else
+      parseaddr (argv[i], &rnode, (short)strlen (argv[i]));
+  }
     }
   if (!mode)
     errexit (10, __FILE__, __LINE__);
@@ -470,11 +416,11 @@ int main (int argc, char **argv)
   if (rnode.zone | rnode.net | rnode.node | rnode.point)
     {
       if (!rnode.zone)
-	rnode.zone = bcfg.address.chain->zone;
+  rnode.zone = bcfg.address.chain->zone;
       if (!rnode.net)
-	rnode.net = bcfg.address.chain->net;
+  rnode.net = bcfg.address.chain->net;
       if (!rnode.node)
-	rnode.node = bcfg.address.chain->node;
+  rnode.node = bcfg.address.chain->node;
 //    if(!rnode.point)
 //      rnode.point=bcfg.address.chain->point;
     }
@@ -495,40 +441,40 @@ int main (int argc, char **argv)
 // Why so strange way of opening logfile?
 // O_RDWR|O_BINARY|O_APPEND|O_CREAT should be enough!
       if ((logfile =
-	   (short)sopen (logfilename, O_RDWR | O_BINARY, SH_DENYNO)) == -1)
-	if ((logfile =
-	     (short)sopen (logfilename, O_RDWR | O_BINARY | O_CREAT,
-			   SH_DENYNO, S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-	  {
-	    mystrncpy (errname, logfilename, DirSize);
-	    logfileok = 0;
-	    errexit (2, __FILE__, __LINE__);
-	  }
+     (short)sopen (logfilename, O_RDWR | O_BINARY, SH_DENYNO)) == -1)
+  if ((logfile =
+       (short)sopen (logfilename, O_RDWR | O_BINARY | O_CREAT,
+         SH_DENYNO, S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+    {
+      mystrncpy (errname, logfilename, DirSize);
+      logfileok = 0;
+      errexit (2, __FILE__, __LINE__);
+    }
       lseek (logfile, 0, SEEK_END);
 #else
 // Perm. mode (S_I*) here must be changed to use value, got from
 // configuration. I.e. it must be possible for user to define his
 // own mode for the logfile.
       if ((logfile =
-	   open (logfilename,
-		 O_WRONLY | O_BINARY | O_CREAT | O_APPEND | O_EXLOCK,
-		 S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
-	{
-	  mystrncpy (errname, logfilename, DirSize);
-	  logfileok = 0;
-	  errexit (2, __FILE__, __LINE__);
-	}
+     open (logfilename,
+     O_WRONLY | O_BINARY | O_CREAT | O_APPEND | O_EXLOCK,
+     S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
+  {
+    mystrncpy (errname, logfilename, DirSize);
+    logfileok = 0;
+    errexit (2, __FILE__, __LINE__);
+  }
 #endif
       logfileok = 1;
       sprintf (logout, "Begin, ParToss %s", version);
       logwrite (1, 1);
       sprintf (logout, "Executed: ");
       for (i = 0; i < argc; i++)
-	{
-	  mystrncat (logout, argv[i], (unsigned short)(strlen (argv[i]) + 5),
-		     DirSize);
-	  mystrncat (logout, " ", 5, DirSize);
-	}
+  {
+    mystrncat (logout, argv[i], (unsigned short)(strlen (argv[i]) + 5),
+         DirSize);
+    mystrncat (logout, " ", 5, DirSize);
+  }
       logwrite (1, 9);
     }
   if (bcfg.workdir[0])
@@ -539,11 +485,11 @@ int main (int argc, char **argv)
 #if HAVE_SOPEN
   if ((ttempl =
        (short)sopen (hfile, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-		     S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+         S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
 #else
   if ((ttempl =
        (short)open (hfile, O_RDWR | O_BINARY | O_CREAT | O_EXLOCK,
-		    S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
+        S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
 #endif
     {
       mystrncpy (errname, hfile, DirSize);
@@ -557,11 +503,11 @@ int main (int argc, char **argv)
 #if HAVE_SOPEN
   if ((temppkt =
        (short)sopen (temppktn, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
-		     S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+         S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
 #else
   if ((temppkt =
        (short)open (temppktn, O_RDWR | O_BINARY | O_CREAT | O_EXLOCK,
-		    S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
+        S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
 #endif
     {
       mystrncpy (errname, temppktn, DirSize);
@@ -575,35 +521,35 @@ int main (int argc, char **argv)
       alog = (short)open (echolog, O_RDWR | O_BINARY);
 #endif
       if (alog == -1)
-	{
-	  if (mode & 2081)
-	    {
+  {
+    if (mode & 2081)
+      {
 #if HAVE_SOPEN
-	      if ((alog =
-		   (short)sopen (echolog, O_RDWR | O_BINARY | O_CREAT,
-				 SH_DENYNO,
-				 S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+        if ((alog =
+       (short)sopen (echolog, O_RDWR | O_BINARY | O_CREAT,
+         SH_DENYNO,
+         S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
 #else
-	      if ((alog =
-		   (short)open (echolog,
-				O_RDWR | O_BINARY | O_CREAT | O_EXLOCK,
-				S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
+        if ((alog =
+       (short)open (echolog,
+        O_RDWR | O_BINARY | O_CREAT | O_EXLOCK,
+        S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
 #endif
-		{
-		  mystrncpy (errname, echolog, DirSize);
-		  errexit (2, __FILE__, __LINE__);
-		}
-	      mustlog = 1;
-	    }
-	  else
-	    alog = 0;
-	}
+    {
+      mystrncpy (errname, echolog, DirSize);
+      errexit (2, __FILE__, __LINE__);
+    }
+        mustlog = 1;
+      }
+    else
+      alog = 0;
+  }
       else
-	mustlog = 1;
+  mustlog = 1;
     }
   if (indv)
     ccprintf ("\r\nDesQView version %d.%d detected\r\n",
-	      (int)((ver >> 8) & 0xff), (int)(ver & 0xff));
+        (int)((ver >> 8) & 0xff), (int)(ver & 0xff));
   i = 0;
   i |= cfgexist (bcfg.post);
   i |= cfgexist (bcfg.help);
@@ -627,19 +573,19 @@ int main (int argc, char **argv)
   if (dirp)
     {
       while ((direntry = readdir (dirp)) != NULL)
-	{
-	  if ((strcmp (direntry->d_name, ".") == 0)
-	      || (strcmp (direntry->d_name, "..") == 0))
-	    {
-	      continue;
-	    }
-	  if (fnmatch (OUT_MASK, direntry->d_name, 0) == 0)
-	    {
-	      mystrncpy (tmpname, outbound, DirSize);
-	      mystrncat (tmpname, direntry->d_name, 16, DirSize);
-	      unlink (tmpname);
-	    }
-	}
+  {
+    if ((strcmp (direntry->d_name, ".") == 0)
+        || (strcmp (direntry->d_name, "..") == 0))
+      {
+        continue;
+      }
+    if (fnmatch (OUT_MASK, direntry->d_name, 0) == 0)
+      {
+        mystrncpy (tmpname, outbound, DirSize);
+        mystrncat (tmpname, direntry->d_name, 16, DirSize);
+        unlink (tmpname);
+      }
+  }
       // Here we must check for a result unless CLOSEDIR_VOID defined.
       closedir (dirp);
     }
@@ -649,11 +595,11 @@ int main (int argc, char **argv)
   while (olds == 0)
     {
       if (fblk.size == 0)
-	{
-	  mystrncpy (tmpname, outbound, DirSize);
-	  mystrncat (tmpname, fblk.name, 16, DirSize);
-	  unlink (tmpname);
-	}
+  {
+    mystrncpy (tmpname, outbound, DirSize);
+    mystrncat (tmpname, fblk.name, 16, DirSize);
+    unlink (tmpname);
+  }
       olds = (short)_dos_findnext (&fblk);
     }
   _dos_findclose (&fblk);/***ash***/
@@ -671,10 +617,10 @@ int main (int argc, char **argv)
       char **new_argv = (char **)malloc (new_argc * sizeof (char *));
       new_argv[0] = argv[0];
       for (new_argv_i = hand_argv_number; new_argv_i < argc; new_argv_i++)
-	{
-	  //printf("%i -> %i\n",new_argv_i,new_argv_i-hand_argv_number+1);
-	  new_argv[new_argv_i - hand_argv_number + 1] = argv[new_argv_i];
-	}
+  {
+    //printf("%i -> %i\n",new_argv_i,new_argv_i-hand_argv_number+1);
+    new_argv[new_argv_i - hand_argv_number + 1] = argv[new_argv_i];
+  }
       handyman ((short)new_argc, new_argv);
       makeattach (0);
     }
@@ -697,26 +643,26 @@ int main (int argc, char **argv)
   switch (mode)
     {
     case 1:
-    case 9:			// in
+    case 9:     // in
       tossarcs ();
       break;
     case 2:
-    case 10:			// out
+    case 10:      // out
       if (!(tmode & 1632))
-	{
-	  closesqd (badmess, 0);
-	  if (!bcfg.killdupes)
-	    closesqd (dupes, 0);
+  {
+    closesqd (badmess, 0);
+    if (!bcfg.killdupes)
+      closesqd (dupes, 0);
 //         closesqd(persarea,1);
-	  closesqd (newarea, 1);
-	  if (mustlog >= 0)
-	    scanbase (echolog, 1);
-	  else
-	    scanbase (echologt, 1);
-	}
+    closesqd (newarea, 1);
+    if (mustlog >= 0)
+      scanbase (echolog, 1);
+    else
+      scanbase (echologt, 1);
+  }
       break;
     case 3:
-    case 11:			// in out
+    case 11:      // in out
       both = 1;
       tossarcs ();
       break;
@@ -747,18 +693,18 @@ int main (int argc, char **argv)
   if (mode & 128 && !pinv)
     {
       if (mustlog >= 0)
-	scanbase (echolog, 3);
+  scanbase (echolog, 3);
       else
-	scanbase (echologt, 3);
+  scanbase (echologt, 3);
     }
   if (mode & 64 && !sinv)
     server ();
   if (mode & 16)
     {
       if (mustlog >= 0)
-	scanbase (echolog, 2);
+  scanbase (echolog, 2);
       else
-	scanbase (echologt, 2);
+  scanbase (echologt, 2);
     }
   killpkts ();
   if (access (crtreprt, 0) == 0)
@@ -769,27 +715,27 @@ int main (int argc, char **argv)
       mode = tmode;
       mode &= 32;
       if (tpost >= 0)
-	unlink (crtreprt);
+  unlink (crtreprt);
     }
-  if (mode & 1632)		// Hand or Kill or Serv or Post
+  if (mode & 1632)    // Hand or Kill or Serv or Post
     {
       if (!(mode & 32) || (tpost > 0))
-	{
-	  tmode = mode;
-	  mode &= 0x0f;
-	  if (mode & 2)
-	    {
-	      closesqd (newarea, 1);
-	      if ((badmess == NULL) || (badmess->sqd.sqd) == 0)
-		setbadarea ();
+  {
+    tmode = mode;
+    mode &= 0x0f;
+    if (mode & 2)
+      {
+        closesqd (newarea, 1);
+        if ((badmess == NULL) || (badmess->sqd.sqd) == 0)
+    setbadarea ();
 //        bcfg.autosend=1;
-	      if (mustlog >= 0)
-		scanbase (echolog, 1);
-	      else
-		scanbase (echologt, 1);
-	    }
-	  mode = tmode;
-	}
+        if (mustlog >= 0)
+    scanbase (echolog, 1);
+        else
+    scanbase (echologt, 1);
+      }
+    mode = tmode;
+  }
     }
   if (bcfg.pack && needout)
     {
@@ -812,49 +758,49 @@ int main (int argc, char **argv)
     {
       tlist = rlist;
       while (tlist)
-	{
-	  for (i = 0; i < tlist->numlists; i++)
-	    {
-	      if (tlist->alist[i].type < 2)
-		{
-		  if (tlist->alist[i].toss || tlist->alist[i].sent
-		      || tlist->alist[i].dupes)
-		    {
-		      asis = 0;
-		      sprintf (logout, "%s:", tlist->alist[i].areaname);
-		      if (tlist->alist[i].toss)
-			{
-			  sprintf (areasbbs, " toss - %u",
-				   tlist->alist[i].toss);
-			  mystrncat (logout, areasbbs, DirSize, BufSize);
-			  if (bcfg.tossstat && tlist->alist[i].type == 1)
-			    {
-			      sprintf (areasbbs, " (%ld bytes)",
-				       tlist->alist[i].tossed);
-			      mystrncat (logout, areasbbs, DirSize, BufSize);
-			    }
-			  asis = 1;
-			}
-		      if (tlist->alist[i].sent)
-			{
-			  sprintf (areasbbs, "%s sent - %u", asis ? "," : "",
-				   tlist->alist[i].sent);
-			  mystrncat (logout, areasbbs, DirSize, BufSize);
-			  asis = 1;
-			}
-		      if (tlist->alist[i].dupes)
-			{
-			  sprintf (areasbbs, "%s dupes - %u", asis ? "," : "",
-				   tlist->alist[i].dupes);
-			  mystrncat (logout, areasbbs, DirSize, BufSize);
-			  asis = 1;
-			}
-		      logwrite (1, 4);
-		    }
-		}
-	    }
-	  tlist = tlist->next;
-	}
+  {
+    for (i = 0; i < tlist->numlists; i++)
+      {
+        if (tlist->alist[i].type < 2)
+    {
+      if (tlist->alist[i].toss || tlist->alist[i].sent
+          || tlist->alist[i].dupes)
+        {
+          asis = 0;
+          sprintf (logout, "%s:", tlist->alist[i].areaname);
+          if (tlist->alist[i].toss)
+      {
+        sprintf (areasbbs, " toss - %u",
+           tlist->alist[i].toss);
+        mystrncat (logout, areasbbs, DirSize, BufSize);
+        if (bcfg.tossstat && tlist->alist[i].type == 1)
+          {
+            sprintf (areasbbs, " (%ld bytes)",
+               tlist->alist[i].tossed);
+            mystrncat (logout, areasbbs, DirSize, BufSize);
+          }
+        asis = 1;
+      }
+          if (tlist->alist[i].sent)
+      {
+        sprintf (areasbbs, "%s sent - %u", asis ? "," : "",
+           tlist->alist[i].sent);
+        mystrncat (logout, areasbbs, DirSize, BufSize);
+        asis = 1;
+      }
+          if (tlist->alist[i].dupes)
+      {
+        sprintf (areasbbs, "%s dupes - %u", asis ? "," : "",
+           tlist->alist[i].dupes);
+        mystrncat (logout, areasbbs, DirSize, BufSize);
+        asis = 1;
+      }
+          logwrite (1, 4);
+        }
+    }
+      }
+    tlist = tlist->next;
+  }
     }
   tlist = rlist;
   while (tlist)
@@ -868,17 +814,17 @@ int main (int argc, char **argv)
     {
       blink = bcfg.links.chain;
       while (blink)
-	{
-	  if (blink->sent)
-	    {
-	      sprintf (logout, "Sent to %u:%u/%u.%u - %ld bytes",
-		       blink->address.zone, blink->address.net,
-		       blink->address.node, blink->address.point,
-		       blink->sent);
-	      logwrite (1, 4);
-	    }
-	  blink = blink->next;
-	}
+  {
+    if (blink->sent)
+      {
+        sprintf (logout, "Sent to %u:%u/%u.%u - %ld bytes",
+           blink->address.zone, blink->address.net,
+           blink->address.node, blink->address.point,
+           blink->sent);
+        logwrite (1, 4);
+      }
+    blink = blink->next;
+  }
     }
 //  myfree((void **)&rlist,__FILE__,__LINE__);
   myfree ((void **)&sqdbuf, __FILE__, __LINE__);
@@ -929,11 +875,11 @@ int main (int argc, char **argv)
       zgt = zg->next;
       tsnb = zg->zseen.chain;
       while (tsnb)
-	{
-	  ttsnb = tsnb->next;
-	  myfree ((void **)&tsnb, __FILE__, __LINE__);
-	  tsnb = ttsnb;
-	}
+  {
+    ttsnb = tsnb->next;
+    myfree ((void **)&tsnb, __FILE__, __LINE__);
+    tsnb = ttsnb;
+  }
       myfree ((void **)&zg, __FILE__, __LINE__);
       zg = zgt;
     }
@@ -969,13 +915,13 @@ short cfgexist (char *cfgfile)
     {
       addhome (hfile, cfgfile);
       if (access (hfile, 0) == -1)
-	{
-	  sprintf (logout, "??? WARNING!!! File %s not found!", hfile);
-	  if (logfileok)
-	    logwrite (1, 1);
-	  ccprintf ("\r\n%s", logout);
-	  return 1;
-	}
+  {
+    sprintf (logout, "??? WARNING!!! File %s not found!", hfile);
+    if (logfileok)
+      logwrite (1, 1);
+    ccprintf ("\r\n%s", logout);
+    return 1;
+  }
       mystrncpy (cfgfile, hfile, DirSize);
     }
   return 0;
