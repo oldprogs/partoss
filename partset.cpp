@@ -146,7 +146,7 @@ nfound:
       tinbound = tinbound->next;
     }
   mystrncpy (outbound, bcfg.outbound, DirSize);
-#if defined(__LNX__) || defined(__FreeBSD__)
+#if defined(__linux__) || defined(__FreeBSD__)
   mystrncat (outbound, ".sq/", 6, DirSize);
 #else
   mystrncat (outbound, ".sq\\", 6, DirSize);
@@ -175,7 +175,7 @@ nfound:
     mystrncpy (bcfg.workdir, homedir, DirSize);
   if (bcfg.logfile[0])
     {
-#if defined(__LNX__) || defined(__FreeBSD__)
+#if defined(__linux__) || defined(__FreeBSD__)
       temp = strrchr (bcfg.logfile, '/');
 #else
       temp = strrchr (bcfg.logfile, '\\');

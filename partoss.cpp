@@ -170,7 +170,7 @@ struct pool *glpool = NULL;
 
 list < areaalias > areaaliaslist;
 
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
 long int umask_val;
 #endif
 
@@ -187,7 +187,7 @@ int main (int argc, char **argv)
 #define verplatform "/OS2"
 #elif defined( __EMX__)
 #define verplatform "/EMX"
-#elif defined( __LNX__)
+#elif defined( __linux__)
 #define verplatform "/LNX"
 #elif defined( __FreeBSD__)
 #define verplatform "/FreeBSD"
@@ -257,7 +257,7 @@ int main (int argc, char **argv)
 //#elif HAVE_REALPATH
 
 
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
   realpath (argv[0], homedir);
 #else
   _fullpath (homedir, argv[0], DirSize);
@@ -290,8 +290,8 @@ int main (int argc, char **argv)
 #endif
 #endif
 
-//#ifdef __LNX__
-  ccprintf ("Compiled on %s %s with %s\n", __DATE__, __TIME__, __VERSION__);
+//#ifdef __linux__
+  ccprintf ("Compiled on %s %s with %s\r\n", __DATE__, __TIME__, __VERSION__);
 //#endif
 //  ccprintf("The Parma Tosser has started from directory\r\n  %s\r\n",homedir);
   ver = (unsigned short)dvtest ();

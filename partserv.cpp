@@ -188,37 +188,37 @@ void doserv (void)
     NULL, *temp2 =
     NULL, fname[DirSize + 1], ttoken[arealength + 1], wild[arealength + 1];
   char *commands[] = {
-    "---",
-    "%Help",
-    "%List",
-    "%Query",
-    "%Notify",
-    "%Links",
-    "%Rescan",
-    "%Passive",
-    "%Active",
-    "%Status",
-    "%Password",
-    "%PktSize",
-    "%Packer",
-    "%All",
-    "+%All",
-    "-%All",
-    "%Group",
-    "+%Group",
-    "-%Group",
-    "+",
-    "-",
-    "\1",
-    "* Origin",
-    "%EList",
-    "%EFList",
-    "%Pause",
-    "%Avail",
-    "%FAvail",
-    "%Resume",
-    "%Address",
-    "%PKTPass"
+    "---",         //  0
+    "%Help",       //  1
+    "%List",       //  2
+    "%Query",      //  3
+    "%Notify",     //  4
+    "%Links",      //  5
+    "%Rescan",     //  6
+    "%Passive",    //  7
+    "%Active",     //  8
+    "%Status",     //  9
+    "%Password",   // 10
+    "%PktSize",    // 11
+    "%Packer",     // 12
+    "%All",        // 13
+    "+%All",       // 14
+    "-%All",       // 15
+    "%Group",      // 16
+    "+%Group",     // 17
+    "-%Group",     // 18
+    "+",           // 19
+    "-",           // 20
+    "\1",          // 21
+    "* Origin",    // 22
+    "%EList",      // 23
+    "%EFList",     // 24
+    "%Pause",      // 25
+    "%Avail",      // 26
+    "%FAvail",     // 27
+    "%Resume",     // 28
+    "%Address",    // 29
+    "%PKTPass"     // 30
   };
   struct uplname *areas = NULL, *tareas = NULL;
   struct uplname ttaname, *tname = NULL, *tuname = NULL;
@@ -368,6 +368,8 @@ void doserv (void)
 	{
 	  getstring (0);
 	  gettoken (0);
+	  if (!strlen(token))
+	     continue;
 	  if (maxstr[0] <= BufSize)
 	    mystrncpy (logout, ::string, (unsigned short)maxstr[0]);
 	  else
@@ -1882,11 +1884,14 @@ void makelinks (char *areaname)
 void changearea (struct uplname *areas)
 {
   struct uplname *tname = NULL, utarea, *tuplink = NULL, *tareas = NULL;
+  struct uplname *ttname = NULL;
   struct link *blink = NULL;
   struct myaddr tpktaddr;
   short tfound;
+  short i;
   mystrncpy (logout, "Report of areas add/remove\r\n\r\n", BufSize);
   mywrite (tempsrv, logout, __FILE__, __LINE__);
+fordelarea:
   chareacfg (areas, mainconf);
   tincl = bcfg.incl;
   while (tincl)
@@ -1904,7 +1909,7 @@ void changearea (struct uplname *areas)
   tname = areas;
   while (tname)
     {
-      if (!tname->found)
+      if (tname->found != 1)
 	{
 	  tfound = 0;
 	  if (tname->where == 1 && !blink->noforward)
@@ -1912,12 +1917,68 @@ void changearea (struct uplname *areas)
 	      tuplink = bcfg.uplname;
 	      while (tuplink)
 		{
-		  tfound = seekarea (tuplink, tname->persarea);
+         if (tname->found == 2 || tname->found == 5)
+         {
+		      //1
+            tlist = rlist;
+            while (tlist)
+            {
+               for (i = 0; i < tlist->numlists; i++)
+               {
+                  if ((strnicmp (tname->persarea, tlist->alist[i].areaname, strlen(tname->persarea)) == 0)
+                      && strlen (tname->persarea) == strlen (tlist->alist[i].areaname))
+                     goto delfound;
+               };
+               tlist = tlist->next;
+            };
+            delfound:
+            if (tlist == NULL)
+            {
+               tokencpy (errname, arealength);
+               errexit (5, __FILE__, __LINE__);
+            };
+            lseek (areaset, tlist->alist[i].areaoffs, SEEK_SET);
+            rread (areaset, newarea, szarea, __FILE__, __LINE__);
+            //2
+            ttname = bcfg.uplname;
+            while (ttname)
+            {
+               if (cmpaddr (&ttname->upaddr, newarea->links.chain) == 0)
+                  break;
+               ttname = ttname->next;
+            };
+            //3
+            if (ttname)
+               if (tfound = seekarea (ttname, tname->persarea))
+               {
+                  tuplink = ttname;
+                  if (tname->found == 2)
+                  {
+                     tname->found = 3;
+                     goto fordelarea;
+                  };
+               };
+         };
+
+        tfound = seekarea (tuplink, tname->persarea);
 		  if (tfound)
 		    {
-		      sprintf (logout, "Area %s added\r\n", tname->persarea);
+            if (tname->found == 2)
+            {
+               tname->found = 4;
+               goto fordelarea;
+            };
+
+            if (tname->found > 5)
+               goto next; //continue;
+
+            if (tname->found < 5)
+            {
+            sprintf (logout, "Area %s added\r\n", tname->persarea);
 		      mywrite (tempsrv, logout, __FILE__, __LINE__);
-		      memcpy (&utarea, tuplink, sizeof (struct uplname));
+		      };
+
+            memcpy (&utarea, tuplink, sizeof (struct uplname));
 		      mystrncpy (utarea.persarea, tname->persarea,
 				 arealength);
 		      utarea.where = 1;
@@ -1947,8 +2008,16 @@ void changearea (struct uplname *areas)
 		      memcpy (&ufnode, &tuplink->upaddr, szmyaddr);
 		      memcpy (&tpktaddr, &pktaddr, szmyaddr);
 		      memcpy (&pktaddr, &tuplink->upaddr, szmyaddr);
+            if (tname->found < 5)
 		      createarea (tname->persarea, 3, &tuplink->upaddr);
 		      memcpy (&pktaddr, &tpktaddr, szmyaddr);
+            if (tname->found > 4)
+            {
+               tname->found = 6;
+               goto fordelarea;
+            };
+            if (tname->found == 4)
+               tname->found = 7;
 		      goto next;
 		    }
 		  tuplink = tuplink->next;
@@ -2049,7 +2118,15 @@ void chareacfg (struct uplname *areas, char *file)
 		}
 	      if (tname)
 		{
-		  tname->found = 1;
+         if (tname->found == 7)
+         {
+            wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
+            continue;
+         };
+         if (tname->found == 6)
+            tname->found = 7;
+        if (!tname->found)
+        tname->found = 1;
 		  tlist = rlist;
 		  while (tlist)
 		    {
@@ -2317,7 +2394,7 @@ void chareacfg (struct uplname *areas, char *file)
 			    }
 			  else
 			    {
-			      delorphn (&utarea, ttname);
+			      delorphn (&utarea, ttname, descr);
 			    }
 			  switch (tname->where)
 			    {
@@ -2405,7 +2482,7 @@ void chareacfg (struct uplname *areas, char *file)
 		       */
 		      if (newarea->passthr && (newarea->numlinks <= 1) &&
 			  bcfg.uplname && !blink->noforward)
-			delorphn (&utarea, ttname);
+			delorphn (&utarea, ttname, descr);
 		      else
 			wwrite (prttemp, ::string, maxstr2[0], __FILE__,
 				__LINE__);
@@ -2415,14 +2492,67 @@ void chareacfg (struct uplname *areas, char *file)
 		}
 	    }
 	  else
-	    {
-	      if (strnicmp (token, "DeletedArea", 11) == 0 && toklen == 11)
-		{
-		  delkill ();
-		}
-	      else
-		wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
-	    }
+       {
+         if (strnicmp (token, "DeletedArea", 11) == 0 && toklen == 11)
+         {
+            gettoken (0);
+            gettoken (0);
+            tname = areas;
+            while (tname)
+            {
+               if ((strnicmp(token, tname->persarea, toklen) == 0) &&
+                   (toklen == strlen(tname->persarea)))
+                  break;
+               tname = tname->next;
+            };
+            if (tname)
+            {
+               switch (tname->found)
+               {
+                  case 0:
+                     curtpos[0] = 0;
+                     gettoken (0);
+                     if (!delkill(0))
+                        tname->found = 2;
+                     break;
+                  case 2:
+                     wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
+                     break;
+                  case 3: //restored from deleted
+                     mywrite (prttemp, "EchoArea   ", __FILE__, __LINE__);
+                     wwrite (prttemp, token, maxstr2[0] - curtpos[0] + toklen, __FILE__, __LINE__);
+                     sprintf (logout, "Deleted Area %s restored to EchoArea by Echo Manager", tname->persarea);
+                     logwrite (1, 6);
+                     if ((crtrep = (short)sopen (crtreprt, O_RDWR | O_BINARY, SH_DENYWR)) == -1)
+                     {
+                        if ((crtrep =
+                            (short)sopen (crtreprt, O_RDWR | O_BINARY | O_CREAT, SH_DENYWR,
+                            S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
+                        {
+                           mystrncpy (errname, crtreprt, DirSize);
+                           errexit (2, __FILE__, __LINE__);
+                        }
+                     }
+                     lseek (crtrep, 0, SEEK_END);
+                     mywrite (crtrep, logout, __FILE__, __LINE__);
+                     mywrite (crtrep, "\r\n", __FILE__, __LINE__);
+                     cclose (&crtrep, __FILE__, __LINE__);
+                     tname->found = 5;
+                     break;
+                  case 4: //kill&create
+                     curtpos[0] = 0;
+                     gettoken (0);
+                     gettoken (0);
+                     delkill(1);
+                     break;
+				    };
+            }
+            else
+               wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
+         }
+         else
+            wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
+       }
 	}
       while (!endblock[0]);
     }
@@ -3113,10 +3243,11 @@ void delorph (struct uplname *utarea, struct uplname *ttname)
   wwrite (prttemp, ttemp + 1, maxstr[0] - fpart - 1, __FILE__, __LINE__);
 }
 
-void delorphn (struct uplname *utarea, struct uplname *ttname)
+void delorphn (struct uplname *utarea, struct uplname *ttname, char * descr)
 {
   struct uplname *tareas = NULL;
   char *ttemp = NULL/*, *dtemp = "     "*/;
+  char *temp = NULL;
   short fpart;
   ttname = bcfg.uplname;
   while (ttname)
@@ -3195,17 +3326,31 @@ void delorphn (struct uplname *utarea, struct uplname *ttname)
   mystrncat(logout," ",2,DirSize);*/
   mywrite (prttemp, "DeletedArea ", __FILE__, __LINE__);
   mywrite (prttemp, logout, __FILE__, __LINE__);
-  wwrite (prttemp, ttemp + 1, maxstr2[0] - fpart - 1, __FILE__, __LINE__);
+  //
+  temp = strstr (ttemp + 1, "-$");
+  if (temp)
+  {
+     wwrite (prttemp, ttemp + 1, (unsigned short)(temp - ttemp + 1), __FILE__, __LINE__);
+     writearea (prttemp, newarea, descr, 2);
+  }
+  else
+     wwrite (prttemp, ttemp + 1, maxstr2[0] - fpart - 1, __FILE__, __LINE__);
+  mystrncpy (logout, ::string + maxstr[0], (short)(maxstr2[0] - maxstr[0]));
+  mywrite (prttemp, logout, __FILE__, __LINE__);
+//  wwrite (prttemp, ttemp + 1, maxstr2[0] - fpart - 1, __FILE__, __LINE__);
 }
 
-void delkill (void)
+short delkill (short deltype)
 {
   time_t curtime, basetime;
   struct tm ttime;
   char ttmp[100];
 //  unsigned long currtime,filetime;
-  short diff;
+  short diff = 0;
   int i = 0;
+
+  if (!deltype)
+  {
   token = temptoken;
   toklen = temptoklen;
   endstring[0] = 0;
@@ -3237,7 +3382,8 @@ void delkill (void)
 
   //diff=diffdays(filetime,currtime);
   diff = (curtime - basetime) / 86400;
-  if (diff > bcfg.deldays)
+  };
+  if ((diff > bcfg.deldays) || deltype)
     {
       gettoken (0);
       tlist = rlist;
@@ -3259,7 +3405,7 @@ void delkill (void)
 //    sprintf(logout,"Echo Area %s (orphaned) killed by Echo Manager",newarea->areaname);
       sprintf (logout,
 	       "Expired DeletedArea %s keyword (%i days) killed by Echo Manager",
-	       newarea->areaname, diff);
+	       newarea->areaname, deltype ? 0 : diff);
       logwrite (1, 6);
       if (bcfg.delfiles)
 	{
@@ -3273,9 +3419,13 @@ void delkill (void)
 	  logout[strlen (logout) - 1] = 'p';
 	  unlink (logout);
 	}
+       return 1;
     }
   else
-    wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
+    {
+       wwrite (prttemp, ::string, maxstr2[0], __FILE__, __LINE__);
+       return 0;
+    };
 }
 
 void dolist (short rt)

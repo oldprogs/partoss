@@ -638,7 +638,7 @@ void flushbuf (short handle)
     }
 #elif defined( __NT__ )
   FlushFileBuffers ((HANDLE) _os_handle (handle));
-#elif defined( __LNX__ ) || defined (__FreeBSD__)
+#elif defined(__linux__) || defined (__FreeBSD__)
   sync ();
 #else
   DosBufReset (handle);

@@ -263,7 +263,7 @@ short killbox (struct link *blink)
   if (blink->address.point)
     {
       mystrncat (packets, fname, 10, DirSize);
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
       mystrncat (packets, ".pnt/", 7, DirSize);
 #else
       mystrncat (packets, ".pnt\\", 7, DirSize);

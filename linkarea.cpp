@@ -15,7 +15,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <fcntl.h>
-#if !defined (__LNX__) && !defined (__FreeBSD__)
+#if !defined (__linux__) && !defined (__FreeBSD__)
 #include <io.h>
 #endif
 #include <sys/timeb.h>

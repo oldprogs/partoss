@@ -450,7 +450,7 @@ void createarea (char *areaname, short pers, struct myaddr *pktaddr2)
 		      rread (areaset, crarea, szarea, __FILE__, __LINE__);
 		      memcpy (&tdefarea, crarea, szarea);
 		      mystrncpy (newname, crarea->areafp, DirSize);
-#if defined(__LNX__) || defined(__FreeBSD__)
+#if defined(__linux__) || defined(__FreeBSD__)
 		      temp = strrchr (newname, '/');
 #else
 		      temp = strrchr (newname, '\\');
@@ -524,7 +524,7 @@ founddef:
     {
       if (!(checkbuf[autonum/8] & (1<<(autonum%8))))
       {
-#if defined(__LNX__) || defined(__FreeBSD__)
+#if defined(__linux__) || defined(__FreeBSD__)
         temp = strrchr (newname, '/');
 #else
         temp = strrchr (newname, '\\');
@@ -590,7 +590,7 @@ founddef:
       i = 0;
       while (i != -1)
 	{
-#if defined(__LNX__) || defined(__FreeBSD__)
+#if defined(__linux__) || defined(__FreeBSD__)
      temp = strrchr (newname, '/');
 #else
      temp = strrchr (newname, '\\');
@@ -977,11 +977,16 @@ goodnam2:
   if ((ttarea->dupes != bcfg.defarea.dupes) || (ttarea->killd_modified))
     {
       if (ttarea->killd_modified)
+      {
 	sprintf (logout, " -$b%c%u", (ttarea->killd) == 1 ? 'k' : 'n',
 		 ttarea->dupes);
-      else
+      mywrite (handle, logout, __FILE__, __LINE__);
+		}
+      else if (ttarea->dupes)
+      {
 	sprintf (logout, " -$b%u", ttarea->dupes);
       mywrite (handle, logout, __FILE__, __LINE__);
+      }
     }
   if (ttarea->passthr)
     {

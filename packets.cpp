@@ -24,7 +24,7 @@ void killpkts (void)
   int mgood;
   char tmpname[(DirSize + 1)];
   struct find_t fblk;
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
 // memset(tmpname,0,DirSize+1);
 #endif
   mystrncpy (tmpname, bcfg.workout, DirSize);

@@ -9,11 +9,11 @@
 /* #define __DOS__ 1 */
 
 //#ifdef __EMX__
-//#define __LNX__
+//#define __linux__
 //#endif
 
 
-/* $Id: partoss.h,v 1.2 2003/02/17 18:39:46 saf2 Exp $ */
+/* $Id: partoss.h,v 1.3 2003/02/17 18:43:34 saf2 Exp $ */
 /* Ported partially */
 #ifdef HAVE_CONFIG_H
 
@@ -150,7 +150,7 @@
 #endif
 #include <stdio.h>
 
-#if !defined(__LNX__) && !defined(__FreeBSD__)
+#if !defined(__linux__) && !defined(__FreeBSD__)
 #include <conio.h>
 #else
 #include "_portlib.h"
@@ -158,7 +158,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#if !defined(__LNX__) && !defined(__FreeBSD__)
+#if !defined(__linux__) && !defined(__FreeBSD__)
 #ifdef __EMX__
 #include <sys/types.h>
 #include <sys/dir.h>
@@ -174,7 +174,7 @@
 #include <fcntl.h>
 //#include <malloc.h>
 #include <time.h>
-#if defined(__LNX__) || defined(__FreeBSD__)
+#if defined(__linux__) || defined(__FreeBSD__)
 #include <sys/stat.h>
 #else
 #include <sys\stat.h>
@@ -182,7 +182,7 @@
 #include <ctype.h>
 #include <errno.h>
 
-#if !defined(__LNX__) && !defined(__FreeBSD__)
+#if !defined(__linux__) && !defined(__FreeBSD__)
 #include <process.h>
 #include <share.h>
 #ifdef __EMX__
@@ -198,7 +198,7 @@ extern int int86 (int intr_no, const union REGS *inreg, union REGS *outreg);
 #ifdef __BORLANDC__
 // Borland
 #ifdef __WIN32__
- int _dos_findclose(struct find_t _FAR *__finfo) { return(1); };
+ int _dos_findclose(struct find_t *__finfo) { return(1); };
  #ifndef __NT__
   #define __NT__
  #endif
@@ -241,7 +241,7 @@ extern "C" unsigned pascal SwapExec (char *FileNameToSwap,
 #define BufSize 512
 #endif
 
-#if (defined (__LNX__) && !defined (__EMX__)) || defined(__FreeBSD__)
+#if (defined (__linux__) && !defined (__EMX__)) || defined(__FreeBSD__)
 #define DIRSEP "/"
 #define SHELL_VAR "SHELL"
 #define SHELL_OPT "-c"
@@ -259,7 +259,7 @@ extern "C" unsigned pascal SwapExec (char *FileNameToSwap,
 #define HAVE_SOPEN 1
 
 // ... and automake.
-#define VERSION "1.10.053/HSH"
+#define VERSION "1.10.061/HSH"
 
 #endif /* HAVE_CONFIG_H */
 
@@ -891,8 +891,8 @@ void readnet2 (short pos, short type);
 void readnet (short file, short pos, short type);
 void inecholog (char *areaname);
 void delorph (struct uplname *utarea, struct uplname *ttname);
-void delkill (void);
-void delorphn (struct uplname *utarea, struct uplname *ttname);
+short delkill (short deltype);
+void delorphn (struct uplname *utarea, struct uplname *ttname, char * descr);
 void dolist (short rt);
 
 void untoss (void);

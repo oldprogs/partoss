@@ -23,7 +23,7 @@ void moreHandles (void)
   _grow_handles (50);
 #elif defined( M_I386 )
   _grow_handles (50);
-#elif defined( __LNX__ ) || defined (__FreeBSD__)
+#elif defined(__linux__) || defined (__FreeBSD__)
 #else
   int h[MAX_HANDLES], i /*,hcnta */ ;
   _grow_handles (MAX_HANDLES);

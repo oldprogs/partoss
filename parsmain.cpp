@@ -2,7 +2,7 @@
 
 #include "partoss.h"
 #include "globext.h"
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
 #include "mappath.h"
 #endif
 
@@ -180,7 +180,7 @@ char *keywords[] = {
   "FirstGoodName",		// 170
   "Umask",			// 171
   "DoNotSearchInboundPKT",	// 172
-  "KeepLogFileOpened",		// 173
+  "KeepLogFileOpened",		// 173   (must be 1.06.09 LogAlwaysOpen <YES|NO>)
   "StripToFTS"			// 174
 };
 short numtoken = 175;
@@ -407,7 +407,7 @@ void parser (char *file, short level)
   struct uplname tuplink, *tupl = NULL, bladv;
   struct pktname *tinbound = NULL;
   struct incl *tgroup = NULL;
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
   char dos_path[DirSize], lnx_path[DirSize];
   char umaskstr[32];
 #endif
@@ -443,7 +443,7 @@ void parser (char *file, short level)
 		    ccprintf ("Incorrect keyword \"%s\" in %s (line %d)\r\n",
 			      logout, hfile, lineno[level]);
 		  break;
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
 //Попытка реализовать MapPath
 		case 167:
 		  gettoken (level);
@@ -752,6 +752,8 @@ void parser (char *file, short level)
 		    ttarea1 = &bcfg.defarea;
 		  memcpy (&defaddr, bcfg.address.chain, szmyaddr);
 		  ttarea1->type = (short)(i - 16);
+		  if (i == 165)
+		      ttarea1->type >>= 4; //=9
 		  if (i < 18)
 		    ttarea1->dupes = bcfg.defarea.dupes;
 		  if (i == 165)
@@ -782,7 +784,7 @@ void parser (char *file, short level)
 //Странно, но тут вместо 79 по идее должен быть DirSize
 //            tokencpy(ttarea1->areafp,79);
 		  tokencpy (ttarea1->areafp, DirSize);
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
 //По идее, тут надо бы сделать mappath в случае необходимости.
 		  pmapper.remap (ttarea1->areafp);
 #endif
@@ -986,7 +988,7 @@ void parser (char *file, short level)
 			    }
 			  break;
 			default:
-			  if (i < 21)
+			  if (i < 21 || i == 165)
 			    {
 			      parseaddr (token, &tsnd, toklen);
 			      if (tsnd.zone)

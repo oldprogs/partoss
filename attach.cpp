@@ -27,7 +27,7 @@ void makeattach (short type)
   tmt = localtime (&sftime);
   mystrncpy (tstrtime, asctime (tmt), 39);
   ext[0] = '.';
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
   ext[1] = (char)tolower (tstrtime[0]);
   ext[2] = (char)tolower (tstrtime[1]);
 #else
@@ -155,7 +155,7 @@ void makeattach (short type)
 		  if (tpack->outaddr.point)
 		    {
 		      mystrncat (packets, fname, 10, DirSize);
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
 		      mystrncat (packets, ".pnt/", 7, DirSize);
 #else
 		      mystrncat (packets, ".pnt\\", 7, DirSize);
@@ -1236,7 +1236,7 @@ char *makebox (struct myaddr *toaddr, int type, int hold)
       break;
 
     case 1:
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
       sprintf (boxlong, "%u.%u.%u.%u%s/", toaddr->zone, toaddr->net,
 	       toaddr->node, toaddr->point, hold ? ".H" : "");
 #else
@@ -1249,7 +1249,7 @@ char *makebox (struct myaddr *toaddr, int type, int hold)
     case 2:
       memcpy (tdomain, toaddr->domain, 8);
       tdomain[8] = 0;
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
       sprintf (boxlong, "%s.%u.%u.%u.%u%s/", tdomain, toaddr->zone,
 	       toaddr->net, toaddr->node, toaddr->point,
 	       hold ? ".Hold" : ".Normal");

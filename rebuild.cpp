@@ -711,7 +711,7 @@ void untoss (void)
       ayear += 1980;
       amonth = (short)((a >> 5) & 0x0f);
       aday = (short)(a & 0x1f);
-#if defined(__LNX__) || defined(__FreeBSD__)
+#if defined(__linux__) || defined(__FreeBSD__)
       sprintf (fname, "%04u%02u%02u/", ayear, amonth, aday, acurr);
 #else
       sprintf (fname, "%04u%02u%02u\\", ayear, amonth, aday);

@@ -19,14 +19,14 @@ struct find_t
   unsigned short wr_time;	/* time of last write to file */
   unsigned short wr_date;	/* date of last write to file */
   unsigned long size;		/* length of file in bytes    */
-#if defined(__OS2__) || defined(__NT__) || defined(__LNX__) || defined(__EMX__)
+#if defined(__OS2__) || defined(__NT__) || defined(__linux__) || defined(__EMX__)
   char name[256];		/* null-terminated filename   */
 #elif defined (__FreeBSD__)
   char name[MAXNAMLEN+1];
 #else
   char name[13];		/* null-terminated filename   */
 #endif
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
   DIR *__entry;
   char *__pattern;
   char *__path_only;

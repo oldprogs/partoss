@@ -26,7 +26,7 @@ char *arckeys[] = {
   "OS2",
   "LNX",
   "BSD"
-#elif defined( __LNX__ )
+#elif defined(__linux__)
 
   "LNX",
   "BSD",

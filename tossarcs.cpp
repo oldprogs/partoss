@@ -389,7 +389,7 @@ short tosspkt (struct pktname *tpkt)
 	      badarea = setarea (curarea, 0);
 	      if (badarea == -2)
 		{
-		  sprintf (logout, "Message in DeletedArea!");
+		  sprintf (logout, "Message in DeletedArea %s!", curarea);
 		  logwrite (1, 3);
 		  goto deleted;
 		}

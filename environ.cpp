@@ -54,7 +54,7 @@ void mtsleep (short sec)
   //sleep (sec);
 #elif defined( __NT__ )
   Sleep ((DWORD) sec * 1000);
-#elif defined( __LNX__ ) || defined(__FreeBSD__)
+#elif defined(__linux__) || defined(__FreeBSD__)
   sleep (sec);
 #else
   int i = 0;

@@ -6,7 +6,7 @@
 #ifdef __DOS__
 #define SHELL "COMMAND.COM"
 #else
-#if (defined(__LNX__) && !defined(__EMX__)) || defined(__FreeBSD__)
+#if (defined(__linux__) && !defined(__EMX__)) || defined(__FreeBSD__)
 #define SHELL "/bin/sh"
 #else
 #define SHELL "CMD.EXE"
@@ -304,7 +304,7 @@ int archiver (char *arcname, char *packname, short type)
 #endif
        }
 #else
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
 	retcode = spawnvp (P_WAIT, param[0], (char *const *)param);
 #else
 #ifdef __DOS__
@@ -335,7 +335,7 @@ int archiver (char *arcname, char *packname, short type)
 		      gettoken (0);
 		      tokencpy (packf, DirSize);
 		      mystrncpy (param[numf], packf, DirSize);
-#if defined (__LNX__) || defined (__FreeBSD__)
+#if defined (__linux__) || defined (__FreeBSD__)
 		      spawnvp (P_WAIT, param[0], (char *const *)param);
 #else
 #ifdef __DOS__
