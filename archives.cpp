@@ -412,18 +412,14 @@ int archiver (char *arcname, char *packname, short type)
           temp[3] = 't';
         }
     }
-        if (rrename ((type == 1 ? fulname : packname), badname))
-    sprintf (logout,
-       "??? Rename of file %s (Archiver's error %X) fails",
+    sprintf (logout, "??? Rename of file %s (Archiver's error %X)",
        (type == 1 ? fulname : packname), retcode);
-        else
-    sprintf (logout,
-       "??? Rename of file %s (Archiver's error %X)",
-       (type == 1 ? fulname : packname), retcode);
-        if (logfileok)
-    logwrite (1, 1);
-        if (!quiet)
-    ccprintf ("\r\n%s\r\n", logout);
+    if (rrename ((type == 1 ? fulname : packname), badname))
+      strcat (logout, " fails");
+    if (logfileok)
+      logwrite (1, 1);
+    if (!quiet)
+      ccprintf ("\r\n%s\r\n", logout);
       }
   }
     }
