@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <time.h>
 
+#include "lowlevel.h"
 #include "partoss.h"
 #include "globext.h"
 

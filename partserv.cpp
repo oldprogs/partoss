@@ -419,8 +419,8 @@ void doserv(void)
           /*
              print file position
            */
-          sprintf(logout, "echolog.$$$ position before truncate = %ld", tell(alog));
-          logwrite(1, 13);
+          //sprintf(logout, "echolog.$$$ position before truncate = %ld", tell(alog));
+          //logwrite(1, 13);
 
           if(chsize(alog, 0) != 0)
           {
@@ -432,8 +432,8 @@ void doserv(void)
           /*
              print file position
            */
-          sprintf(logout, "echolog.$$$ position after truncate = %ld", tell(alog));
-          logwrite(1, 13);
+          //sprintf(logout, "echolog.$$$ position after truncate = %ld", tell(alog));
+          //logwrite(1, 13);
 
           if(endstring[0])      // а эха-то и не указана!
             break;

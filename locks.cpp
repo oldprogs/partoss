@@ -4,6 +4,9 @@
 
 #include "locks.h"
 
+#include <sys/types.h>
+#include <signal.h>
+
 int readlock (char * filename)
 {
    int h, pid;

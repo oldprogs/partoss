@@ -19,7 +19,7 @@
 #ifndef _LIST_TPL
 #define _LIST_TPL
 
-#include <iostream.h>
+#include <iostream>
 
 template < class type > class list_el
 {
@@ -282,9 +282,9 @@ public:
   }
 };
 
-template < class type > ostream & operator <<(ostream & o, list < type > &l)
+template < class type > std::ostream & operator <<(std::ostream & o, list < type > &l)
 {
-  list_el < type > *temp = head;
+  list_el < type > *temp = l.head;
   while(1)
   {
     if(temp == NULL)
